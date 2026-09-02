@@ -58,6 +58,37 @@ Respond with ONLY a JSON object of this exact shape:
 {{"claims": [{{"text": str, "related_kind": str, "related_name": str}}]}}"""
 
 
+# Fields that duplicate other fields or carry no meaning for claim-writing.
+_DROP_FROM_PROMPT = frozenset({
+    "label",        # prose restatement of the structured fields
+    "last_seen",    # superseded by latest_at / the history block
+    "series",       # see _compact_details: the summary carries the trend
+    "snomed", "rxnorm",  # coding systems the model must not cite from
+    "verification", "intent", "allergy_type", "request_status",
+})
+
+
+def _compact_details(body: dict) -> dict:
+    """Trim a stored record to what a model needs to write a claim about it.
+
+    Memory keeps everything; the prompt gets the meaning. A lab trend's raw
+    five-point series is the most valuable thing in the store for a clinician
+    to SEE, and the least useful thing for the model to READ -- direction and
+    delta say "creatinine is rising by 0.4" in a fraction of the tokens.
+
+    This is not cosmetic. Groq's free tier allows 8,000 tokens per minute and
+    the uncompacted payload measured 8,742, so a rich store made every request
+    fail with a 413 until the prompt stopped carrying raw series data.
+    """
+    if not isinstance(body, dict):
+        return {}
+    compact = {k: v for k, v in body.items()
+               if k not in _DROP_FROM_PROMPT and v is not None and v != []}
+    if body.get("series"):
+        compact["reading_count"] = body.get("readings")
+    return compact
+
+
 def build_payload(context: RetrievedContext) -> dict:
     """Render retrieved memory into the shape the model is asked to cite from.
 
@@ -74,12 +105,12 @@ def build_payload(context: RetrievedContext) -> dict:
                 "related_kind": kind,
                 "related_name": row["name"],
                 "status": row["status"],
-                "details": row["body"],
+                "details": _compact_details(row["body"]),
             })
 
     history = [
         {
-            "when": event.timestamp,
+            "when": event.timestamp[:10],
             "event_type": event.event_type,
             "summary": event.summary,
             "severity": event.severity,

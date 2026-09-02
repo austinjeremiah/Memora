@@ -40,16 +40,23 @@ class ClinicalEvent:
     related_name: str | None = None     # links back to a WARM entity name
     source_id: str | None = None        # source record id, for provenance
     severity: str | None = None
+    # Structured clinical detail from the source record: measured values with
+    # units, codes, categories, dates. Prose in `summary` is for a human to
+    # read; this is what downstream logic and trend-building actually use.
+    details: dict[str, Any] | None = None
 
     def to_extra(self) -> dict[str, Any]:
         """The structured payload handed to write_event(extra=...)."""
-        return {
+        payload = {
             "event_type": self.event_type,
             "related_kind": self.related_kind,
             "related_name": self.related_name,
             "source_id": self.source_id,
             "severity": self.severity,
         }
+        if self.details:
+            payload["details"] = self.details
+        return payload
 
     @staticmethod
     def from_record(record: dict[str, Any]) -> "ClinicalEvent":
@@ -64,4 +71,5 @@ class ClinicalEvent:
             related_name=extra.get("related_name"),
             source_id=extra.get("source_id"),
             severity=extra.get("severity"),
+            details=extra.get("details"),
         )

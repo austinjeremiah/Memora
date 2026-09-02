@@ -134,7 +134,12 @@ def _parse_resource(resource: dict[str, Any]) -> ClinicalEvent | None:
     rtype = resource.get("resourceType")
 
     if rtype == "MedicationRequest":
-        name = _text(resource.get("medicationCodeableConcept"), "unknown medication")
+        name = _text(resource.get("medicationCodeableConcept"), "")
+        if not name:
+            # Real Synthea bundles contain MedicationRequests with neither
+            # .text nor a coding display. An unnamed medication cannot be
+            # reconciled, cited, or acted on -- it is noise in a brief.
+            return None
         return ClinicalEvent(
             event_type=EVENT_MEDICATION_ADMINISTERED,
             summary=f"{name} prescribed",
@@ -143,10 +148,18 @@ def _parse_resource(resource: dict[str, Any]) -> ClinicalEvent | None:
             related_name=slug(name),
             source_id=str(resource.get("id", "")),
             severity=SEVERITY_INFO,
+            details={
+                "medication": name,
+                "rxnorm": _code(resource.get("medicationCodeableConcept")),
+                "request_status": resource.get("status"),
+                "intent": resource.get("intent"),
+            },
         )
 
     if rtype == "MedicationAdministration":
-        name = _text(resource.get("medicationCodeableConcept"), "unknown medication")
+        name = _text(resource.get("medicationCodeableConcept"), "")
+        if not name:
+            return None
         return ClinicalEvent(
             event_type=EVENT_MEDICATION_ADMINISTERED,
             summary=f"{name} administered",
@@ -155,6 +168,13 @@ def _parse_resource(resource: dict[str, Any]) -> ClinicalEvent | None:
             related_name=slug(name),
             source_id=str(resource.get("id", "")),
             severity=SEVERITY_INFO,
+            details={
+                "medication": name,
+                "rxnorm": _code(resource.get("medicationCodeableConcept")),
+                "administration_status": resource.get("status"),
+                "reason": ((resource.get("reasonReference") or [{}])[0]
+                           .get("display")),
+            },
         )
 
     if rtype == "AllergyIntolerance":
@@ -173,6 +193,15 @@ def _parse_resource(resource: dict[str, Any]) -> ClinicalEvent | None:
             source_id=str(resource.get("id", "")),
             # A drug allergy is what can actually contraindicate a prescription.
             severity=SEVERITY_CRITICAL if is_drug else SEVERITY_WARNING,
+            details={
+                "allergen": name,
+                "categories": categories,
+                "criticality": criticality,
+                "allergy_type": resource.get("type"),
+                "verification": _code(resource.get("verificationStatus")),
+                "snomed": _code(resource.get("code")),
+                "is_drug_allergy": is_drug,
+            },
         )
 
     if rtype == "Condition":
@@ -185,6 +214,14 @@ def _parse_resource(resource: dict[str, Any]) -> ClinicalEvent | None:
             related_name=slug(name),
             source_id=str(resource.get("id", "")),
             severity=SEVERITY_INFO,
+            details={
+                "condition": name,
+                "clinical_status": _code(resource.get("clinicalStatus")),
+                "verification": _code(resource.get("verificationStatus")),
+                "onset": _when(resource, "onsetDateTime"),
+                "recorded": _when(resource, "recordedDate"),
+                "snomed": _code(resource.get("code")),
+            },
         )
 
     if rtype == "Procedure":
@@ -197,6 +234,14 @@ def _parse_resource(resource: dict[str, Any]) -> ClinicalEvent | None:
             related_name=slug(name),
             source_id=str(resource.get("id", "")),
             severity=SEVERITY_INFO,
+            details={
+                "procedure": name,
+                "status": resource.get("status"),
+                "started": _when(resource, "performedDateTime",
+                                 "performedPeriod.start"),
+                "ended": _when(resource, "performedPeriod.end"),
+                "snomed": _code(resource.get("code")),
+            },
         )
 
     if rtype == "Observation":
@@ -204,14 +249,21 @@ def _parse_resource(resource: dict[str, Any]) -> ClinicalEvent | None:
         if not isinstance(value, dict) or value.get("value") is None:
             return None  # non-numeric observations are not a lab trend
         name = _text(resource.get("code"), "unspecified observation")
+        unit = value.get("unit", "")
         return ClinicalEvent(
             event_type=EVENT_LAB_RESULT,
-            summary=f"{name}: {value['value']} {value.get('unit', '')}".strip(),
+            summary=f"{name}: {value['value']} {unit}".strip(),
             timestamp=_when(resource, "effectiveDateTime", "issued"),
             related_kind=KIND_LAB_TREND,
             related_name=slug(name),
             source_id=str(resource.get("id", "")),
             severity=SEVERITY_INFO,
+            details={
+                "test": name,
+                "value": value["value"],
+                "unit": unit,
+                "loinc": _code(resource.get("code")),
+            },
         )
 
     if rtype == "Encounter":
@@ -226,6 +278,13 @@ def _parse_resource(resource: dict[str, Any]) -> ClinicalEvent | None:
             related_name=slug(name),
             source_id=str(resource.get("id", "")),
             severity=SEVERITY_INFO,
+            details={
+                "encounter": name,
+                "encounter_class": encounter_class,
+                "started": _when(resource, "period.start"),
+                "ended": _when(resource, "period.end"),
+                "status": resource.get("status"),
+            },
         )
 
     return None

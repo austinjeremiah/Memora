@@ -31,10 +31,16 @@ ROLE_PERMISSIONS: dict[ClinicianRole, RolePermissions] = {
         can_approve_handoff=True,
     ),
     ClinicianRole.WARD_PHYSICIAN: RolePermissions(
+        # A ward physician receiving an ICU patient reads their labs -- that is
+        # the entire point of medication reconciliation at a care transition.
         can_view=frozenset({KIND_MEDICATION, KIND_ALLERGY, KIND_DIAGNOSIS,
-                            KIND_CARE_PHASE}),
+                            KIND_LAB_TREND, KIND_PROCEDURE, KIND_CARE_PHASE}),
         can_approve_handoff=True,
     ),
+    # The surgeon is the narrow role: a pre-operative review needs allergies,
+    # prior procedures and current medications. Diagnoses, lab trends and care
+    # phase are outside that scope, and this is where the authority check is
+    # demonstrated rather than on a ward physician reading a creatinine.
     ClinicianRole.SURGEON: RolePermissions(
         can_view=frozenset({KIND_ALLERGY, KIND_PROCEDURE, KIND_MEDICATION}),
         can_approve_handoff=False,

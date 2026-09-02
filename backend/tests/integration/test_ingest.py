@@ -216,3 +216,119 @@ def test_story_patient_selection_requires_a_real_drug_allergy(story_patients):
         assert candidate["drug_allergies"]
         assert candidate["medications"] >= 3
         assert candidate["encounters"] >= 5
+
+
+# ---- trajectories: what persistent memory buys -------------------------
+
+def test_repeated_observations_become_a_trend_not_a_snapshot(parsed):
+    """A single result is a number; the same store holding every result is a
+    trajectory. This is the clearest thing the memory layer provides."""
+    from memora.ingest.pipeline import build_lab_trend
+
+    _, events = parsed
+    by_test: dict[str, list] = {}
+    for event in select_events(events):
+        if event.event_type == EVENT_LAB_RESULT and event.details:
+            by_test.setdefault(event.related_name, []).append(event)
+
+    multi = {k: v for k, v in by_test.items() if len(v) >= 2}
+    assert multi, "expected at least one test with repeat readings"
+
+    _name, points = next(iter(multi.items()))
+    trend = build_lab_trend(points)
+    assert trend["readings"] == len(points)
+    assert trend["direction"] in {"rising", "falling", "stable", "unknown"}
+    assert trend["latest_value"] is not None
+    assert trend["loinc"], "a lab trend must carry its LOINC code"
+    stamps = [p["at"] for p in trend["series"]]
+    assert stamps == sorted(stamps), "series must be chronological"
+
+
+def test_single_reading_is_not_reported_as_a_direction():
+    from memora.ingest.pipeline import build_lab_trend
+    one = ClinicalEvent(EVENT_LAB_RESULT, "Creatinine: 1.6 mg/dL",
+                        "2026-01-01T00:00:00Z", "lab_trend", "creatinine",
+                        details={"test": "Creatinine", "value": 1.6,
+                                 "unit": "mg/dL", "loinc": "2160-0"})
+    assert build_lab_trend([one])["direction"] == "single_reading"
+
+
+def test_trend_direction_is_computed_from_the_series():
+    from memora.ingest.pipeline import build_lab_trend
+
+    def point(value, day):
+        return ClinicalEvent(EVENT_LAB_RESULT, f"Creatinine: {value}",
+                             f"2026-01-{day:02d}T00:00:00Z", "lab_trend",
+                             "creatinine",
+                             details={"test": "Creatinine", "value": value,
+                                      "unit": "mg/dL", "loinc": "2160-0"})
+
+    rising = build_lab_trend([point(1.0, 1), point(1.4, 2), point(1.9, 3)])
+    assert rising["direction"] == "rising"
+    assert rising["delta"] == 0.9
+
+    falling = build_lab_trend([point(2.0, 1), point(1.2, 2)])
+    assert falling["direction"] == "falling"
+
+    stable = build_lab_trend([point(1.00, 1), point(1.01, 2)])
+    assert stable["direction"] == "stable"
+
+
+def test_trends_outrank_single_readings_under_the_item_cap(store, story_patients):
+    """Ranking by recency alone dropped every real trajectory in favour of
+    whichever single-reading test was written last."""
+    from memora.context.engine import compile_plan, execute_plan
+
+    report = ingest_patient(Path(story_patients[0]["path"]))
+    context = execute_plan(compile_plan(report.patient_id, Situation.ICU_TO_WARD,
+                                        ClinicianRole.WARD_PHYSICIAN))
+    labs = context.facts.get("lab_trend", [])
+    if not labs:
+        pytest.skip("patient has no lab observations")
+    counts = [(row["body"].get("readings") or 0) for row in labs]
+    assert counts == sorted(counts, reverse=True), "trends were not ranked first"
+
+
+def test_unnamed_medications_are_not_ingested(parsed):
+    """Real bundles contain MedicationRequests with no name at all. An
+    unnamed medication cannot be reconciled and reads as a defect in a brief."""
+    _, events = parsed
+    for event in events:
+        if event.related_kind == KIND_MEDICATION:
+            assert event.related_name != "unknown_medication"
+            assert event.details.get("medication")
+
+
+def test_prompt_payload_stays_within_the_provider_token_budget(store, story_patients):
+    """Groq's free tier allows 8,000 tokens/minute. A rich store made the
+    uncompacted payload 8,742 tokens and every request failed with 413."""
+    import json
+
+    from memora.context.engine import compile_plan, execute_plan
+    from memora.llm.propose import SYSTEM_PROMPT, build_payload
+
+    report = ingest_patient(Path(story_patients[0]["path"]))
+    context = execute_plan(compile_plan(report.patient_id, Situation.ICU_TO_WARD,
+                                        ClinicianRole.WARD_PHYSICIAN))
+    chars = len(json.dumps(build_payload(context), default=str)) + len(SYSTEM_PROMPT)
+    assert chars / 4 < 6000, f"prompt is ~{chars // 4} tokens, too close to the cap"
+
+
+def test_memory_keeps_the_series_the_prompt_omits(store, story_patients):
+    """The raw series is the most valuable thing for a clinician to see and the
+    least useful for the model to read. It must stay in memory regardless."""
+    from memora.context.engine import compile_plan, execute_plan
+    from memora.llm.propose import _compact_details
+
+    report = ingest_patient(Path(story_patients[0]["path"]))
+    context = execute_plan(compile_plan(report.patient_id, Situation.ICU_TO_WARD,
+                                        ClinicianRole.WARD_PHYSICIAN))
+    trends = [r for r in context.facts.get("lab_trend", [])
+              if (r["body"].get("readings") or 0) >= 2]
+    if not trends:
+        pytest.skip("patient has no multi-reading labs")
+
+    stored = trends[0]["body"]
+    assert stored["series"], "memory lost the series"
+    assert "series" not in _compact_details(stored), "prompt still carries it"
+    assert _compact_details(stored)["direction"] == stored["direction"]

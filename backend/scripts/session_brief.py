@@ -41,6 +41,20 @@ plan = compile_plan(PATIENT, Situation.ICU_TO_WARD, CLINICIAN.role)
 context = execute_plan(plan)
 print(f"[1] recalled {context.fact_count()} facts, {len(context.history)} events")
 
+# Surface what persistent memory actually holds: not last values, trajectories.
+ARROW = {"rising": "^ RISING ", "falling": "v FALLING", "stable": "= STABLE ",
+         "single_reading": "  single "}
+trends = [r for r in context.facts.get("lab_trend", [])
+          if (r["body"].get("readings") or 0) >= 2]
+if trends:
+    print(f"\n    trajectories held in memory ({len(trends)} multi-reading tests):")
+    for row in sorted(trends, key=lambda r: -r["body"]["readings"])[:6]:
+        b = row["body"]
+        pts = " -> ".join(f"{p['value']}" for p in b["series"])
+        print(f"      {ARROW[b['direction']]} {b['test'][:34]:<34} "
+              f"{pts}  {b['unit']} (delta {b['delta']})")
+    print()
+
 t0 = time.time()
 proposed = propose_claims(context)
 print(f"[2] model proposed {len(proposed)} claims in {time.time() - t0:.2f}s "

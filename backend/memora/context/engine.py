@@ -85,6 +85,29 @@ def compile_plan(
     )
 
 
+def _fact_rank(row: dict) -> tuple:
+    """Order facts within a kind by how much they actually tell a clinician.
+
+    A lab with five readings is a trajectory; a lab with one is a number. Under
+    a per-kind item cap, ranking purely by recency drops every trend in favour
+    of whichever single-reading test happened to be written last -- which was
+    observed on real data: a patient with seven genuine multi-reading trends
+    surfaced none of them.
+
+    Records with more readings come first, then the most recently updated, then
+    name as a deterministic tiebreak (bulk ingestion writes many rows inside the
+    same millisecond, so updated_at alone is not stable).
+    """
+    body = row.get("body") if isinstance(row.get("body"), dict) else {}
+    readings = body.get("readings") or 0
+    return (-readings, _invert(row.get("updated_at") or ""), row.get("name") or "")
+
+
+def _invert(value: str) -> tuple:
+    """Sort a string descending inside an otherwise ascending key."""
+    return tuple(-ord(ch) for ch in value)
+
+
 def _history_rank(event: ClinicalEvent) -> tuple[int, str]:
     """Order history by clinical weight, then recency.
 
@@ -120,10 +143,7 @@ def execute_plan(plan: RetrievalPlan) -> RetrievedContext:
     facts: dict[str, list[dict]] = {}
     for kind in plan.kinds_to_check:
         rows = memory.list_facts(kind)
-        # Stable ordering: list_entities sorts by updated_at DESC, and bulk
-        # ingestion can write several rows inside the same millisecond, so name
-        # is the tiebreak that keeps repeated runs identical.
-        rows.sort(key=lambda r: (r["updated_at"], r["name"]), reverse=True)
+        rows.sort(key=_fact_rank)
         facts[kind] = rows[: plan.max_items]
 
     wanted = set(plan.event_types_to_check)

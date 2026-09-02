@@ -59,6 +59,7 @@ class PatientMemory:
 
     def __init__(self, patient_id: str, *, require_data: bool = False):
         self.scope = PatientScope(patient_id=patient_id)
+        self._quota_warned = False
         db_path = settings.sibyl_db_path
 
         # Order matters: the store must be proven to exist BEFORE the client is
@@ -179,7 +180,8 @@ class PatientMemory:
                     f"Sibyl free-tier cap reached ({status['db_size_bytes']:,} of "
                     f"{status['soft_cap_bytes']:,} bytes). Trim the dataset or upgrade."
                 )
-            if status.get("at_or_above_warning"):
+            if status.get("at_or_above_warning") and not self._outer._quota_warned:
+                self._outer._quota_warned = True
                 log.warning(
                     "Sibyl store at %s bytes -- %.1f%% of the free-tier cap",
                     f"{status['db_size_bytes']:,}", 100 * status["pct_used"],

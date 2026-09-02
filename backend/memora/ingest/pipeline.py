@@ -23,7 +23,11 @@ from pathlib import Path
 
 from memora.ingest.change_detector import ChangeType, apply_fact_change
 from memora.ingest.synthea_parser import parse_patient_bundle
-from memora.ontology.events import EVENT_LAB_RESULT, ClinicalEvent
+from memora.ontology.events import (
+    EVENT_LAB_RESULT,
+    SEVERITY_CRITICAL,
+    ClinicalEvent,
+)
 from memora.ontology.kinds import (
     KIND_ALLERGY,
     KIND_CARE_PHASE,
@@ -36,12 +40,20 @@ from memora.sibyl.client import PatientMemory
 
 log = logging.getLogger("memora.ingest")
 
-# Most recent N results per distinct lab test. Labs are ~53% of parsed events
-# on a real patient and would otherwise dominate the store.
-MAX_LAB_POINTS_PER_TEST = 3
+# Retention is per DISTINCT RECORD, not global, because the cost driver is row
+# count rather than payload. Measured on three real patients: 999 journal rows
+# and 272 entities held only 410 KB of actual content, while the store was
+# 4.3 MB -- SQLite plus the four FTS5 indexes cost roughly 10x the payload. So
+# trimming repeats buys far more headroom than trimming detail does, which is
+# why every retained record keeps its full structured body.
+#
+# 340 of those 999 rows were repeat procedures across just 67 distinct
+# procedures. The tenth identical "Assessment of health and social care needs"
+# tells a receiving clinician nothing the first three did not.
+MAX_LAB_POINTS_PER_TEST = 5      # enough points to compute a real trend
+MAX_EVENTS_PER_RECORD = 3        # repeats of any other single record
 
-# Journal entries per patient. A hard ceiling so one unusually long history
-# cannot consume the whole free-tier budget.
+# Absolute ceiling per patient, as a backstop.
 MAX_EVENTS_PER_PATIENT = 400
 
 STATUS_FOR_KIND = {
@@ -79,6 +91,64 @@ class IngestReport:
         }
 
 
+def _fact_body(event: ClinicalEvent) -> dict:
+    """The WARM payload for a non-lab fact.
+
+    Carries the source record's structured detail -- codes, dates, categories,
+    criticality -- not just a rendered sentence. A clinician asking "what is
+    this, exactly" should get an answer from memory rather than from prose.
+    """
+    body: dict = {"label": event.summary, "last_seen": event.timestamp}
+    if event.details:
+        body.update(event.details)
+    return body
+
+
+def build_lab_trend(points: list[ClinicalEvent]) -> dict:
+    """Fold repeated observations of one test into a trajectory.
+
+    This is the clearest thing persistent memory buys: a single result is a
+    number, but the same store holding every result is a TREND -- and a rising
+    creatinine is a different clinical fact from a creatinine of 1.61. The
+    direction is computed from the retained series, so the entity answers
+    "what is happening to this value" and not merely "what was it last".
+    """
+    ordered = sorted(points, key=lambda e: e.timestamp)
+    series = [
+        {"value": e.details["value"], "at": e.timestamp[:10]}
+        for e in ordered if e.details and e.details.get("value") is not None
+    ]
+    latest = ordered[-1]
+    detail = latest.details or {}
+
+    direction, delta = "single_reading", None
+    if len(series) >= 2:
+        first_value, last_value = series[0]["value"], series[-1]["value"]
+        try:
+            delta = round(float(last_value) - float(first_value), 4)
+            scale = abs(float(first_value)) or 1.0
+            if abs(delta) / scale < 0.05:
+                direction = "stable"
+            else:
+                direction = "rising" if delta > 0 else "falling"
+        except (TypeError, ValueError):
+            direction, delta = "unknown", None
+
+    return {
+        "test": detail.get("test", latest.related_name),
+        "loinc": detail.get("loinc"),
+        "unit": detail.get("unit"),
+        "latest_value": detail.get("value"),
+        "latest_at": latest.timestamp[:10],
+        "readings": len(series),
+        "series": series,
+        "direction": direction,
+        "delta": delta,
+        "label": latest.summary,
+        "last_seen": latest.timestamp,
+    }
+
+
 def select_events(events: list[ClinicalEvent]) -> list[ClinicalEvent]:
     """Trim to what fits and what matters, deterministically.
 
@@ -87,20 +157,28 @@ def select_events(events: list[ClinicalEvent]) -> list[ClinicalEvent]:
     while every critical event is retained -- losing a documented drug allergy
     to a volume cap would defeat the entire product.
     """
-    lab_seen: dict[str, int] = defaultdict(int)
+    seen: dict[tuple[str, str], int] = defaultdict(int)
     kept: list[ClinicalEvent] = []
 
     for event in sorted(events, key=lambda e: e.timestamp, reverse=True):
-        if event.event_type == EVENT_LAB_RESULT:
-            key = event.related_name or "unknown"
-            if lab_seen[key] >= MAX_LAB_POINTS_PER_TEST:
-                continue
-            lab_seen[key] += 1
+        # Never thin a critical event. Losing a documented drug allergy to a
+        # retention rule would defeat the entire product.
+        if event.severity == SEVERITY_CRITICAL:
+            kept.append(event)
+            continue
+
+        key = (event.related_kind or "", event.related_name or "unknown")
+        ceiling = (MAX_LAB_POINTS_PER_TEST
+                   if event.event_type == EVENT_LAB_RESULT
+                   else MAX_EVENTS_PER_RECORD)
+        if seen[key] >= ceiling:
+            continue
+        seen[key] += 1
         kept.append(event)
 
     if len(kept) > MAX_EVENTS_PER_PATIENT:
-        critical = [e for e in kept if e.severity == "critical"]
-        others = [e for e in kept if e.severity != "critical"]
+        critical = [e for e in kept if e.severity == SEVERITY_CRITICAL]
+        others = [e for e in kept if e.severity != SEVERITY_CRITICAL]
         room = max(0, MAX_EVENTS_PER_PATIENT - len(critical))
         kept = critical + others[:room]
 
@@ -125,25 +203,49 @@ def ingest_patient(bundle_path: Path, patient_id: str | None = None) -> IngestRe
     selected = select_events(events)
     kind_counts: dict[str, int] = defaultdict(int)
 
+    # Labs are folded into one trend entity per test; everything else maps
+    # one event to one fact. Every observation is still journalled either way,
+    # so COLD stays complete while WARM holds the computed trajectory.
+    lab_points: dict[str, list[ClinicalEvent]] = defaultdict(list)
+
     for event in selected:
         kind, name = event.related_kind, event.related_name
+
+        if kind == KIND_LAB_TREND and name:
+            lab_points[name].append(event)
+            memory.log_event(event)
+            report.events_written += 1
+            continue
+
         if kind and name:
             status = STATUS_FOR_KIND.get(kind)
-            body = {"label": event.summary, "last_seen": event.timestamp}
-            result = apply_fact_change(memory, kind, name, body, event, status=status)
+            result = apply_fact_change(memory, kind, name, _fact_body(event),
+                                       event, status=status)
             if result.change is ChangeType.NEW:
                 report.facts_new += 1
                 kind_counts[kind] += 1
             elif result.change is ChangeType.CONFIRMED:
                 report.facts_confirmed += 1
-                # A confirmed fact writes nothing, so the journal entry that
-                # would otherwise be lost is written explicitly.
+                # A confirmed fact writes no transition, so the observation
+                # that would otherwise be lost is journalled explicitly.
                 memory.log_event(event)
             else:
                 report.facts_changed += 1
         else:
             memory.log_event(event)
         report.events_written += 1
+
+    for name, points in lab_points.items():
+        trend = build_lab_trend(points)
+        result = apply_fact_change(memory, KIND_LAB_TREND, name, trend,
+                                   points[-1], status=STATUS_FOR_KIND[KIND_LAB_TREND])
+        if result.change is ChangeType.NEW:
+            report.facts_new += 1
+            kind_counts[KIND_LAB_TREND] += 1
+        elif result.change is ChangeType.CONFIRMED:
+            report.facts_confirmed += 1
+        else:
+            report.facts_changed += 1
 
     quota = memory.quota()
     report.db_size_bytes = quota["db_size_bytes"]
