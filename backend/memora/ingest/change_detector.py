@@ -36,6 +36,11 @@ class ChangeResult:
     name: str
     previous_status: str | None = None
     new_status: str | None = None
+    # The body as it was before this write. Carried so Sentinel can judge the
+    # delta without re-reading Sibyl to re-derive what this function already
+    # knew -- that would be duplicated work and a second place the "what
+    # changed" logic could drift out of step with this one.
+    previous_body: dict | None = None
 
 
 def apply_fact_change(memory: PatientMemory, kind: str, name: str,
@@ -47,7 +52,7 @@ def apply_fact_change(memory: PatientMemory, kind: str, name: str,
     if existing is None:
         memory.set_fact(kind, name, new_body, status=status)
         memory.log_event(event)
-        return ChangeResult(ChangeType.NEW, kind, name, None, status)
+        return ChangeResult(ChangeType.NEW, kind, name, None, status, None)
 
     # Compare MATERIAL fields only, against the right parts of the row: the
     # payload against body, the lifecycle marker against the status column.
@@ -65,7 +70,7 @@ def apply_fact_change(memory: PatientMemory, kind: str, name: str,
         # the caller logs the observation itself.
         memory.set_fact(kind, name, new_body, status=status)
         return ChangeResult(ChangeType.CONFIRMED, kind, name,
-                            existing["status"], status)
+                            existing["status"], status, old)
 
     previous_status = existing["status"]
     transition = ClinicalEvent(
@@ -82,4 +87,4 @@ def apply_fact_change(memory: PatientMemory, kind: str, name: str,
     # value, so the history has to exist first.
     memory.log_event(transition)
     memory.set_fact(kind, name, new_body, status=status)
-    return ChangeResult(ChangeType.CHANGED, kind, name, previous_status, status)
+    return ChangeResult(ChangeType.CHANGED, kind, name, previous_status, status, old)

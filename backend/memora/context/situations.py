@@ -38,6 +38,18 @@ class ClinicianRole(str, Enum):
     SURGEON = "surgeon"
     ICU_PHYSICIAN = "icu_physician"
 
+    # Not a person. Sentinel raises findings with no clinician present, and the
+    # Gate requires a role for its authority check -- has_authority(None, kind)
+    # returns False, so passing None would BLOCK every autonomous finding before
+    # any policy rule ran. Giving Sentinel its own role keeps the authority
+    # check genuinely applied rather than bypassed.
+    #
+    # CONTAINMENT: no Clinician persona may carry this role, so it is
+    # unreachable through CLINICIANS and therefore unrequestable over HTTP --
+    # otherwise it would be an authority bypass anyone could name. Asserted in
+    # tests/unit/test_clinicians.py.
+    SYSTEM = "system"
+
 
 class SituationFocus:
     """One row of the focus table. Tuples, not lists, so a compiled plan is

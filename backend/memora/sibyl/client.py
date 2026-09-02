@@ -195,3 +195,29 @@ class PatientMemory:
 
     def _quota_guard(self) -> "_QuotaGuard":
         return PatientMemory._QuotaGuard(self)
+
+
+def known_patient_ids() -> list[str]:
+    """Every patient tenant present in the store, excluding reserved ones.
+
+    Reads tenant ids straight from the entities table. Sibyl's SDK exposes no
+    "list tenants" call -- it is designed around knowing which tenant you want
+    -- so this is the one place MEMORA touches the underlying SQLite directly,
+    read-only, rather than inventing a parallel registry that could drift out of
+    step with what is actually stored.
+    """
+    import sqlite3
+
+    from memora.sentinel.digest import SENTINEL_SYSTEM_ID
+
+    db_path = settings.sibyl_db_path
+    assert_store_available(db_path)
+    con = sqlite3.connect(f"file:{db_path}?mode=ro", uri=True)
+    try:
+        rows = con.execute("SELECT DISTINCT tenant_id FROM entities").fetchall()
+    finally:
+        con.close()
+
+    prefix = "patient-"
+    ids = [r[0][len(prefix):] for r in rows if r[0].startswith(prefix)]
+    return sorted(i for i in ids if i != SENTINEL_SYSTEM_ID)

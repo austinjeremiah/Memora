@@ -126,3 +126,43 @@ class VerifyOut(BaseModel):
     timestamp: int
     committer: str
     basescan_url: str
+
+
+class SentinelRunRequest(BaseModel):
+    situation: Situation
+    patient_ids: list[str] | None = None   # None = every ingested patient
+    escalation_threshold: int = Field(default=3, ge=1, le=50)
+
+
+class FindingOut(BaseModel):
+    patient_id: str
+    kind: str
+    name: str
+    status: str
+    gate_result: str
+    reason: str
+    detector: str
+    first_seen_at: str
+    last_seen_at: str
+    runs_seen: int
+    triggered_rules: list[str] = []
+    evidence_event: str | None = None
+
+
+class SentinelRunOut(BaseModel):
+    situation: str
+    run_at: str
+    patients_scanned: int
+    records_checked: int
+    summary: dict[str, int]
+    findings: list[FindingOut]
+    announceable: list[FindingOut]
+    digest_commitment: str | None = None
+
+
+class SinceLastReviewOut(BaseModel):
+    patient_id: str
+    situation: str
+    new: list[FindingOut] = []
+    persisting: list[FindingOut] = []
+    escalated: list[FindingOut] = []

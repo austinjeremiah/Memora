@@ -288,3 +288,93 @@ def test_approved_handoff_is_anchored_onchain_and_reads_back(client, seeded):
     assert verified["exists"] is True
     assert verified["timestamp"] > 0
     assert verified["committer"] == commitment["committer"]
+
+
+# ---- Sentinel over HTTP -------------------------------------------------
+
+@pytest.fixture
+def drifting_patient(store):
+    """Memory that contradicts itself: an ACTIVE medication with a documented
+    adverse reaction in its own journal."""
+    from memora.ontology.events import EVENT_ADVERSE_REACTION
+    m = PatientMemory(PATIENT)
+    m.set_fact(KIND_MEDICATION, "drug_a", {"label": "Drug A"}, status=STATUS_ACTIVE)
+    m.log_event(ClinicalEvent(EVENT_ADVERSE_REACTION, "Adverse reaction to Drug A",
+                              "2026-01-04T14:30:00Z", KIND_MEDICATION, "drug_a",
+                              "ev-1", SEVERITY_CRITICAL))
+    return store
+
+
+def test_sentinel_run_detects_drift_over_http(client, drifting_patient):
+    r = client.post("/sentinel/run", json={"situation": "icu_to_ward",
+                                           "patient_ids": [PATIENT]})
+    assert r.status_code == 200
+    body = r.json()
+    assert body["patients_scanned"] == 1
+    assert body["records_checked"] > 0
+    assert body["findings"], "drift was not detected"
+    finding = body["findings"][0]
+    assert finding["status"] == "NEW"
+    assert finding["detector"] == "drift"
+    assert finding["gate_result"] in {"NEEDS_REVIEW", "BLOCK"}
+
+
+def test_second_run_does_not_re_announce(client, drifting_patient):
+    client.post("/sentinel/run", json={"situation": "icu_to_ward",
+                                       "patient_ids": [PATIENT]})
+    body = client.post("/sentinel/run", json={"situation": "icu_to_ward",
+                                              "patient_ids": [PATIENT]}).json()
+    assert body["findings"][0]["status"] == "PERSISTING"
+    assert body["announceable"] == [], "a persisting finding re-alerted"
+
+
+def test_since_last_review_reads_the_digest(client, drifting_patient):
+    client.post("/sentinel/run", json={"situation": "icu_to_ward",
+                                       "patient_ids": [PATIENT]})
+    r = client.get("/sentinel/since-last-review",
+                   params={"patient_id": PATIENT, "situation": "icu_to_ward"})
+    assert r.status_code == 200
+    assert r.json()["new"], "the finding is not visible in the review view"
+
+
+def test_sentinel_discovers_patients_when_none_are_named(client, drifting_patient):
+    body = client.post("/sentinel/run", json={"situation": "icu_to_ward"}).json()
+    assert body["patients_scanned"] >= 1
+
+
+def test_sentinel_run_is_503_without_the_memory_layer(client, drifting_patient):
+    drifting_patient.unlink()
+    r = client.post("/sentinel/run", json={"situation": "icu_to_ward"})
+    assert r.status_code == 503
+    assert r.json()["error"] == "sibyl_unavailable"
+
+
+# ---- containment --------------------------------------------------------
+
+def test_the_sentinel_pseudo_tenant_is_not_addressable_as_a_patient(client, seeded):
+    """It holds Sentinel's digest, not clinical data. A patient route must not
+    surface it."""
+    from memora.sentinel.digest import SENTINEL_SYSTEM_ID
+    r = client.get(f"/patients/{SENTINEL_SYSTEM_ID}/context",
+                   params={"situation": "icu_to_ward", "clinician_id": "dr_maya"})
+    assert r.status_code == 404
+
+    r = client.post("/handoff", json={"patient_id": SENTINEL_SYSTEM_ID,
+                                      "situation": "icu_to_ward",
+                                      "clinician_id": "dr_maya"})
+    assert r.status_code == 404
+
+
+def test_the_system_role_cannot_be_requested_over_http(client, seeded):
+    """SYSTEM sees every kind Sentinel checks. If a request could name it, the
+    authority check would be bypassable from outside."""
+    for attempt in ("SYSTEM", "system", "__sentinel_system__"):
+        r = client.get(f"/patients/{PATIENT}/context",
+                       params={"situation": "icu_to_ward", "clinician_id": attempt})
+        assert r.status_code == 400
+
+
+def test_sentinel_never_lists_its_own_tenant_as_a_patient(client, drifting_patient):
+    from memora.sentinel.digest import SENTINEL_SYSTEM_ID
+    body = client.post("/sentinel/run", json={"situation": "icu_to_ward"}).json()
+    assert all(f["patient_id"] != SENTINEL_SYSTEM_ID for f in body["findings"])

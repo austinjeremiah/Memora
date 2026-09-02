@@ -25,6 +25,14 @@ class RolePermissions:
 
 
 ROLE_PERMISSIONS: dict[ClinicianRole, RolePermissions] = {
+    # Sentinel's own role. It reads every kind it may need to raise a finding
+    # about, and can approve nothing -- an autonomous process must never be able
+    # to sign off a handover on a clinician's behalf.
+    ClinicianRole.SYSTEM: RolePermissions(
+        can_view=frozenset({KIND_MEDICATION, KIND_ALLERGY, KIND_DIAGNOSIS,
+                            KIND_LAB_TREND, KIND_PROCEDURE, KIND_CARE_PHASE}),
+        can_approve_handoff=False,
+    ),
     ClinicianRole.ICU_PHYSICIAN: RolePermissions(
         can_view=frozenset({KIND_MEDICATION, KIND_ALLERGY, KIND_DIAGNOSIS,
                             KIND_LAB_TREND, KIND_PROCEDURE, KIND_CARE_PHASE}),

@@ -21,6 +21,7 @@ from collections import defaultdict
 from dataclasses import dataclass, field
 from pathlib import Path
 
+from memora.gate.gate import GateResult
 from memora.ingest.change_detector import ChangeType, apply_fact_change
 from memora.ingest.synthea_parser import parse_patient_bundle
 from memora.ontology.events import (
@@ -36,6 +37,7 @@ from memora.ontology.kinds import (
     KIND_MEDICATION,
     KIND_PROCEDURE,
 )
+from memora.sentinel.scan import evaluate_delta
 from memora.sibyl.client import PatientMemory
 
 log = logging.getLogger("memora.ingest")
@@ -67,6 +69,23 @@ STATUS_FOR_KIND = {
 
 
 @dataclass
+class SentinelHit:
+    """A Sentinel decision raised during ingestion, buffered not written.
+
+    Findings are collected in memory and flushed to the digest ONCE by the
+    caller, rather than each hook writing its own -- one set_state per run, not
+    one per changed fact, consistent with the row-count discipline the store
+    size measurements forced.
+    """
+
+    kind: str
+    name: str
+    gate_result: str
+    reason: str
+    triggered_rules: list[str] = field(default_factory=list)
+
+
+@dataclass
 class IngestReport:
     patient_id: str
     events_parsed: int = 0
@@ -77,6 +96,7 @@ class IngestReport:
     db_size_bytes: int = 0
     pct_of_cap: float = 0.0
     kinds: dict[str, int] = field(default_factory=dict)
+    sentinel_hits: list[SentinelHit] = field(default_factory=list)
 
     def as_dict(self) -> dict:
         return {
@@ -86,6 +106,7 @@ class IngestReport:
             "facts": {"new": self.facts_new, "confirmed": self.facts_confirmed,
                       "changed": self.facts_changed},
             "kinds": self.kinds,
+            "sentinel_hits": len(self.sentinel_hits),
             "db_size_bytes": self.db_size_bytes,
             "pct_of_cap": round(self.pct_of_cap, 2),
         }
@@ -231,6 +252,24 @@ def ingest_patient(bundle_path: Path, patient_id: str | None = None) -> IngestRe
                 memory.log_event(event)
             else:
                 report.facts_changed += 1
+                # THE SENTINEL HOOK. This is the one place a WARM change is
+                # already known, so the previous and current bodies are handed
+                # straight over rather than re-derived. No LLM is reachable
+                # from here.
+                decision = evaluate_delta(
+                    memory, kind, name,
+                    previous=result.previous_body, current=_fact_body(event),
+                    previous_status=result.previous_status,
+                    current_status=result.new_status,
+                    event_severity=event.severity,
+                )
+                if decision is not None and decision.result is not GateResult.ALLOW:
+                    report.sentinel_hits.append(SentinelHit(
+                        kind=kind, name=name,
+                        gate_result=decision.result.value,
+                        reason=decision.reason,
+                        triggered_rules=list(decision.triggered_rules),
+                    ))
         else:
             memory.log_event(event)
         report.events_written += 1

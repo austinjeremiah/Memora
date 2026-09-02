@@ -16,9 +16,13 @@ from memora.api.schemas import (
     ContextOut,
     EventOut,
     FactOut,
+    FindingOut,
     HandoffOut,
     HandoffRequest,
     MemoryStatusOut,
+    SentinelRunOut,
+    SentinelRunRequest,
+    SinceLastReviewOut,
     SourceEventOut,
     VerifyOut,
 )
@@ -34,7 +38,9 @@ from memora.integrity.commitment import (
     compute_commitment_hash,
 )
 from memora.llm.propose import propose_claims
-from memora.sibyl.client import PatientMemory
+from memora.sentinel.digest import SENTINEL_SYSTEM_ID
+from memora.sentinel.runner import since_last_review, sweep
+from memora.sibyl.client import PatientMemory, known_patient_ids
 from memora.sibyl.errors import SibylUnavailableError
 from memora.sibyl.preflight import assert_store_available
 
@@ -51,6 +57,15 @@ def _memory_out(memory: PatientMemory) -> MemoryStatusOut:
     return MemoryStatusOut(db_size_bytes=quota["db_size_bytes"],
                            soft_cap_bytes=quota["soft_cap_bytes"],
                            pct_used=quota.get("pct_used"))
+
+
+def _reject_reserved(patient_id: str) -> None:
+    """Sentinel's pseudo-tenant is not a patient and must never be addressable
+    as one. It holds the digest, not clinical data -- surfacing it through a
+    patient route would leak an internal structure into the clinical surface.
+    """
+    if patient_id == SENTINEL_SYSTEM_ID:
+        raise HTTPException(status_code=404, detail=f"No such patient: {patient_id}")
 
 
 def _require_clinician(clinician_id: str):
@@ -104,6 +119,7 @@ def get_context(patient_id: str, situation: str, clinician_id: str) -> ContextOu
     that the same patient yields different subsets per situation without an
     LLM anywhere in the path.
     """
+    _reject_reserved(patient_id)
     clinician = _require_clinician(clinician_id)
     from memora.context.situations import Situation
 
@@ -136,6 +152,7 @@ def get_context(patient_id: str, situation: str, clinician_id: str) -> ContextOu
 @router.post("/handoff", response_model=HandoffOut)
 def handoff(request: HandoffRequest) -> HandoffOut:
     """The full pipeline: recall -> propose -> verify -> gate."""
+    _reject_reserved(request.patient_id)
     clinician = _require_clinician(request.clinician_id)
 
     context = execute_plan(
@@ -273,4 +290,61 @@ def verify_commitment(commitment_hash: str) -> VerifyOut:
         committer=result["committer"],
         basescan_url=("https://sepolia.basescan.org/address/"
                       f"{settings.base_commitment_contract_address}"),
+    )
+
+
+# ---------------------------------------------------------------------------
+# Sentinel -- the proactive path. No model is reachable from any of it.
+# ---------------------------------------------------------------------------
+
+def _findings_out(findings) -> list[FindingOut]:
+    return [FindingOut(**f.as_dict()) if not isinstance(f, dict) else FindingOut(**f)
+            for f in findings]
+
+
+@router.post("/sentinel/run", response_model=SentinelRunOut)
+def sentinel_run(request: SentinelRunRequest) -> SentinelRunOut:
+    """Sweep patients for memory drift and reconcile against the digest.
+
+    No LLM is called anywhere in this path -- findings are built directly from
+    persisted records and judged by the same Gate the reactive path uses.
+    """
+    patient_ids = request.patient_ids
+    if patient_ids is None:
+        patient_ids = known_patient_ids()
+    patient_ids = [p for p in patient_ids if p != SENTINEL_SYSTEM_ID]
+
+    run = sweep(request.situation, patient_ids,
+                escalation_threshold=request.escalation_threshold)
+    return SentinelRunOut(
+        situation=run.situation,
+        run_at=run.run_at,
+        patients_scanned=run.patients_scanned,
+        records_checked=run.records_checked,
+        summary=run.by_status(),
+        findings=_findings_out(run.findings),
+        announceable=_findings_out(run.announceable()),
+        digest_commitment=run.digest_commitment,
+    )
+
+
+@router.get("/sentinel/since-last-review", response_model=SinceLastReviewOut)
+def sentinel_since_last_review(patient_id: str, situation: str) -> SinceLastReviewOut:
+    """What changed since this clinician last looked. Pure read, no detection."""
+    _reject_reserved(patient_id)
+    from memora.context.situations import Situation
+
+    try:
+        parsed = Situation(situation)
+    except ValueError as e:
+        raise HTTPException(status_code=422,
+                            detail=f"Unknown situation '{situation}'.") from e
+
+    buckets = since_last_review(parsed, patient_id)
+    return SinceLastReviewOut(
+        patient_id=patient_id,
+        situation=parsed.value,
+        new=_findings_out(buckets["new"]),
+        persisting=_findings_out(buckets["persisting"]),
+        escalated=_findings_out(buckets["escalated"]),
     )
