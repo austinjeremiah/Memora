@@ -1,0 +1,395 @@
+/* Interactivity added on top of the static Framer scrape.
+ * The original export has zero client JS wired up (no "use client",
+ * no state, no handlers) — these rules back the behavior added in
+ * Nav, Faq, Pricing, and CookieBanner so it matches how the live
+ * cosmoq.framer.website site actually behaves.
+ */
+
+/* ---------- Mobile nav ---------- */
+
+.memora-nav-mobile {
+  display: none;
+}
+
+@media (max-width: 809.98px) {
+  .memora-nav-desktop {
+    display: none !important;
+  }
+  .memora-nav-mobile {
+    display: block;
+  }
+}
+
+.memora-nav-mobile-bar {
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  right: 16px;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 8px 8px 20px;
+  border-radius: 999px;
+  background: rgba(6, 7, 10, 0.75);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 0.5px solid rgba(125, 164, 255, 0.16);
+}
+
+.memora-nav-mobile-logo {
+  display: block;
+  height: 22px;
+  width: auto;
+}
+
+.memora-nav-burger {
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  border: none;
+  background: rgba(255, 255, 255, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.memora-nav-burger-line {
+  position: relative;
+  width: 16px;
+  height: 1.5px;
+  background: rgb(255, 255, 255);
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.memora-nav-burger-line::before,
+.memora-nav-burger-line::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  width: 16px;
+  height: 1.5px;
+  background: rgb(255, 255, 255);
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.memora-nav-burger-line::before {
+  top: -5px;
+}
+
+.memora-nav-burger-line::after {
+  top: 5px;
+}
+
+.memora-nav-burger[data-open="true"] .memora-nav-burger-line {
+  background: transparent;
+}
+
+.memora-nav-burger[data-open="true"] .memora-nav-burger-line::before {
+  top: 0;
+  transform: rotate(45deg);
+}
+
+.memora-nav-burger[data-open="true"] .memora-nav-burger-line::after {
+  top: 0;
+  transform: rotate(-45deg);
+}
+
+.memora-nav-mobile-panel {
+  position: fixed;
+  top: 70px;
+  left: 16px;
+  right: 16px;
+  z-index: 999;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px;
+  border-radius: 24px;
+  background: rgba(6, 7, 10, 0.95);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 0.5px solid rgba(125, 164, 255, 0.16);
+  transform-origin: top center;
+  transition: opacity 0.18s ease, transform 0.18s ease;
+}
+
+.memora-nav-mobile-panel[data-open="false"] {
+  opacity: 0;
+  transform: scaleY(0.92) translateY(-6px);
+  pointer-events: none;
+}
+
+.memora-nav-mobile-panel[data-open="true"] {
+  opacity: 1;
+  transform: scaleY(1) translateY(0);
+}
+
+.memora-nav-mobile-link {
+  padding: 12px 14px;
+  border-radius: 14px;
+  color: rgb(255, 255, 255);
+  font-size: 16px;
+  text-decoration: none;
+}
+
+.memora-nav-mobile-link:active {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.memora-nav-mobile-cta {
+  margin-top: 8px;
+  padding: 14px;
+  border-radius: 15px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  background: rgb(0, 0, 0);
+  color: rgb(255, 255, 255);
+  font-size: 15px;
+  font-weight: 600;
+  text-align: center;
+  text-decoration: none;
+}
+
+/* ---------- FAQ accordion ---------- */
+
+.memora-faq-question {
+  cursor: pointer;
+}
+
+.memora-faq-icon {
+  transition: transform 0.2s ease;
+}
+
+.memora-faq-icon[data-open="true"] {
+  transform: rotate(45deg);
+}
+
+.memora-faq-answer {
+  overflow: hidden;
+  max-height: 0;
+  opacity: 0;
+  transition: max-height 0.25s ease, opacity 0.2s ease, padding 0.25s ease;
+  padding: 0 20px;
+}
+
+.memora-faq-answer[data-open="true"] {
+  max-height: 240px;
+  opacity: 1;
+  padding: 0 20px 20px 20px;
+}
+
+.memora-faq-answer p {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.55;
+  color: rgb(176, 190, 217);
+}
+
+/* ---------- Pricing toggle ---------- */
+
+.memora-pricing-selector {
+  transition: transform 0.2s ease;
+}
+
+.memora-pricing-selector[data-period="yearly"] {
+  transform: translateY(-50%) translateX(100%);
+}
+
+.memora-pricing-tab-btn {
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  display: contents;
+}
+
+/* ---------- Exceptionalities decorative widgets ---------- */
+/* These were all baked into the scrape as a single frozen frame of a
+ * looping Framer animation (no runtime JS to drive them). Restored with
+ * plain CSS keyframes so they read as "alive" the way the live site does,
+ * without needing the original animation-engine timing data (which isn't
+ * present in a static export either).
+ */
+
+@keyframes memora-spark-shoot {
+  0% { transform: translateY(0) scaleY(0.4); opacity: 0; }
+  15% { opacity: 1; }
+  70% { opacity: 0.55; }
+  100% { transform: translateY(-38px) scaleY(1.3); opacity: 0; }
+}
+
+.memora-spark {
+  animation: memora-spark-shoot 1.8s ease-out infinite;
+}
+
+@keyframes memora-twinkle {
+  0%, 100% { opacity: 0.25; }
+  50% { opacity: 1; }
+}
+
+.memora-shine-dot {
+  animation: memora-twinkle 3.2s ease-in-out infinite;
+}
+
+@keyframes memora-slider-glide {
+  0%, 100% { top: 8%; }
+  50% { top: 88%; }
+}
+
+.memora-slider-knob {
+  position: absolute;
+  animation: memora-slider-glide 3.6s ease-in-out infinite;
+}
+
+@keyframes memora-marquee-a {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+@keyframes memora-marquee-b {
+  from { transform: translateX(-50%); }
+  to { transform: translateX(0); }
+}
+
+.memora-marquee-row-a {
+  animation: memora-marquee-a 30s linear infinite;
+}
+
+.memora-marquee-row-b {
+  animation: memora-marquee-b 30s linear infinite;
+}
+
+/* ---------- Cookie banner ---------- */
+
+.memora-cookie-banner {
+  position: fixed;
+  left: 16px;
+  right: 16px;
+  bottom: 16px;
+  z-index: 2000;
+  max-width: 420px;
+  margin: 0 auto;
+  padding: 20px;
+  border-radius: 20px;
+  background: rgb(12, 15, 22);
+  border: 0.5px solid rgba(125, 164, 255, 0.16);
+  box-shadow: 0px 20px 40px -10px rgba(0, 0, 0, 0.5);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.memora-cookie-banner[data-visible="false"] {
+  opacity: 0;
+  transform: translateY(12px);
+  pointer-events: none;
+}
+
+.memora-cookie-text {
+  margin: 0 0 16px 0;
+  font-size: 14px;
+  line-height: 1.5;
+  color: rgb(176, 190, 217);
+}
+
+.memora-cookie-text a {
+  color: rgb(255, 255, 255);
+  text-decoration: underline;
+}
+
+.memora-cookie-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.memora-cookie-btn {
+  flex: 1;
+  padding: 11px 14px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  background: transparent;
+  color: rgb(255, 255, 255);
+}
+
+.memora-cookie-btn-primary {
+  background: rgb(255, 255, 255);
+  color: rgb(0, 0, 0);
+  border-color: rgb(255, 255, 255);
+}
+
+.memora-cookie-settings-panel {
+  position: fixed;
+  left: 16px;
+  right: 16px;
+  bottom: 16px;
+  z-index: 2000;
+  max-width: 420px;
+  margin: 0 auto;
+  padding: 20px;
+  border-radius: 20px;
+  background: rgb(12, 15, 22);
+  border: 0.5px solid rgba(125, 164, 255, 0.16);
+  box-shadow: 0px 20px 40px -10px rgba(0, 0, 0, 0.5);
+}
+
+.memora-cookie-settings-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-top: 0.5px solid rgba(125, 164, 255, 0.16);
+}
+
+.memora-cookie-settings-row:first-of-type {
+  border-top: none;
+}
+
+.memora-cookie-settings-label {
+  font-size: 14px;
+  color: rgb(255, 255, 255);
+}
+
+.memora-cookie-settings-desc {
+  font-size: 12px;
+  color: rgb(132, 145, 171);
+  margin: 2px 0 0 0;
+}
+
+.memora-switch {
+  position: relative;
+  width: 38px;
+  height: 22px;
+  border-radius: 999px;
+  border: none;
+  background: rgba(255, 255, 255, 0.15);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.memora-switch[data-on="true"] {
+  background: rgb(1, 117, 255);
+}
+
+.memora-switch[data-disabled="true"] {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.memora-switch-knob {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: rgb(255, 255, 255);
+  transition: transform 0.15s ease;
+}
+
+.memora-switch[data-on="true"] .memora-switch-knob {
+  transform: translateX(16px);
+}

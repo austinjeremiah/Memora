@@ -16,7 +16,7 @@ export default function Exceptionalities() {
                       </figure>
                       <div className="framer-q7ns0q" data-framer-name="FEATURES" data-framer-component-type="RichTextContainer" style={{"--extracted-r6o4lv": "var(--token-e77749d5-1f11-472b-b926-5090d7e5b50e, rgb(132, 145, 171))", "--framer-paragraph-spacing": "0px", transform: "none", opacity: "1"}}>
                         <p className="framer-text framer-styles-preset-1xv0u9n" data-styles-preset="VsDceC7bv" style={{"--framer-text-color": "var(--extracted-r6o4lv, var(--token-e77749d5-1f11-472b-b926-5090d7e5b50e, rgb(132, 145, 171)))"}}>
-                          EXCEPTIONALITIES
+                          WHY MEMORA
                         </p>
                       </div>
                     </div>
@@ -29,13 +29,13 @@ export default function Exceptionalities() {
               <div className="framer-lusdcv" data-framer-name="Main">
                 <div className="framer-kz5tbq" data-framer-name="Alpha Range Technology" data-framer-component-type="RichTextContainer" style={{transform: "none"}}>
                   <h2 className="framer-text framer-styles-preset-mnfyzd" data-styles-preset="muXEgmE57">
-                    What sets COSMOQ apart
+                    What makes the memory load-bearing
                   </h2>
                 </div>
               </div>
               <div className="framer-vdwtkd" data-framer-name="Subtext" data-framer-component-type="RichTextContainer" style={{transform: "none"}}>
                 <p className="framer-text framer-styles-preset-1xv0u9n" data-styles-preset="VsDceC7bv" style={{"--framer-text-color": "var(--token-e77749d5-1f11-472b-b926-5090d7e5b50e, rgb(176, 190, 217))"}}>
-                  Smarter, faster, and more adaptive than traditional AI solutions.
+                  A deterministic gate stands between every AI claim and the clinician who has to trust it.
                 </p>
               </div>
             </div>
@@ -91,12 +91,12 @@ export default function Exceptionalities() {
                       <div className="framer-j8joy7" data-framer-name="Text" style={{backdropFilter: "blur(5px)", backgroundColor: "var(--token-365216f8-7ee6-4f9f-94e0-ca7d584e4354, rgba(255, 254, 250, 0))", borderRadius: "10px", opacity: "1"}}>
                         <div className="framer-1klptjp" data-framer-name="Title" data-framer-component-type="RichTextContainer" style={{"--framer-paragraph-spacing": "0px", transform: "none", opacity: "1"}}>
                           <h4 className="framer-text framer-styles-preset-16xzswl" data-styles-preset="iefaioo4M">
-                            Speed
+                            Persistent Memory
                           </h4>
                         </div>
                         <div className="framer-hndpv9" data-framer-name="Subtext" data-framer-component-type="RichTextContainer" style={{"--extracted-r6o4lv": "var(--token-e77749d5-1f11-472b-b926-5090d7e5b50e, rgb(155, 169, 196))", "--framer-paragraph-spacing": "0px", transform: "none", opacity: "1"}}>
                           <p className="framer-text framer-styles-preset-t2rmki" data-styles-preset="KlDvBsEyc" style={{"--framer-text-color": "var(--extracted-r6o4lv, var(--token-e77749d5-1f11-472b-b926-5090d7e5b50e, rgb(155, 169, 196)))"}}>
-                            Faster time-to-value with our enterprise AI solutions and AI agent marketplace.
+                            Every patient history lives in Sibyl Memory — HOT, WARM, and COLD — and survives every restart.
                           </p>
                         </div>
                         <div className="framer-8ixsur" data-border="true" data-framer-name="Border" style={{"--border-bottom-width": "0.5px", "--border-color": "var(--token-839225cb-b1fc-470d-a0c2-2eb7fcc590b8, rgb(255, 255, 255))", "--border-left-width": "0.5px", "--border-right-width": "0.5px", "--border-style": "solid", "--border-top-width": "0.5px", backgroundColor: "var(--token-365216f8-7ee6-4f9f-94e0-ca7d584e4354, rgba(255, 254, 250, 0))", mask: "linear-gradient(255deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.12) 18.1687%, rgba(0, 0, 0, 0.23) 85.166%, rgba(0, 0, 0, 0) 100%), linear-gradient(320deg, rgb(0, 0, 0) 0%, rgba(0, 0, 0, 0.12) 25.753%, rgba(0, 0, 0, 0.13) 78.8698%, rgb(0, 0, 0) 100%)", borderRadius: "10px", opacity: "1"}} />
@@ -138,12 +138,12 @@ export default function Exceptionalities() {
                       <div className="framer-j8joy7" data-framer-name="Text" style={{backdropFilter: "blur(5px)", backgroundColor: "var(--token-365216f8-7ee6-4f9f-94e0-ca7d584e4354, rgba(255, 254, 250, 0))", borderRadius: "10px", opacity: "1"}}>
                         <div className="framer-1klptjp" data-framer-name="Title" data-framer-component-type="RichTextContainer" style={{"--framer-paragraph-spacing": "0px", transform: "none", opacity: "1"}}>
                           <h4 className="framer-text framer-styles-preset-16xzswl" data-styles-preset="iefaioo4M">
-                            Deep capabilites
+                            Deterministic Gate
                           </h4>
                         </div>
                         <div className="framer-hndpv9" data-framer-name="Subtext" data-framer-component-type="RichTextContainer" style={{"--extracted-r6o4lv": "var(--token-e77749d5-1f11-472b-b926-5090d7e5b50e, rgb(155, 169, 196))", "--framer-paragraph-spacing": "0px", transform: "none", opacity: "1"}}>
                           <p className="framer-text framer-styles-preset-t2rmki" data-styles-preset="KlDvBsEyc" style={{"--framer-text-color": "var(--extracted-r6o4lv, var(--token-e77749d5-1f11-472b-b926-5090d7e5b50e, rgb(155, 169, 196)))"}}>
-                            {"An agent platform with the depth to adapt to every interaction, workflow, behavior, and enterprise. "}
+                            {"Evidence, policy, and authority checked before any claim becomes trusted output — ALLOW, NEEDS_REVIEW, or BLOCK. "}
                           </p>
                         </div>
                         <div className="framer-8ixsur" data-border="true" data-framer-name="Border" style={{"--border-bottom-width": "0.5px", "--border-color": "var(--token-839225cb-b1fc-470d-a0c2-2eb7fcc590b8, rgb(255, 255, 255))", "--border-left-width": "0.5px", "--border-right-width": "0.5px", "--border-style": "solid", "--border-top-width": "0.5px", backgroundColor: "var(--token-365216f8-7ee6-4f9f-94e0-ca7d584e4354, rgba(255, 254, 250, 0))", mask: "linear-gradient(255deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.12) 18.1687%, rgba(0, 0, 0, 0.23) 85.166%, rgba(0, 0, 0, 0) 100%), linear-gradient(320deg, rgb(0, 0, 0) 0%, rgba(0, 0, 0, 0.12) 25.753%, rgba(0, 0, 0, 0.13) 78.8698%, rgb(0, 0, 0) 100%)", borderRadius: "10px", opacity: "1"}} />
@@ -201,12 +201,12 @@ export default function Exceptionalities() {
                       <div className="framer-j8joy7" data-framer-name="Text" style={{backdropFilter: "blur(5px)", backgroundColor: "var(--token-365216f8-7ee6-4f9f-94e0-ca7d584e4354, rgba(255, 254, 250, 0))", borderRadius: "10px", opacity: "1"}}>
                         <div className="framer-1klptjp" data-framer-name="Title" data-framer-component-type="RichTextContainer" style={{"--framer-paragraph-spacing": "0px", transform: "none", opacity: "1"}}>
                           <h4 className="framer-text framer-styles-preset-16xzswl" data-styles-preset="iefaioo4M">
-                            Control
+                            Sentinel
                           </h4>
                         </div>
                         <div className="framer-hndpv9" data-framer-name="Subtext" data-framer-component-type="RichTextContainer" style={{"--extracted-r6o4lv": "var(--token-e77749d5-1f11-472b-b926-5090d7e5b50e, rgb(155, 169, 196))", "--framer-paragraph-spacing": "0px", transform: "none", opacity: "1"}}>
                           <p className="framer-text framer-styles-preset-t2rmki" data-styles-preset="KlDvBsEyc" style={{"--framer-text-color": "var(--extracted-r6o4lv, var(--token-e77749d5-1f11-472b-b926-5090d7e5b50e, rgb(155, 169, 196)))"}}>
-                            {"The power of a standardized platform built for the demands. "}
+                            {"Proactive drift detection with zero LLM in the path — memory catching itself disagreeing. "}
                           </p>
                         </div>
                         <div className="framer-8ixsur" data-border="true" data-framer-name="Border" style={{"--border-bottom-width": "0.5px", "--border-color": "var(--token-839225cb-b1fc-470d-a0c2-2eb7fcc590b8, rgb(255, 255, 255))", "--border-left-width": "0.5px", "--border-right-width": "0.5px", "--border-style": "solid", "--border-top-width": "0.5px", backgroundColor: "var(--token-365216f8-7ee6-4f9f-94e0-ca7d584e4354, rgba(255, 254, 250, 0))", mask: "linear-gradient(255deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.12) 18.1687%, rgba(0, 0, 0, 0.23) 85.166%, rgba(0, 0, 0, 0) 100%), linear-gradient(320deg, rgb(0, 0, 0) 0%, rgba(0, 0, 0, 0.12) 25.753%, rgba(0, 0, 0, 0.13) 78.8698%, rgb(0, 0, 0) 100%)", borderRadius: "10px", opacity: "1"}} />
@@ -623,12 +623,12 @@ export default function Exceptionalities() {
                       <div className="framer-j8joy7" data-framer-name="Text" style={{backdropFilter: "blur(5px)", backgroundColor: "var(--token-365216f8-7ee6-4f9f-94e0-ca7d584e4354, rgba(255, 254, 250, 0))", borderRadius: "10px", opacity: "1"}}>
                         <div className="framer-1klptjp" data-framer-name="Title" data-framer-component-type="RichTextContainer" style={{"--framer-paragraph-spacing": "0px", transform: "none", opacity: "1"}}>
                           <h4 className="framer-text framer-styles-preset-16xzswl" data-styles-preset="iefaioo4M">
-                            Flexibility
+                            Onchain Attestation
                           </h4>
                         </div>
                         <div className="framer-hndpv9" data-framer-name="Subtext" data-framer-component-type="RichTextContainer" style={{"--extracted-r6o4lv": "var(--token-e77749d5-1f11-472b-b926-5090d7e5b50e, rgb(155, 169, 196))", "--framer-paragraph-spacing": "0px", transform: "none", opacity: "1"}}>
                           <p className="framer-text framer-styles-preset-t2rmki" data-styles-preset="KlDvBsEyc" style={{"--framer-text-color": "var(--extracted-r6o4lv, var(--token-e77749d5-1f11-472b-b926-5090d7e5b50e, rgb(155, 169, 196)))"}}>
-                            Our design approach is ecosystem agnostic, allowing you to choose .C
+                            Clinician-approved states get a replay-protected EIP-712 signature, recorded on Base.
                           </p>
                         </div>
                         <div className="framer-8ixsur" data-border="true" data-framer-name="Border" style={{"--border-bottom-width": "0.5px", "--border-color": "var(--token-839225cb-b1fc-470d-a0c2-2eb7fcc590b8, rgb(255, 255, 255))", "--border-left-width": "0.5px", "--border-right-width": "0.5px", "--border-style": "solid", "--border-top-width": "0.5px", backgroundColor: "var(--token-365216f8-7ee6-4f9f-94e0-ca7d584e4354, rgba(255, 254, 250, 0))", mask: "linear-gradient(255deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.12) 18.1687%, rgba(0, 0, 0, 0.23) 85.166%, rgba(0, 0, 0, 0) 100%), linear-gradient(320deg, rgb(0, 0, 0) 0%, rgba(0, 0, 0, 0.12) 25.753%, rgba(0, 0, 0, 0.13) 78.8698%, rgb(0, 0, 0) 100%)", borderRadius: "10px", opacity: "1"}} />
@@ -641,12 +641,12 @@ export default function Exceptionalities() {
                 <div className="framer-1q5b51a" data-framer-name="Text">
                   <div className="framer-snod1u" data-framer-name="Title" data-framer-component-type="RichTextContainer" style={{transform: "none"}}>
                     <h3 className="framer-text framer-styles-preset-1pjo9hs" data-styles-preset="HuTKvbhX7">
-                      Ready to get started?
+                      Ready to see it in action?
                     </h3>
                   </div>
                   <div className="framer-b202j5" data-framer-name="Subtext" data-framer-component-type="RichTextContainer" style={{transform: "none"}}>
                     <p className="framer-text framer-styles-preset-1xv0u9n" data-styles-preset="VsDceC7bv" style={{"--framer-text-color": "var(--token-e77749d5-1f11-472b-b926-5090d7e5b50e, rgb(132, 145, 171))"}}>
-                      Let’s make this happen. We’re ready when you are.
+                      Watch a real ICU-to-ward handoff, gated end to end and attested on Base.
                     </p>
                   </div>
                 </div>

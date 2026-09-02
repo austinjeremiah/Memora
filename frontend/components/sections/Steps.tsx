@@ -29,13 +29,13 @@ export default function Steps() {
               <div className="framer-cw73wf" data-framer-name="Main">
                 <div className="framer-1hmkxk9" data-framer-name="Alpha Range Technology" data-framer-component-type="RichTextContainer" style={{transform: "none"}}>
                   <h2 className="framer-text framer-styles-preset-mnfyzd" data-styles-preset="muXEgmE57">
-                    3 Steps to Kickstart
+                    3 Steps to a Verified Handoff
                   </h2>
                 </div>
               </div>
               <div className="framer-gm8yds" data-framer-name="Subtext" data-framer-component-type="RichTextContainer" style={{transform: "none"}}>
                 <p className="framer-text framer-styles-preset-1xv0u9n" data-styles-preset="VsDceC7bv" style={{"--framer-text-color": "var(--token-e77749d5-1f11-472b-b926-5090d7e5b50e, rgb(176, 190, 217))"}}>
-                  From setup to measurable success made effortless in three steps.
+                  From an LLM's proposal to a clinician-approved, onchain-attested state.
                 </p>
               </div>
             </div>
@@ -77,12 +77,12 @@ export default function Steps() {
                       <div className="framer-jmip68" data-framer-name="Title" style={{opacity: "1"}}>
                         <div className="framer-ecxnd" data-framer-name="Sign up and select Plan" data-framer-component-type="RichTextContainer" style={{"--framer-paragraph-spacing": "0px", transform: "none", opacity: "1"}}>
                           <h3 className="framer-text framer-styles-preset-1pjo9hs" data-styles-preset="HuTKvbhX7">
-                            One account, endless sign-in choices
+                            Retrieve the memory
                           </h3>
                         </div>
                         <div className="framer-g2oltk" data-framer-name="Fin is the top-performing and most capable AI Agent\u2014handling more complex queries" data-framer-component-type="RichTextContainer" style={{"--extracted-r6o4lv": "var(--token-e77749d5-1f11-472b-b926-5090d7e5b50e, rgb(132, 145, 171))", "--framer-paragraph-spacing": "0px", transform: "none", opacity: "1"}}>
                           <p className="framer-text framer-styles-preset-1xv0u9n" data-styles-preset="VsDceC7bv" style={{"--framer-text-color": "var(--extracted-r6o4lv, var(--token-e77749d5-1f11-472b-b926-5090d7e5b50e, rgb(132, 145, 171)))"}}>
-                            Choose from Google, Apple, GitHub, or create an account with email and passkey.
+                            Situation, role, and task compile into a retrieval plan against Sibyl's HOT, WARM, and COLD layers.
                           </p>
                         </div>
                       </div>
@@ -92,7 +92,7 @@ export default function Steps() {
                             <div className="framer-o1thv5" data-framer-name="Content" style={{opacity: "1"}}>
                               <div className="framer-v3ildb" data-framer-name="Healthcare" data-framer-component-type="RichTextContainer" style={{"--extracted-r6o4lv": "var(--token-7ed67f45-7ffc-4523-9689-9d08f6aa2909, rgb(209, 212, 227))", "--framer-paragraph-spacing": "0px", transform: "none", opacity: "1"}}>
                                 <p className="framer-text framer-styles-preset-1xv0u9n" data-styles-preset="VsDceC7bv" style={{"--framer-text-color": "var(--extracted-r6o4lv, var(--token-7ed67f45-7ffc-4523-9689-9d08f6aa2909, rgb(209, 212, 227)))"}}>
-                                  Sign in instantly with Google or GitHub.
+                                  HOT — current context, always fresh.
                                 </p>
                               </div>
                               <div className="framer-1l4bl6k" data-framer-name="Label" style={{backgroundColor: "var(--token-2765094e-0f8b-477f-9e2a-092fb0171343, rgba(255, 255, 255, 0.1))", borderRadius: "10px", boxShadow: "rgba(255, 255, 255, 0.31) 0px 0px 4px 0px inset", opacity: "1"}}>
@@ -113,7 +113,7 @@ export default function Steps() {
                             <div className="framer-o1thv5" data-framer-name="Content" style={{opacity: "1"}}>
                               <div className="framer-v3ildb" data-framer-name="Healthcare" data-framer-component-type="RichTextContainer" style={{"--extracted-r6o4lv": "var(--token-7ed67f45-7ffc-4523-9689-9d08f6aa2909, rgb(209, 212, 227))", "--framer-paragraph-spacing": "0px", transform: "none", opacity: "1"}}>
                                 <p className="framer-text framer-styles-preset-1xv0u9n" data-styles-preset="VsDceC7bv" style={{"--framer-text-color": "var(--extracted-r6o4lv, var(--token-7ed67f45-7ffc-4523-9689-9d08f6aa2909, rgb(209, 212, 227)))"}}>
-                                  Create your own secure login credentials.
+                                  WARM — current facts, one per entity.
                                 </p>
                               </div>
                               <div className="framer-1l4bl6k" data-framer-name="Label" style={{backgroundColor: "var(--token-2765094e-0f8b-477f-9e2a-092fb0171343, rgba(255, 255, 255, 0.1))", borderRadius: "10px", boxShadow: "rgba(255, 255, 255, 0.31) 0px 0px 4px 0px inset", opacity: "1"}}>
@@ -134,7 +134,7 @@ export default function Steps() {
                             <div className="framer-o1thv5" data-framer-name="Content" style={{opacity: "1"}}>
                               <div className="framer-v3ildb" data-framer-name="Healthcare" data-framer-component-type="RichTextContainer" style={{"--extracted-r6o4lv": "var(--token-7ed67f45-7ffc-4523-9689-9d08f6aa2909, rgb(209, 212, 227))", "--framer-paragraph-spacing": "0px", transform: "none", opacity: "1"}}>
                                 <p className="framer-text framer-styles-preset-1xv0u9n" data-styles-preset="VsDceC7bv" style={{"--framer-text-color": "var(--extracted-r6o4lv, var(--token-7ed67f45-7ffc-4523-9689-9d08f6aa2909, rgb(209, 212, 227)))"}}>
-                                  Connect through your company’s sign-in.
+                                  COLD — append-only journal, never deleted.
                                 </p>
                               </div>
                               <div className="framer-1l4bl6k" data-framer-name="Label" style={{backgroundColor: "var(--token-2765094e-0f8b-477f-9e2a-092fb0171343, rgba(255, 255, 255, 0.1))", borderRadius: "10px", boxShadow: "rgba(255, 255, 255, 0.31) 0px 0px 4px 0px inset", opacity: "1"}}>
@@ -169,12 +169,12 @@ export default function Steps() {
                       <div className="framer-jmip68" data-framer-name="Title" style={{opacity: "1"}}>
                         <div className="framer-ecxnd" data-framer-name="Sign up and select Plan" data-framer-component-type="RichTextContainer" style={{"--framer-paragraph-spacing": "0px", transform: "none", opacity: "1"}}>
                           <h3 className="framer-text framer-styles-preset-1pjo9hs" data-styles-preset="HuTKvbhX7">
-                            Choose the Agent You Want to Deploy
+                            Propose and check the claim
                           </h3>
                         </div>
                         <div className="framer-g2oltk" data-framer-name="Fin is the top-performing and most capable AI Agent\u2014handling more complex queries" data-framer-component-type="RichTextContainer" style={{"--extracted-r6o4lv": "var(--token-e77749d5-1f11-472b-b926-5090d7e5b50e, rgb(132, 145, 171))", "--framer-paragraph-spacing": "0px", transform: "none", opacity: "1"}}>
                           <p className="framer-text framer-styles-preset-1xv0u9n" data-styles-preset="VsDceC7bv" style={{"--framer-text-color": "var(--extracted-r6o4lv, var(--token-e77749d5-1f11-472b-b926-5090d7e5b50e, rgb(132, 145, 171)))"}}>
-                            From a vast universe of intelligent agents, pick the one that best fits your needs and serves your purpose.
+                            The LLM proposes a clinical brief; the Evidence Resolver checks every claim against the real Sibyl record.
                           </p>
                         </div>
                       </div>
@@ -184,7 +184,7 @@ export default function Steps() {
                             <div className="framer-o1thv5" data-framer-name="Content" style={{opacity: "1"}}>
                               <div className="framer-v3ildb" data-framer-name="Healthcare" data-framer-component-type="RichTextContainer" style={{"--extracted-r6o4lv": "var(--token-7ed67f45-7ffc-4523-9689-9d08f6aa2909, rgb(209, 212, 227))", "--framer-paragraph-spacing": "0px", transform: "none", opacity: "1"}}>
                                 <p className="framer-text framer-styles-preset-1xv0u9n" data-styles-preset="VsDceC7bv" style={{"--framer-text-color": "var(--extracted-r6o4lv, var(--token-7ed67f45-7ffc-4523-9689-9d08f6aa2909, rgb(209, 212, 227)))"}}>
-                                  Choose agents tailored to your specific tasks.
+                                  Evidence-linked — source, event ID, timestamp.
                                 </p>
                               </div>
                               <div className="framer-1l4bl6k" data-framer-name="Label" style={{backgroundColor: "var(--token-2765094e-0f8b-477f-9e2a-092fb0171343, rgba(255, 255, 255, 0.1))", borderRadius: "10px", boxShadow: "rgba(255, 255, 255, 0.31) 0px 0px 4px 0px inset", opacity: "1"}}>
@@ -205,7 +205,7 @@ export default function Steps() {
                             <div className="framer-o1thv5" data-framer-name="Content" style={{opacity: "1"}}>
                               <div className="framer-v3ildb" data-framer-name="Healthcare" data-framer-component-type="RichTextContainer" style={{"--extracted-r6o4lv": "var(--token-7ed67f45-7ffc-4523-9689-9d08f6aa2909, rgb(209, 212, 227))", "--framer-paragraph-spacing": "0px", transform: "none", opacity: "1"}}>
                                 <p className="framer-text framer-styles-preset-1xv0u9n" data-styles-preset="VsDceC7bv" style={{"--framer-text-color": "var(--extracted-r6o4lv, var(--token-7ed67f45-7ffc-4523-9689-9d08f6aa2909, rgb(209, 212, 227)))"}}>
-                                  Access universe of pre-built intelligent.
+                                  Zero unsupported claims reach a clinician.
                                 </p>
                               </div>
                               <div className="framer-1l4bl6k" data-framer-name="Label" style={{backgroundColor: "var(--token-2765094e-0f8b-477f-9e2a-092fb0171343, rgba(255, 255, 255, 0.1))", borderRadius: "10px", boxShadow: "rgba(255, 255, 255, 0.31) 0px 0px 4px 0px inset", opacity: "1"}}>
@@ -226,7 +226,7 @@ export default function Steps() {
                             <div className="framer-o1thv5" data-framer-name="Content" style={{opacity: "1"}}>
                               <div className="framer-v3ildb" data-framer-name="Healthcare" data-framer-component-type="RichTextContainer" style={{"--extracted-r6o4lv": "var(--token-7ed67f45-7ffc-4523-9689-9d08f6aa2909, rgb(209, 212, 227))", "--framer-paragraph-spacing": "0px", transform: "none", opacity: "1"}}>
                                 <p className="framer-text framer-styles-preset-1xv0u9n" data-styles-preset="VsDceC7bv" style={{"--framer-text-color": "var(--extracted-r6o4lv, var(--token-7ed67f45-7ffc-4523-9689-9d08f6aa2909, rgb(209, 212, 227)))"}}>
-                                  Deploy agents that align with your goals.
+                                  Policy and authority checked before ALLOW.
                                 </p>
                               </div>
                               <div className="framer-1l4bl6k" data-framer-name="Label" style={{backgroundColor: "var(--token-2765094e-0f8b-477f-9e2a-092fb0171343, rgba(255, 255, 255, 0.1))", borderRadius: "10px", boxShadow: "rgba(255, 255, 255, 0.31) 0px 0px 4px 0px inset", opacity: "1"}}>
@@ -261,12 +261,12 @@ export default function Steps() {
                       <div className="framer-jmip68" data-framer-name="Title" style={{opacity: "1"}}>
                         <div className="framer-ecxnd" data-framer-name="Sign up and select Plan" data-framer-component-type="RichTextContainer" style={{"--framer-paragraph-spacing": "0px", transform: "none", opacity: "1"}}>
                           <h3 className="framer-text framer-styles-preset-1pjo9hs" data-styles-preset="HuTKvbhX7">
-                            Prompt or Set to Automation Mode
+                            Approve and attest
                           </h3>
                         </div>
                         <div className="framer-g2oltk" data-framer-name="Fin is the top-performing and most capable AI Agent\u2014handling more complex queries" data-framer-component-type="RichTextContainer" style={{"--extracted-r6o4lv": "var(--token-e77749d5-1f11-472b-b926-5090d7e5b50e, rgb(132, 145, 171))", "--framer-paragraph-spacing": "0px", transform: "none", opacity: "1"}}>
                           <p className="framer-text framer-styles-preset-1xv0u9n" data-styles-preset="VsDceC7bv" style={{"--framer-text-color": "var(--extracted-r6o4lv, var(--token-e77749d5-1f11-472b-b926-5090d7e5b50e, rgb(132, 145, 171)))"}}>
-                            You can manually guide and adjust the workflow, or let the agent handle everything automatically.
+                            A clinician reviews and approves; the state is signed EIP-712 and recorded on Base Sepolia.
                           </p>
                         </div>
                       </div>
@@ -276,7 +276,7 @@ export default function Steps() {
                             <div className="framer-o1thv5" data-framer-name="Content" style={{opacity: "1"}}>
                               <div className="framer-v3ildb" data-framer-name="Healthcare" data-framer-component-type="RichTextContainer" style={{"--extracted-r6o4lv": "var(--token-7ed67f45-7ffc-4523-9689-9d08f6aa2909, rgb(209, 212, 227))", "--framer-paragraph-spacing": "0px", transform: "none", opacity: "1"}}>
                                 <p className="framer-text framer-styles-preset-1xv0u9n" data-styles-preset="VsDceC7bv" style={{"--framer-text-color": "var(--extracted-r6o4lv, var(--token-7ed67f45-7ffc-4523-9689-9d08f6aa2909, rgb(209, 212, 227)))"}}>
-                                  Prompt the agent and adjust workflows.
+                                  Nonce and deadline block any replay.
                                 </p>
                               </div>
                               <div className="framer-1l4bl6k" data-framer-name="Label" style={{backgroundColor: "var(--token-2765094e-0f8b-477f-9e2a-092fb0171343, rgba(255, 255, 255, 0.1))", borderRadius: "10px", boxShadow: "rgba(255, 255, 255, 0.31) 0px 0px 4px 0px inset", opacity: "1"}}>
@@ -297,7 +297,7 @@ export default function Steps() {
                             <div className="framer-o1thv5" data-framer-name="Content" style={{opacity: "1"}}>
                               <div className="framer-v3ildb" data-framer-name="Healthcare" data-framer-component-type="RichTextContainer" style={{"--extracted-r6o4lv": "var(--token-7ed67f45-7ffc-4523-9689-9d08f6aa2909, rgb(209, 212, 227))", "--framer-paragraph-spacing": "0px", transform: "none", opacity: "1"}}>
                                 <p className="framer-text framer-styles-preset-1xv0u9n" data-styles-preset="VsDceC7bv" style={{"--framer-text-color": "var(--extracted-r6o4lv, var(--token-7ed67f45-7ffc-4523-9689-9d08f6aa2909, rgb(209, 212, 227)))"}}>
-                                  Let the agent handle tasks end-to-end.
+                                  Tamper-evident and publicly verifiable.
                                 </p>
                               </div>
                               <div className="framer-1l4bl6k" data-framer-name="Label" style={{backgroundColor: "var(--token-2765094e-0f8b-477f-9e2a-092fb0171343, rgba(255, 255, 255, 0.1))", borderRadius: "10px", boxShadow: "rgba(255, 255, 255, 0.31) 0px 0px 4px 0px inset", opacity: "1"}}>
@@ -318,7 +318,7 @@ export default function Steps() {
                             <div className="framer-o1thv5" data-framer-name="Content" style={{opacity: "1"}}>
                               <div className="framer-v3ildb" data-framer-name="Healthcare" data-framer-component-type="RichTextContainer" style={{"--extracted-r6o4lv": "var(--token-7ed67f45-7ffc-4523-9689-9d08f6aa2909, rgb(209, 212, 227))", "--framer-paragraph-spacing": "0px", transform: "none", opacity: "1"}}>
                                 <p className="framer-text framer-styles-preset-1xv0u9n" data-styles-preset="VsDceC7bv" style={{"--framer-text-color": "var(--extracted-r6o4lv, var(--token-7ed67f45-7ffc-4523-9689-9d08f6aa2909, rgb(209, 212, 227)))"}}>
-                                  Switch between manual and automated.
+                                  Sentinel findings use the same flow.
                                 </p>
                               </div>
                               <div className="framer-1l4bl6k" data-framer-name="Label" style={{backgroundColor: "var(--token-2765094e-0f8b-477f-9e2a-092fb0171343, rgba(255, 255, 255, 0.1))", borderRadius: "10px", boxShadow: "rgba(255, 255, 255, 0.31) 0px 0px 4px 0px inset", opacity: "1"}}>

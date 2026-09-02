@@ -29,13 +29,13 @@ export default function Faq() {
               <div className="framer-4psvsu" data-framer-name="Main">
                 <div className="framer-1txfqpi" data-framer-name="Alpha Range Technology" data-framer-component-type="RichTextContainer" style={{transform: "none"}}>
                   <h2 className="framer-text framer-styles-preset-mnfyzd" data-styles-preset="muXEgmE57">
-                    Curious About Cosmoq?
+                    Curious About MEMORA?
                   </h2>
                 </div>
               </div>
               <div className="framer-1vckr1e" data-framer-name="Subtext" data-framer-component-type="RichTextContainer" style={{transform: "none"}}>
                 <p className="framer-text framer-styles-preset-1xv0u9n" data-styles-preset="VsDceC7bv" style={{"--framer-text-color": "var(--token-e77749d5-1f11-472b-b926-5090d7e5b50e, rgb(176, 190, 217))"}}>
-                  Answers to common questions about our AI-powered enterprise platform.
+                  Answers to common questions about persistent clinical memory and the safety gate.
                 </p>
               </div>
             </div>
@@ -49,7 +49,7 @@ export default function Faq() {
                       <div className="framer-144r8qr" data-border="true" data-framer-name="Question" data-highlight="true" tabIndex={0} style={{"--border-bottom-width": "0px", "--border-color": "var(--token-63f7583a-ac58-4fab-bed6-928aed613254, rgb(47, 57, 80))", "--border-left-width": "0px", "--border-right-width": "0px", "--border-style": "solid", "--border-top-width": "0px", opacity: "1"}}>
                         <div className="framer-d7agds" data-framer-name="What industries does Vertica Studio work with?" data-framer-component-type="RichTextContainer" style={{"--framer-paragraph-spacing": "0px", transform: "none", opacity: "1"}}>
                           <p className="framer-text framer-styles-preset-kng7jv" data-styles-preset="cDiAQHEyE" style={{"--framer-text-alignment": "left"}}>
-                            What is COSMOQ?
+                            What is MEMORA?
                           </p>
                         </div>
                         <div className="framer-updvjf" data-framer-name="Icon" style={{transform: "none", opacity: "1"}}>
@@ -69,7 +69,7 @@ export default function Faq() {
                       <div className="framer-144r8qr" data-border="true" data-framer-name="Question" data-highlight="true" tabIndex={0} style={{"--border-bottom-width": "0px", "--border-color": "var(--token-63f7583a-ac58-4fab-bed6-928aed613254, rgb(47, 57, 80))", "--border-left-width": "0px", "--border-right-width": "0px", "--border-style": "solid", "--border-top-width": "0px", opacity: "1"}}>
                         <div className="framer-d7agds" data-framer-name="What industries does Vertica Studio work with?" data-framer-component-type="RichTextContainer" style={{"--framer-paragraph-spacing": "0px", transform: "none", opacity: "1"}}>
                           <p className="framer-text framer-styles-preset-kng7jv" data-styles-preset="cDiAQHEyE" style={{"--framer-text-alignment": "left"}}>
-                            How are AI Agents different from automation tools?
+                            How is this different from just asking an LLM?
                           </p>
                         </div>
                         <div className="framer-updvjf" data-framer-name="Icon" style={{transform: "none", opacity: "1"}}>
@@ -89,7 +89,7 @@ export default function Faq() {
                       <div className="framer-144r8qr" data-border="true" data-framer-name="Question" data-highlight="true" tabIndex={0} style={{"--border-bottom-width": "0px", "--border-color": "var(--token-63f7583a-ac58-4fab-bed6-928aed613254, rgb(47, 57, 80))", "--border-left-width": "0px", "--border-right-width": "0px", "--border-style": "solid", "--border-top-width": "0px", opacity: "1"}}>
                         <div className="framer-d7agds" data-framer-name="What industries does Vertica Studio work with?" data-framer-component-type="RichTextContainer" style={{"--framer-paragraph-spacing": "0px", transform: "none", opacity: "1"}}>
                           <p className="framer-text framer-styles-preset-kng7jv" data-styles-preset="cDiAQHEyE" style={{"--framer-text-alignment": "left"}}>
-                            Can COSMOQ integrate with our existing systems?
+                            What is Sentinel?
                           </p>
                         </div>
                         <div className="framer-updvjf" data-framer-name="Icon" style={{transform: "none", opacity: "1"}}>
@@ -109,7 +109,7 @@ export default function Faq() {
                       <div className="framer-144r8qr" data-border="true" data-framer-name="Question" data-highlight="true" tabIndex={0} style={{"--border-bottom-width": "0px", "--border-color": "var(--token-63f7583a-ac58-4fab-bed6-928aed613254, rgb(47, 57, 80))", "--border-left-width": "0px", "--border-right-width": "0px", "--border-style": "solid", "--border-top-width": "0px", opacity: "1"}}>
                         <div className="framer-d7agds" data-framer-name="What industries does Vertica Studio work with?" data-framer-component-type="RichTextContainer" style={{"--framer-paragraph-spacing": "0px", transform: "none", opacity: "1"}}>
                           <p className="framer-text framer-styles-preset-kng7jv" data-styles-preset="cDiAQHEyE" style={{"--framer-text-alignment": "left"}}>
-                            Is COSMOQ secure for enterprise use?
+                            Is any real patient data used?
                           </p>
                         </div>
                         <div className="framer-updvjf" data-framer-name="Icon" style={{transform: "none", opacity: "1"}}>
@@ -135,7 +135,7 @@ export default function Faq() {
                       <div className="framer-144r8qr" data-border="true" data-framer-name="Question" data-highlight="true" tabIndex={0} style={{"--border-bottom-width": "0px", "--border-color": "var(--token-63f7583a-ac58-4fab-bed6-928aed613254, rgb(47, 57, 80))", "--border-left-width": "0px", "--border-right-width": "0px", "--border-style": "solid", "--border-top-width": "0px", opacity: "1"}}>
                         <div className="framer-d7agds" data-framer-name="What industries does Vertica Studio work with?" data-framer-component-type="RichTextContainer" style={{"--framer-paragraph-spacing": "0px", transform: "none", opacity: "1"}}>
                           <p className="framer-text framer-styles-preset-kng7jv" data-styles-preset="cDiAQHEyE" style={{"--framer-text-alignment": "left"}}>
-                            How quickly can COSMOQ be implemented?
+                            What actually gets written to Base?
                           </p>
                         </div>
                         <div className="framer-updvjf" data-framer-name="Icon" style={{transform: "none", opacity: "1"}}>
@@ -155,7 +155,7 @@ export default function Faq() {
                       <div className="framer-144r8qr" data-border="true" data-framer-name="Question" data-highlight="true" tabIndex={0} style={{"--border-bottom-width": "0px", "--border-color": "var(--token-63f7583a-ac58-4fab-bed6-928aed613254, rgb(47, 57, 80))", "--border-left-width": "0px", "--border-right-width": "0px", "--border-style": "solid", "--border-top-width": "0px", opacity: "1"}}>
                         <div className="framer-d7agds" data-framer-name="What industries does Vertica Studio work with?" data-framer-component-type="RichTextContainer" style={{"--framer-paragraph-spacing": "0px", transform: "none", opacity: "1"}}>
                           <p className="framer-text framer-styles-preset-kng7jv" data-styles-preset="cDiAQHEyE" style={{"--framer-text-alignment": "left"}}>
-                            Can AI Agents replace human employees?
+                            Is the blockchain record "immutable"?
                           </p>
                         </div>
                         <div className="framer-updvjf" data-framer-name="Icon" style={{transform: "none", opacity: "1"}}>
@@ -175,7 +175,7 @@ export default function Faq() {
                       <div className="framer-144r8qr" data-border="true" data-framer-name="Question" data-highlight="true" tabIndex={0} style={{"--border-bottom-width": "0px", "--border-color": "var(--token-63f7583a-ac58-4fab-bed6-928aed613254, rgb(47, 57, 80))", "--border-left-width": "0px", "--border-right-width": "0px", "--border-style": "solid", "--border-top-width": "0px", opacity: "1"}}>
                         <div className="framer-d7agds" data-framer-name="What industries does Vertica Studio work with?" data-framer-component-type="RichTextContainer" style={{"--framer-paragraph-spacing": "0px", transform: "none", opacity: "1"}}>
                           <p className="framer-text framer-styles-preset-kng7jv" data-styles-preset="cDiAQHEyE" style={{"--framer-text-alignment": "left"}}>
-                            How does COSMOQ improve customer service?
+                            What happens when the gate blocks a claim?
                           </p>
                         </div>
                         <div className="framer-updvjf" data-framer-name="Icon" style={{transform: "none", opacity: "1"}}>
@@ -195,7 +195,7 @@ export default function Faq() {
                       <div className="framer-144r8qr" data-border="true" data-framer-name="Question" data-highlight="true" tabIndex={0} style={{"--border-bottom-width": "0px", "--border-color": "var(--token-63f7583a-ac58-4fab-bed6-928aed613254, rgb(47, 57, 80))", "--border-left-width": "0px", "--border-right-width": "0px", "--border-style": "solid", "--border-top-width": "0px", opacity: "1"}}>
                         <div className="framer-d7agds" data-framer-name="What industries does Vertica Studio work with?" data-framer-component-type="RichTextContainer" style={{"--framer-paragraph-spacing": "0px", transform: "none", opacity: "1"}}>
                           <p className="framer-text framer-styles-preset-kng7jv" data-styles-preset="cDiAQHEyE" style={{"--framer-text-alignment": "left"}}>
-                            Is COSMOQ scalable for global operations?
+                            What situations does MEMORA support today?
                           </p>
                         </div>
                         <div className="framer-updvjf" data-framer-name="Icon" style={{transform: "none", opacity: "1"}}>

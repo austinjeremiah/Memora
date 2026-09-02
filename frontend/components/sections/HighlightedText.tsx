@@ -20,115 +20,13 @@ export default function HighlightedText() {
                     {" "}
                   </span>
                   <span style={{display: "inline", color: "var(--token-0eb0d570-0e27-4070-997d-d65cb58db903, rgba(255, 255, 255, 0.4))"}}>
-                    enterprises
+                    clinicians
                   </span>
                   <span style={{display: "inline", color: "var(--token-0eb0d570-0e27-4070-997d-d65cb58db903, rgba(255, 255, 255, 0.4))"}}>
                     {" "}
                   </span>
                   <span style={{display: "inline", color: "var(--token-0eb0d570-0e27-4070-997d-d65cb58db903, rgba(255, 255, 255, 0.4))"}}>
-                    reimagine
-                  </span>
-                  <span style={{display: "inline", color: "var(--token-0eb0d570-0e27-4070-997d-d65cb58db903, rgba(255, 255, 255, 0.4))"}}>
-                    {" "}
-                  </span>
-                  <span style={{display: "inline", color: "var(--token-0eb0d570-0e27-4070-997d-d65cb58db903, rgba(255, 255, 255, 0.4))"}}>
-                    business
-                  </span>
-                  <span style={{display: "inline", color: "var(--token-0eb0d570-0e27-4070-997d-d65cb58db903, rgba(255, 255, 255, 0.4))"}}>
-                    {" "}
-                  </span>
-                  <span style={{display: "inline", color: "var(--token-0eb0d570-0e27-4070-997d-d65cb58db903, rgba(255, 255, 255, 0.4))"}}>
-                    growth
-                  </span>
-                  <span style={{display: "inline", color: "var(--token-0eb0d570-0e27-4070-997d-d65cb58db903, rgba(255, 255, 255, 0.4))"}}>
-                    {" "}
-                  </span>
-                  <span style={{display: "inline", color: "var(--token-0eb0d570-0e27-4070-997d-d65cb58db903, rgba(255, 255, 255, 0.4))"}}>
-                    with
-                  </span>
-                  <span style={{display: "inline", color: "var(--token-0eb0d570-0e27-4070-997d-d65cb58db903, rgba(255, 255, 255, 0.4))"}}>
-                    {" "}
-                  </span>
-                  <span style={{display: "inline", color: "var(--token-0eb0d570-0e27-4070-997d-d65cb58db903, rgba(255, 255, 255, 0.4))"}}>
-                    our
-                  </span>
-                  <span style={{display: "inline", color: "var(--token-0eb0d570-0e27-4070-997d-d65cb58db903, rgba(255, 255, 255, 0.4))"}}>
-                    {" "}
-                  </span>
-                  <span style={{display: "inline", color: "var(--token-0eb0d570-0e27-4070-997d-d65cb58db903, rgba(255, 255, 255, 0.4))"}}>
-                    AI
-                  </span>
-                  <span style={{display: "inline", color: "var(--token-0eb0d570-0e27-4070-997d-d65cb58db903, rgba(255, 255, 255, 0.4))"}}>
-                    {" "}
-                  </span>
-                  <span style={{display: "inline", color: "var(--token-0eb0d570-0e27-4070-997d-d65cb58db903, rgba(255, 255, 255, 0.4))"}}>
-                    Platform,
-                  </span>
-                  <span style={{display: "inline", color: "var(--token-0eb0d570-0e27-4070-997d-d65cb58db903, rgba(255, 255, 255, 0.4))"}}>
-                    {" "}
-                  </span>
-                  <span style={{display: "inline", color: "var(--token-0eb0d570-0e27-4070-997d-d65cb58db903, rgba(255, 255, 255, 0.4))"}}>
-                    Work
-                  </span>
-                  <span style={{display: "inline", color: "var(--token-0eb0d570-0e27-4070-997d-d65cb58db903, rgba(255, 255, 255, 0.4))"}}>
-                    {" "}
-                  </span>
-                  <span style={{display: "inline", color: "var(--token-0eb0d570-0e27-4070-997d-d65cb58db903, rgba(255, 255, 255, 0.4))"}}>
-                    Solutions,
-                  </span>
-                  <span style={{display: "inline", color: "var(--token-0eb0d570-0e27-4070-997d-d65cb58db903, rgba(255, 255, 255, 0.4))"}}>
-                    {" "}
-                  </span>
-                  <span style={{display: "inline", color: "var(--token-0eb0d570-0e27-4070-997d-d65cb58db903, rgba(255, 255, 255, 0.4))"}}>
-                    and
-                  </span>
-                  <span style={{display: "inline", color: "var(--token-0eb0d570-0e27-4070-997d-d65cb58db903, rgba(255, 255, 255, 0.4))"}}>
-                    {" "}
-                  </span>
-                  <span style={{display: "inline", color: "var(--token-0eb0d570-0e27-4070-997d-d65cb58db903, rgba(255, 255, 255, 0.4))"}}>
-                    Intelligent
-                  </span>
-                  <span style={{display: "inline", color: "var(--token-0eb0d570-0e27-4070-997d-d65cb58db903, rgba(255, 255, 255, 0.4))"}}>
-                    {" "}
-                  </span>
-                  <span style={{display: "inline", color: "var(--token-0eb0d570-0e27-4070-997d-d65cb58db903, rgba(255, 255, 255, 0.4))"}}>
-                    Marketplace.
-                  </span>
-                  <span style={{display: "inline", color: "var(--token-0eb0d570-0e27-4070-997d-d65cb58db903, rgba(255, 255, 255, 0.4))"}}>
-                    {"\n"}
-                  </span>
-                  <span style={{display: "inline", color: "var(--token-0eb0d570-0e27-4070-997d-d65cb58db903, rgba(255, 255, 255, 0.4))"}}>
-                    Unlock
-                  </span>
-                  <span style={{display: "inline", color: "var(--token-0eb0d570-0e27-4070-997d-d65cb58db903, rgba(255, 255, 255, 0.4))"}}>
-                    {" "}
-                  </span>
-                  <span style={{display: "inline", color: "var(--token-0eb0d570-0e27-4070-997d-d65cb58db903, rgba(255, 255, 255, 0.4))"}}>
-                    efficiency,
-                  </span>
-                  <span style={{display: "inline", color: "var(--token-0eb0d570-0e27-4070-997d-d65cb58db903, rgba(255, 255, 255, 0.4))"}}>
-                    {" "}
-                  </span>
-                  <span style={{display: "inline", color: "var(--token-0eb0d570-0e27-4070-997d-d65cb58db903, rgba(255, 255, 255, 0.4))"}}>
-                    automation,
-                  </span>
-                  <span style={{display: "inline", color: "var(--token-0eb0d570-0e27-4070-997d-d65cb58db903, rgba(255, 255, 255, 0.4))"}}>
-                    {" "}
-                  </span>
-                  <span style={{display: "inline", color: "var(--token-0eb0d570-0e27-4070-997d-d65cb58db903, rgba(255, 255, 255, 0.4))"}}>
-                    and
-                  </span>
-                  <span style={{display: "inline", color: "var(--token-0eb0d570-0e27-4070-997d-d65cb58db903, rgba(255, 255, 255, 0.4))"}}>
-                    {" "}
-                  </span>
-                  <span style={{display: "inline", color: "var(--token-0eb0d570-0e27-4070-997d-d65cb58db903, rgba(255, 255, 255, 0.4))"}}>
-                    innovation
-                  </span>
-                  <span style={{display: "inline", color: "var(--token-0eb0d570-0e27-4070-997d-d65cb58db903, rgba(255, 255, 255, 0.4))"}}>
-                    {" "}
-                  </span>
-                  <span style={{display: "inline", color: "var(--token-0eb0d570-0e27-4070-997d-d65cb58db903, rgba(255, 255, 255, 0.4))"}}>
-                    across
+                    remember
                   </span>
                   <span style={{display: "inline", color: "var(--token-0eb0d570-0e27-4070-997d-d65cb58db903, rgba(255, 255, 255, 0.4))"}}>
                     {" "}
@@ -140,7 +38,103 @@ export default function HighlightedText() {
                     {" "}
                   </span>
                   <span style={{display: "inline", color: "var(--token-0eb0d570-0e27-4070-997d-d65cb58db903, rgba(255, 255, 255, 0.4))"}}>
-                    workflow.
+                    patient,
+                  </span>
+                  <span style={{display: "inline", color: "var(--token-0eb0d570-0e27-4070-997d-d65cb58db903, rgba(255, 255, 255, 0.4))"}}>
+                    {" "}
+                  </span>
+                  <span style={{display: "inline", color: "var(--token-0eb0d570-0e27-4070-997d-d65cb58db903, rgba(255, 255, 255, 0.4))"}}>
+                    verify
+                  </span>
+                  <span style={{display: "inline", color: "var(--token-0eb0d570-0e27-4070-997d-d65cb58db903, rgba(255, 255, 255, 0.4))"}}>
+                    {" "}
+                  </span>
+                  <span style={{display: "inline", color: "var(--token-0eb0d570-0e27-4070-997d-d65cb58db903, rgba(255, 255, 255, 0.4))"}}>
+                    every
+                  </span>
+                  <span style={{display: "inline", color: "var(--token-0eb0d570-0e27-4070-997d-d65cb58db903, rgba(255, 255, 255, 0.4))"}}>
+                    {" "}
+                  </span>
+                  <span style={{display: "inline", color: "var(--token-0eb0d570-0e27-4070-997d-d65cb58db903, rgba(255, 255, 255, 0.4))"}}>
+                    claim,
+                  </span>
+                  <span style={{display: "inline", color: "var(--token-0eb0d570-0e27-4070-997d-d65cb58db903, rgba(255, 255, 255, 0.4))"}}>
+                    {" "}
+                  </span>
+                  <span style={{display: "inline", color: "var(--token-0eb0d570-0e27-4070-997d-d65cb58db903, rgba(255, 255, 255, 0.4))"}}>
+                    and
+                  </span>
+                  <span style={{display: "inline", color: "var(--token-0eb0d570-0e27-4070-997d-d65cb58db903, rgba(255, 255, 255, 0.4))"}}>
+                    {" "}
+                  </span>
+                  <span style={{display: "inline", color: "var(--token-0eb0d570-0e27-4070-997d-d65cb58db903, rgba(255, 255, 255, 0.4))"}}>
+                    trust
+                  </span>
+                  <span style={{display: "inline", color: "var(--token-0eb0d570-0e27-4070-997d-d65cb58db903, rgba(255, 255, 255, 0.4))"}}>
+                    {" "}
+                  </span>
+                  <span style={{display: "inline", color: "var(--token-0eb0d570-0e27-4070-997d-d65cb58db903, rgba(255, 255, 255, 0.4))"}}>
+                    every
+                  </span>
+                  <span style={{display: "inline", color: "var(--token-0eb0d570-0e27-4070-997d-d65cb58db903, rgba(255, 255, 255, 0.4))"}}>
+                    {" "}
+                  </span>
+                  <span style={{display: "inline", color: "var(--token-0eb0d570-0e27-4070-997d-d65cb58db903, rgba(255, 255, 255, 0.4))"}}>
+                    handoff.
+                  </span>
+                  <span style={{display: "inline", color: "var(--token-0eb0d570-0e27-4070-997d-d65cb58db903, rgba(255, 255, 255, 0.4))"}}>
+                    {"\n"}
+                  </span>
+                  <span style={{display: "inline", color: "var(--token-0eb0d570-0e27-4070-997d-d65cb58db903, rgba(255, 255, 255, 0.4))"}}>
+                    Unlock
+                  </span>
+                  <span style={{display: "inline", color: "var(--token-0eb0d570-0e27-4070-997d-d65cb58db903, rgba(255, 255, 255, 0.4))"}}>
+                    {" "}
+                  </span>
+                  <span style={{display: "inline", color: "var(--token-0eb0d570-0e27-4070-997d-d65cb58db903, rgba(255, 255, 255, 0.4))"}}>
+                    persistent
+                  </span>
+                  <span style={{display: "inline", color: "var(--token-0eb0d570-0e27-4070-997d-d65cb58db903, rgba(255, 255, 255, 0.4))"}}>
+                    {" "}
+                  </span>
+                  <span style={{display: "inline", color: "var(--token-0eb0d570-0e27-4070-997d-d65cb58db903, rgba(255, 255, 255, 0.4))"}}>
+                    memory,
+                  </span>
+                  <span style={{display: "inline", color: "var(--token-0eb0d570-0e27-4070-997d-d65cb58db903, rgba(255, 255, 255, 0.4))"}}>
+                    {" "}
+                  </span>
+                  <span style={{display: "inline", color: "var(--token-0eb0d570-0e27-4070-997d-d65cb58db903, rgba(255, 255, 255, 0.4))"}}>
+                    deterministic
+                  </span>
+                  <span style={{display: "inline", color: "var(--token-0eb0d570-0e27-4070-997d-d65cb58db903, rgba(255, 255, 255, 0.4))"}}>
+                    {" "}
+                  </span>
+                  <span style={{display: "inline", color: "var(--token-0eb0d570-0e27-4070-997d-d65cb58db903, rgba(255, 255, 255, 0.4))"}}>
+                    gates,
+                  </span>
+                  <span style={{display: "inline", color: "var(--token-0eb0d570-0e27-4070-997d-d65cb58db903, rgba(255, 255, 255, 0.4))"}}>
+                    {" "}
+                  </span>
+                  <span style={{display: "inline", color: "var(--token-0eb0d570-0e27-4070-997d-d65cb58db903, rgba(255, 255, 255, 0.4))"}}>
+                    and
+                  </span>
+                  <span style={{display: "inline", color: "var(--token-0eb0d570-0e27-4070-997d-d65cb58db903, rgba(255, 255, 255, 0.4))"}}>
+                    {" "}
+                  </span>
+                  <span style={{display: "inline", color: "var(--token-0eb0d570-0e27-4070-997d-d65cb58db903, rgba(255, 255, 255, 0.4))"}}>
+                    proof
+                  </span>
+                  <span style={{display: "inline", color: "var(--token-0eb0d570-0e27-4070-997d-d65cb58db903, rgba(255, 255, 255, 0.4))"}}>
+                    {" "}
+                  </span>
+                  <span style={{display: "inline", color: "var(--token-0eb0d570-0e27-4070-997d-d65cb58db903, rgba(255, 255, 255, 0.4))"}}>
+                    recorded
+                  </span>
+                  <span style={{display: "inline", color: "var(--token-0eb0d570-0e27-4070-997d-d65cb58db903, rgba(255, 255, 255, 0.4))"}}>
+                    {" "}
+                  </span>
+                  <span style={{display: "inline", color: "var(--token-0eb0d570-0e27-4070-997d-d65cb58db903, rgba(255, 255, 255, 0.4))"}}>
+                    onchain.
                   </span>
                   <span style={{display: "inline", color: "var(--token-0eb0d570-0e27-4070-997d-d65cb58db903, rgba(255, 255, 255, 0.4))"}}>
                     {"\n"}

@@ -29,13 +29,13 @@ export default function Pricing() {
               <div className="framer-e0ketg" data-framer-name="Main">
                 <div className="framer-11bp8e4" data-framer-name="Alpha Range Technology" data-framer-component-type="RichTextContainer" style={{transform: "none"}}>
                   <h2 className="framer-text framer-styles-preset-mnfyzd" data-styles-preset="muXEgmE57">
-                    Flexible Plans for Every
+                    The Sibyl Memory Tiers This Runs On
                   </h2>
                 </div>
               </div>
               <div className="framer-1iyhl4i" data-framer-name="Subtext" data-framer-component-type="RichTextContainer" style={{transform: "none"}}>
                 <p className="framer-text framer-styles-preset-1xv0u9n" data-styles-preset="VsDceC7bv" style={{"--framer-text-color": "var(--token-e77749d5-1f11-472b-b926-5090d7e5b50e, rgb(176, 190, 217))"}}>
-                  Choose the plan that fits your team and scales with your business.
+                  MEMORA runs on Sibyl's local-first memory — here's what each tier actually caps.
                 </p>
               </div>
             </div>
@@ -48,26 +48,26 @@ export default function Pricing() {
                     <div className="framer-11bc3wg" data-framer-name="Text" data-highlight="true" tabIndex={0} style={{opacity: "1"}}>
                       <div className="framer-15axhlz" data-framer-name="Monthly" data-framer-component-type="RichTextContainer" style={{"--extracted-r6o4lv": "var(--token-74e333f8-fe87-4945-af87-cae5b7e16c10, rgb(0, 0, 0))", "--framer-paragraph-spacing": "0px", transform: "none", opacity: "1"}}>
                         <p className="framer-text framer-styles-preset-1xv0u9n" data-styles-preset="VsDceC7bv" style={{"--framer-text-color": "var(--extracted-r6o4lv, var(--token-74e333f8-fe87-4945-af87-cae5b7e16c10, rgb(0, 0, 0)))"}}>
-                          Monthly
+                          Free
                         </p>
                       </div>
                     </div>
                     <div className="framer-fxhpgc" data-framer-name="Selector" style={{backgroundColor: "var(--token-839225cb-b1fc-470d-a0c2-2eb7fcc590b8, rgb(255, 255, 255))", borderRadius: "4px", transform: "translateY(-50%)", opacity: "1"}}>
                       <div className="framer-10zqbqf" data-framer-name="Monthly" data-framer-component-type="RichTextContainer" style={{"--extracted-r6o4lv": "var(--token-74e333f8-fe87-4945-af87-cae5b7e16c10, rgb(0, 0, 0))", "--framer-paragraph-spacing": "0px", opacity: "0", transform: "none"}}>
                         <p className="framer-text framer-styles-preset-1xv0u9n" data-styles-preset="VsDceC7bv" style={{"--framer-text-color": "var(--extracted-r6o4lv, var(--token-74e333f8-fe87-4945-af87-cae5b7e16c10, rgb(0, 0, 0)))"}}>
-                          Monthly
+                          Free
                         </p>
                       </div>
                     </div>
                     <div className="framer-ngmoy0" data-framer-name="Text" data-highlight="true" tabIndex={0} style={{opacity: "1"}}>
                       <div className="framer-ljk0cd" data-framer-name="Yearly" data-framer-component-type="RichTextContainer" style={{"--framer-paragraph-spacing": "0px", transform: "none", opacity: "1"}}>
                         <p className="framer-text framer-styles-preset-1xv0u9n" data-styles-preset="VsDceC7bv">
-                          Yearly
+                          Staked
                         </p>
                       </div>
                       <div className="framer-1m4vvr3" data-framer-name="30%off" data-framer-component-type="RichTextContainer" style={{"--extracted-r6o4lv": "var(--token-1a06e153-824c-4039-a1ec-38e20ad17137, rgb(255, 172, 10))", "--framer-paragraph-spacing": "0px", transform: "none", opacity: "1"}}>
                         <p className="framer-text framer-styles-preset-79ayo0" data-styles-preset="AVSIklFkd" style={{"--framer-text-color": "var(--extracted-r6o4lv, var(--token-1a06e153-824c-4039-a1ec-38e20ad17137, rgb(255, 172, 10)))"}}>
-                          30%off
+                          no cap
                         </p>
                       </div>
                     </div>
@@ -84,18 +84,18 @@ export default function Pricing() {
                           <div className="framer-1s5m62z" data-framer-name="Card Top" style={{opacity: "1"}}>
                             <div className="framer-1x2rk3f" data-framer-name="Premium Package" data-framer-component-type="RichTextContainer" style={{justifyContent: "center", "--framer-paragraph-spacing": "0px", transform: "none", opacity: "1"}}>
                               <h4 className="framer-text framer-styles-preset-1c78dmg" data-styles-preset="hVHiYTsnG">
-                                Sonic
+                                Free Tier
                               </h4>
                             </div>
                             <div className="framer-15vj7x4" data-framer-name="Price Wrapper" style={{opacity: "1"}}>
                               <div className="framer-fytxqp" data-framer-name="$\u00a03,500.00\u00a0USD" data-framer-component-type="RichTextContainer" style={{justifyContent: "center", "--extracted-a0htzi": "var(--token-7ed67f45-7ffc-4523-9689-9d08f6aa2909, rgb(209, 212, 227))", "--framer-paragraph-spacing": "0px", transform: "none", opacity: "1"}}>
                                 <h3 className="framer-text framer-styles-preset-152unph" data-styles-preset="zBDJ5wOY1" style={{"--framer-text-color": "var(--extracted-a0htzi, var(--token-7ed67f45-7ffc-4523-9689-9d08f6aa2909, rgb(209, 212, 227)))"}}>
-                                  $49
+                                  2 MiB
                                 </h3>
                               </div>
                               <div className="framer-17jtqa9" data-framer-name="$\u00a03,500.00\u00a0USD" data-framer-component-type="RichTextContainer" style={{justifyContent: "center", "--extracted-r6o4lv": "var(--token-e77749d5-1f11-472b-b926-5090d7e5b50e, rgb(132, 145, 171))", "--framer-paragraph-spacing": "0px", transform: "none", opacity: "1"}}>
                                 <p className="framer-text framer-styles-preset-2c17c" data-styles-preset="TYV2gdO25" style={{"--framer-text-color": "var(--extracted-r6o4lv, var(--token-e77749d5-1f11-472b-b926-5090d7e5b50e, rgb(132, 145, 171)))"}}>
-                                  /month
+                                  hard cap
                                 </p>
                               </div>
                             </div>
@@ -132,7 +132,7 @@ export default function Pricing() {
                                 </div>
                                 <div className="framer-ob5oc6" data-framer-name="Fin is the top-performing and most" data-framer-component-type="RichTextContainer" style={{"--extracted-r6o4lv": "var(--token-839225cb-b1fc-470d-a0c2-2eb7fcc590b8, rgb(255, 255, 255))", "--framer-paragraph-spacing": "0px", transform: "none", opacity: "1"}}>
                                   <p className="framer-text framer-styles-preset-1xv0u9n" data-styles-preset="VsDceC7bv" style={{"--framer-text-color": "var(--extracted-r6o4lv, var(--token-839225cb-b1fc-470d-a0c2-2eb7fcc590b8, rgb(255, 255, 255)))"}}>
-                                    Access to core AI Agents
+                                    Local SQLite + FTS5 search
                                   </p>
                                 </div>
                               </div>
@@ -153,7 +153,7 @@ export default function Pricing() {
                                 </div>
                                 <div className="framer-ob5oc6" data-framer-name="Fin is the top-performing and most" data-framer-component-type="RichTextContainer" style={{"--extracted-r6o4lv": "var(--token-839225cb-b1fc-470d-a0c2-2eb7fcc590b8, rgb(255, 255, 255))", "--framer-paragraph-spacing": "0px", transform: "none", opacity: "1"}}>
                                   <p className="framer-text framer-styles-preset-1xv0u9n" data-styles-preset="VsDceC7bv" style={{"--framer-text-color": "var(--extracted-r6o4lv, var(--token-839225cb-b1fc-470d-a0c2-2eb7fcc590b8, rgb(255, 255, 255)))"}}>
-                                    Workflow automation for teams
+                                    HOT / WARM / COLD tiers
                                   </p>
                                 </div>
                               </div>
@@ -174,7 +174,7 @@ export default function Pricing() {
                                 </div>
                                 <div className="framer-ob5oc6" data-framer-name="Fin is the top-performing and most" data-framer-component-type="RichTextContainer" style={{"--extracted-r6o4lv": "var(--token-839225cb-b1fc-470d-a0c2-2eb7fcc590b8, rgb(255, 255, 255))", "--framer-paragraph-spacing": "0px", transform: "none", opacity: "1"}}>
                                   <p className="framer-text framer-styles-preset-1xv0u9n" data-styles-preset="VsDceC7bv" style={{"--framer-text-color": "var(--extracted-r6o4lv, var(--token-839225cb-b1fc-470d-a0c2-2eb7fcc590b8, rgb(255, 255, 255)))"}}>
-                                    Basic integrations
+                                    archive_entity, never delete
                                   </p>
                                 </div>
                               </div>
@@ -216,7 +216,7 @@ export default function Pricing() {
                                 </div>
                                 <div className="framer-ob5oc6" data-framer-name="Fin is the top-performing and most" data-framer-component-type="RichTextContainer" style={{"--extracted-r6o4lv": "var(--token-839225cb-b1fc-470d-a0c2-2eb7fcc590b8, rgb(255, 255, 255))", "--framer-paragraph-spacing": "0px", transform: "none", opacity: "1"}}>
                                   <p className="framer-text framer-styles-preset-1xv0u9n" data-styles-preset="VsDceC7bv" style={{"--framer-text-color": "var(--extracted-r6o4lv, var(--token-839225cb-b1fc-470d-a0c2-2eb7fcc590b8, rgb(255, 255, 255)))"}}>
-                                    Email support
+                                    Single local file, single tenant
                                   </p>
                                 </div>
                               </div>
@@ -237,7 +237,7 @@ export default function Pricing() {
                                 </div>
                                 <div className="framer-ob5oc6" data-framer-name="Fin is the top-performing and most" data-framer-component-type="RichTextContainer" style={{"--extracted-r6o4lv": "var(--token-839225cb-b1fc-470d-a0c2-2eb7fcc590b8, rgb(255, 255, 255))", "--framer-paragraph-spacing": "0px", transform: "none", opacity: "1"}}>
                                   <p className="framer-text framer-styles-preset-1xv0u9n" data-styles-preset="VsDceC7bv" style={{"--framer-text-color": "var(--extracted-r6o4lv, var(--token-839225cb-b1fc-470d-a0c2-2eb7fcc590b8, rgb(255, 255, 255)))"}}>
-                                    5,000 AI actions per month
+                                    2,097,152 byte hard cap
                                   </p>
                                 </div>
                               </div>
@@ -247,7 +247,7 @@ export default function Pricing() {
                             <div className="framer-1kliwq5" data-framer-name="Line" style={{backgroundColor: "var(--token-0eb0d570-0e27-4070-997d-d65cb58db903, rgba(255, 255, 255, 0.4))", opacity: "1"}} />
                             <div className="framer-11pf405" data-framer-name="1200+ Client trusted this" data-framer-component-type="RichTextContainer" style={{"--extracted-r6o4lv": "var(--token-839225cb-b1fc-470d-a0c2-2eb7fcc590b8, rgb(255, 255, 255))", "--framer-paragraph-spacing": "0px", transform: "none", opacity: "1"}}>
                               <p className="framer-text framer-styles-preset-1xv0u9n" data-styles-preset="VsDceC7bv" style={{"--framer-text-color": "var(--extracted-r6o4lv, var(--token-839225cb-b1fc-470d-a0c2-2eb7fcc590b8, rgb(255, 255, 255)))"}}>
-                                300+ teams trusted this
+                                The tier MEMORA's demo runs on
                               </p>
                             </div>
                           </div>
@@ -265,18 +265,18 @@ export default function Pricing() {
                           <div className="framer-1dj2e9e" data-framer-name="Card Top" style={{opacity: "1"}}>
                             <div className="framer-5ih6xm" data-framer-name="Premium Package" data-framer-component-type="RichTextContainer" style={{justifyContent: "center", "--extracted-1eung3n": "var(--token-839225cb-b1fc-470d-a0c2-2eb7fcc590b8, rgb(255, 255, 255))", "--framer-paragraph-spacing": "0px", transform: "none", opacity: "1"}}>
                               <h4 className="framer-text framer-styles-preset-1c78dmg" data-styles-preset="hVHiYTsnG" style={{"--framer-text-color": "var(--extracted-1eung3n, var(--token-839225cb-b1fc-470d-a0c2-2eb7fcc590b8, rgb(255, 255, 255)))"}}>
-                                Supersonic
+                                Staked Tier
                               </h4>
                             </div>
                             <div className="framer-1uniwul" data-framer-name="Price Wrapper" style={{opacity: "1"}}>
                               <div className="framer-oahkj4" data-framer-name="$\u00a03,500.00\u00a0USD" data-framer-component-type="RichTextContainer" style={{justifyContent: "center", "--extracted-a0htzi": "var(--token-7ed67f45-7ffc-4523-9689-9d08f6aa2909, rgb(209, 212, 227))", "--framer-paragraph-spacing": "0px", transform: "none", opacity: "1"}}>
                                 <h3 className="framer-text framer-styles-preset-152unph" data-styles-preset="zBDJ5wOY1" style={{"--framer-text-color": "var(--extracted-a0htzi, var(--token-7ed67f45-7ffc-4523-9689-9d08f6aa2909, rgb(209, 212, 227)))"}}>
-                                  $99
+                                  100K
                                 </h3>
                               </div>
                               <div className="framer-g8nqy3" data-framer-name="$\u00a03,500.00\u00a0USD" data-framer-component-type="RichTextContainer" style={{justifyContent: "center", "--extracted-r6o4lv": "var(--token-e77749d5-1f11-472b-b926-5090d7e5b50e, rgb(132, 145, 171))", "--framer-paragraph-spacing": "0px", transform: "none", opacity: "1"}}>
                                 <p className="framer-text framer-styles-preset-2c17c" data-styles-preset="TYV2gdO25" style={{"--framer-text-color": "var(--extracted-r6o4lv, var(--token-e77749d5-1f11-472b-b926-5090d7e5b50e, rgb(132, 145, 171)))"}}>
-                                  /month
+                                  $SIBYL staked
                                 </p>
                               </div>
                             </div>
@@ -313,7 +313,7 @@ export default function Pricing() {
                                 </div>
                                 <div className="framer-ob5oc6" data-framer-name="Fin is the top-performing and most" data-framer-component-type="RichTextContainer" style={{"--extracted-r6o4lv": "var(--token-839225cb-b1fc-470d-a0c2-2eb7fcc590b8, rgb(255, 255, 255))", "--framer-paragraph-spacing": "0px", transform: "none", opacity: "1"}}>
                                   <p className="framer-text framer-styles-preset-1xv0u9n" data-styles-preset="VsDceC7bv" style={{"--framer-text-color": "var(--extracted-r6o4lv, var(--token-839225cb-b1fc-470d-a0c2-2eb7fcc590b8, rgb(255, 255, 255)))"}}>
-                                    Everything in Sonic Monthly
+                                    Everything in the Free tier
                                   </p>
                                 </div>
                               </div>
@@ -334,7 +334,7 @@ export default function Pricing() {
                                 </div>
                                 <div className="framer-ob5oc6" data-framer-name="Fin is the top-performing and most" data-framer-component-type="RichTextContainer" style={{"--extracted-r6o4lv": "var(--token-839225cb-b1fc-470d-a0c2-2eb7fcc590b8, rgb(255, 255, 255))", "--framer-paragraph-spacing": "0px", transform: "none", opacity: "1"}}>
                                   <p className="framer-text framer-styles-preset-1xv0u9n" data-styles-preset="VsDceC7bv" style={{"--framer-text-color": "var(--extracted-r6o4lv, var(--token-839225cb-b1fc-470d-a0c2-2eb7fcc590b8, rgb(255, 255, 255)))"}}>
-                                    Advanced AI Agents for workflows
+                                    Cap fully lifted
                                   </p>
                                 </div>
                               </div>
@@ -355,7 +355,7 @@ export default function Pricing() {
                                 </div>
                                 <div className="framer-ob5oc6" data-framer-name="Fin is the top-performing and most" data-framer-component-type="RichTextContainer" style={{"--extracted-r6o4lv": "var(--token-839225cb-b1fc-470d-a0c2-2eb7fcc590b8, rgb(255, 255, 255))", "--framer-paragraph-spacing": "0px", transform: "none", opacity: "1"}}>
                                   <p className="framer-text framer-styles-preset-1xv0u9n" data-styles-preset="VsDceC7bv" style={{"--framer-text-color": "var(--extracted-r6o4lv, var(--token-839225cb-b1fc-470d-a0c2-2eb7fcc590b8, rgb(255, 255, 255)))"}}>
-                                    Priority integrations
+                                    Same local-first architecture
                                   </p>
                                 </div>
                               </div>
@@ -376,7 +376,7 @@ export default function Pricing() {
                                 </div>
                                 <div className="framer-ob5oc6" data-framer-name="Fin is the top-performing and most" data-framer-component-type="RichTextContainer" style={{"--extracted-r6o4lv": "var(--token-839225cb-b1fc-470d-a0c2-2eb7fcc590b8, rgb(255, 255, 255))", "--framer-paragraph-spacing": "0px", transform: "none", opacity: "1"}}>
                                   <p className="framer-text framer-styles-preset-1xv0u9n" data-styles-preset="VsDceC7bv" style={{"--framer-text-color": "var(--extracted-r6o4lv, var(--token-839225cb-b1fc-470d-a0c2-2eb7fcc590b8, rgb(255, 255, 255)))"}}>
-                                    Enhanced dashboards
+                                    sibyl status shows Qualified: yes
                                   </p>
                                 </div>
                               </div>
@@ -397,7 +397,7 @@ export default function Pricing() {
                                 </div>
                                 <div className="framer-ob5oc6" data-framer-name="Fin is the top-performing and most" data-framer-component-type="RichTextContainer" style={{"--extracted-r6o4lv": "var(--token-839225cb-b1fc-470d-a0c2-2eb7fcc590b8, rgb(255, 255, 255))", "--framer-paragraph-spacing": "0px", transform: "none", opacity: "1"}}>
                                   <p className="framer-text framer-styles-preset-1xv0u9n" data-styles-preset="VsDceC7bv" style={{"--framer-text-color": "var(--extracted-r6o4lv, var(--token-839225cb-b1fc-470d-a0c2-2eb7fcc590b8, rgb(255, 255, 255)))"}}>
-                                    24/7 support via chat
+                                    No server round-trip, ever
                                   </p>
                                 </div>
                               </div>
@@ -418,7 +418,7 @@ export default function Pricing() {
                                 </div>
                                 <div className="framer-ob5oc6" data-framer-name="Fin is the top-performing and most" data-framer-component-type="RichTextContainer" style={{"--extracted-r6o4lv": "var(--token-839225cb-b1fc-470d-a0c2-2eb7fcc590b8, rgb(255, 255, 255))", "--framer-paragraph-spacing": "0px", transform: "none", opacity: "1"}}>
                                   <p className="framer-text framer-styles-preset-1xv0u9n" data-styles-preset="VsDceC7bv" style={{"--framer-text-color": "var(--extracted-r6o4lv, var(--token-839225cb-b1fc-470d-a0c2-2eb7fcc590b8, rgb(255, 255, 255)))"}}>
-                                    20,000 AI actions per month
+                                    Unbounded local storage
                                   </p>
                                 </div>
                               </div>
@@ -428,7 +428,7 @@ export default function Pricing() {
                             <div className="framer-lcr9dq" data-framer-name="Line" style={{backgroundColor: "var(--token-0eb0d570-0e27-4070-997d-d65cb58db903, rgba(255, 255, 255, 0.4))", opacity: "1"}} />
                             <div className="framer-1wiy61c" data-framer-name="1200+ Client trusted this" data-framer-component-type="RichTextContainer" style={{"--extracted-r6o4lv": "var(--token-839225cb-b1fc-470d-a0c2-2eb7fcc590b8, rgb(255, 255, 255))", "--framer-paragraph-spacing": "0px", transform: "none", opacity: "1"}}>
                               <p className="framer-text framer-styles-preset-1xv0u9n" data-styles-preset="VsDceC7bv" style={{"--framer-text-color": "var(--extracted-r6o4lv, var(--token-839225cb-b1fc-470d-a0c2-2eb7fcc590b8, rgb(255, 255, 255)))"}}>
-                                250+ growing enterprises
+                                What a production deployment would need
                               </p>
                             </div>
                           </div>
@@ -441,19 +441,19 @@ export default function Pricing() {
                           <div className="framer-1smj8a4" data-framer-name="Card Top" style={{opacity: "1"}}>
                             <div className="framer-1f2kmb" data-framer-name="Premium Package" data-framer-component-type="RichTextContainer" style={{justifyContent: "center", "--framer-paragraph-spacing": "0px", transform: "none", opacity: "1"}}>
                               <h4 className="framer-text framer-styles-preset-1c78dmg" data-styles-preset="hVHiYTsnG">
-                                Go for more power
+                                Choose your own cadence
                               </h4>
                             </div>
                           </div>
                           <div className="framer-19ovl8a" data-framer-name="Price Wrapper" style={{opacity: "1"}}>
                             <div className="framer-10hzy6x" data-framer-name="$\u00a03,500.00\u00a0USD" data-framer-component-type="RichTextContainer" style={{justifyContent: "center", "--extracted-a0htzi": "var(--token-7ed67f45-7ffc-4523-9689-9d08f6aa2909, rgb(209, 212, 227))", "--framer-paragraph-spacing": "0px", transform: "none", opacity: "1"}}>
                               <h3 className="framer-text framer-styles-preset-152unph" data-styles-preset="zBDJ5wOY1" style={{"--framer-text-color": "var(--extracted-a0htzi, var(--token-7ed67f45-7ffc-4523-9689-9d08f6aa2909, rgb(209, 212, 227)))"}}>
-                                HyperSonic
+                                Subscription Tier
                               </h3>
                             </div>
                             <div className="framer-719szb" data-framer-name="$\u00a03,500.00\u00a0USD" data-framer-component-type="RichTextContainer" style={{justifyContent: "center", "--extracted-r6o4lv": "var(--token-e77749d5-1f11-472b-b926-5090d7e5b50e, rgb(176, 190, 217))", "--framer-paragraph-spacing": "0px", transform: "none", opacity: "1"}}>
                               <p className="framer-text framer-styles-preset-1xv0u9n" data-styles-preset="VsDceC7bv" style={{"--framer-text-color": "var(--extracted-r6o4lv, var(--token-e77749d5-1f11-472b-b926-5090d7e5b50e, rgb(176, 190, 217)))"}}>
-                                Unlimited automation with dedicated enterprise support.
+                                $29/mo, $79/quarter, or $290/yr — paid in USDC, no staking required.
                               </p>
                             </div>
                           </div>
@@ -477,7 +477,7 @@ export default function Pricing() {
                                 </div>
                                 <div className="framer-ob5oc6" data-framer-name="Fin is the top-performing and most" data-framer-component-type="RichTextContainer" style={{"--extracted-r6o4lv": "var(--token-839225cb-b1fc-470d-a0c2-2eb7fcc590b8, rgb(255, 255, 255))", "--framer-paragraph-spacing": "0px", transform: "none", opacity: "1"}}>
                                   <p className="framer-text framer-styles-preset-1xv0u9n" data-styles-preset="VsDceC7bv" style={{"--framer-text-color": "var(--extracted-r6o4lv, var(--token-839225cb-b1fc-470d-a0c2-2eb7fcc590b8, rgb(255, 255, 255)))"}}>
-                                    Enterprise-grade AI Agent
+                                    Same cap-lift as staking
                                   </p>
                                 </div>
                               </div>
@@ -498,7 +498,7 @@ export default function Pricing() {
                                 </div>
                                 <div className="framer-ob5oc6" data-framer-name="Fin is the top-performing and most" data-framer-component-type="RichTextContainer" style={{"--extracted-r6o4lv": "var(--token-839225cb-b1fc-470d-a0c2-2eb7fcc590b8, rgb(255, 255, 255))", "--framer-paragraph-spacing": "0px", transform: "none", opacity: "1"}}>
                                   <p className="framer-text framer-styles-preset-1xv0u9n" data-styles-preset="VsDceC7bv" style={{"--framer-text-color": "var(--extracted-r6o4lv, var(--token-839225cb-b1fc-470d-a0c2-2eb7fcc590b8, rgb(255, 255, 255)))"}}>
-                                    Full custom API access
+                                    Billed monthly, quarterly, or yearly
                                   </p>
                                 </div>
                               </div>

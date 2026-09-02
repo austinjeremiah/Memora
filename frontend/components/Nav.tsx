@@ -6,11 +6,11 @@ export default function Nav() {
           <nav className="framer-ZUPdC framer-90tdu2 framer-v-90tdu2" data-framer-name="Desktop" style={{backgroundColor: "rgba(0, 0, 0, 0)", width: "100%", boxShadow: "none", opacity: "1"}}>
             <div className="framer-yq3j0r" data-framer-name="Container" style={{opacity: "1"}}>
               <div className="framer-1of73k0" data-framer-name="Content" style={{opacity: "1"}}>
-                <div className="framer-1yvwb09" data-framer-name="Logo" style={{backdropFilter: "blur(10px)", borderRadius: "999px", opacity: "1"}}>
-                  <a className="framer-c2linv framer-c0tdwz" data-framer-name="Logo Image " href="./" data-framer-page-link-current="true" style={{opacity: "1"}}>
-                    <div style={{position: "absolute", borderRadius: "inherit", cornerShape: "inherit", top: "0", right: "0", bottom: "0", left: "0"}} data-framer-background-image-wrapper="true">
-                      <img decoding="auto" width="1810" height="335" sizes="(min-width: 1200px) max(131px, 952px), (min-width: 810px) and (max-width: 1199.98px) max(131px, 637.2893px), (max-width: 809.98px) max(131px, 338.2801px, 337.6258px)" srcSet="/images/9knjwoszoexl1mcopuddlqagg.svg 512w, /images/9knjwoszoexl1mcopuddlqagg.svg 1024w, /images/9knjwoszoexl1mcopuddlqagg.svg 1810w" src="/images/9knjwoszoexl1mcopuddlqagg.svg" alt="Logo " style={{display: "block", width: "100%", height: "100%", borderRadius: "inherit", cornerShape: "inherit", objectPosition: "center", objectFit: "contain"}} />
-                    </div>
+                <div className="framer-1yvwb09" data-framer-name="Logo" style={{backdropFilter: "none", backgroundColor: "transparent", boxShadow: "none", borderRadius: "0", opacity: "1", width: "210px", minWidth: "210px", overflow: "visible"}}>
+                  <a className="framer-c2linv framer-c0tdwz" data-framer-name="Logo Image " href="./" data-framer-page-link-current="true" style={{opacity: "1", display: "flex", alignItems: "center", justifyContent: "center", overflow: "visible"}}>
+                    <span style={{fontFamily: "BentonSansRE, Verdana, sans-serif", fontSize: "34px", fontWeight: 400, fontStyle: "normal", lineHeight: "normal", letterSpacing: "normal", color: "rgb(255, 255, 255)", whiteSpace: "nowrap"}}>
+                      MEMORA
+                    </span>
                   </a>
                 </div>
               </div>
@@ -20,7 +20,7 @@ export default function Nav() {
                     <a className="framer-ttQjC framer-QATJw framer-1vp0xhe framer-v-1vp0xhe framer-j6ho85" data-framer-name="Default" data-highlight="true" href="./ai-solutions" tabIndex={0} style={{opacity: "1"}}>
                       <div className="framer-1gsxzzc" data-framer-name="Label" data-framer-component-type="RichTextContainer" style={{"--extracted-r6o4lv": "var(--token-839225cb-b1fc-470d-a0c2-2eb7fcc590b8, rgb(255, 255, 255))", "--framer-link-text-color": "rgb(0, 153, 255)", "--framer-link-text-decoration": "underline", transform: "none", opacity: "1"}}>
                         <p className="framer-text framer-styles-preset-1p9z0bc" data-styles-preset="lW2kM2SoC" style={{"--framer-text-color": "var(--extracted-r6o4lv, var(--token-839225cb-b1fc-470d-a0c2-2eb7fcc590b8, rgb(255, 255, 255)))"}}>
-                          AI Solutions
+                          Platform
                         </p>
                       </div>
                       <div className="framer-zhbp5c" data-framer-name="Underline Wrap" style={{opacity: "1"}}>

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 
 import "@/styles/framer.css";
 import "@/styles/breakpoints.css";
+import "@/styles/fonts.css";
 
 const FAVICON =
   "https://framerusercontent.com/images/1VtXtUrlVK0Y1WHlW4GIfnhxFho.png";
@@ -9,10 +10,10 @@ const OG_IMAGE =
   "https://framerusercontent.com/assets/LaGEDiVbTeEg75rIXlNKdeL8x4.png";
 
 const DESCRIPTION =
-  "COSMOQ is a modern Framer template built for AI startups and enterprises. Launch fast, scale easily, and showcase your AI products, workflows, and services with clarity, style, and impact—all in one powerful, responsive design.";
+  "MEMORA is a persistent clinical memory and safety system built on Sibyl Memory and Base. Every AI-proposed claim is checked against real evidence before it reaches a clinician, and Sentinel watches memory for drift with zero LLM in the detection path.";
 
 export const metadata: Metadata = {
-  title: "COSMOQ - Automation and AI Agent Template",
+  title: "MEMORA - Persistent Clinical Memory & Safety Gate",
   description: DESCRIPTION,
   metadataBase: new URL("https://cosmoq.framer.website/"),
   alternates: { canonical: "/" },
@@ -21,13 +22,13 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     url: "https://cosmoq.framer.website/",
-    title: "COSMOQ - Automation and AI Agent Template",
+    title: "MEMORA - Persistent Clinical Memory & Safety Gate",
     description: DESCRIPTION,
     images: [OG_IMAGE],
   },
   twitter: {
     card: "summary_large_image",
-    title: "COSMOQ - Automation and AI Agent Template",
+    title: "MEMORA - Persistent Clinical Memory & Safety Gate",
     description: DESCRIPTION,
     images: [OG_IMAGE],
   },

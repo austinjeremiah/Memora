@@ -37,7 +37,7 @@ export default function Integration() {
               </div>
               <div className="framer-10obiw3" data-framer-name="Subtext" data-framer-component-type="RichTextContainer" style={{transform: "none"}}>
                 <p className="framer-text framer-styles-preset-1xv0u9n" data-styles-preset="VsDceC7bv" style={{"--framer-text-color": "var(--token-e77749d5-1f11-472b-b926-5090d7e5b50e, rgb(176, 190, 217))"}}>
-                  Connect custom or pre-built connectors to your enterprise and third-party apps.
+                  Built on Sibyl Memory, Groq, and Base — real SDKs, real transactions, zero mocks.
                 </p>
               </div>
             </div>
@@ -47,7 +47,7 @@ export default function Integration() {
                   <div className="framer-6yhlt6" data-border="true" data-framer-name="Label" style={{"--border-bottom-width": "1px", "--border-color": "var(--token-0eb0d570-0e27-4070-997d-d65cb58db903, rgba(255, 255, 255, 0.4))", "--border-left-width": "1px", "--border-right-width": "1px", "--border-style": "solid", "--border-top-width": "1px", backgroundColor: "var(--token-74e333f8-fe87-4945-af87-cae5b7e16c10, rgb(0, 0, 0))", filter: "brightness(1)", borderRadius: "15px", boxShadow: "0px 0.829890004863264px 0.829890004863264px -0.75px rgba(0, 0, 0, 0.18), 0px 2.260010866989614px 2.260010866989614px -1.5px rgba(0, 0, 0, 0.18), 0px 4.96216589306132px 4.96216589306132px -2.25px rgba(0, 0, 0, 0.17), 0px 11.014875294190135px 11.014875294190135px -3px rgba(0, 0, 0, 0.14), 0px 28px 28px -3.75px rgba(0, 0, 0, 0.06), inset -4px 3px 9px 0px var(--token-991642a5-fe69-44f0-a456-0d249f695158, rgb(1, 117, 255)), inset 3px -2px 8px 0px var(--token-40eb5c15-2df6-4cc5-9a1c-8a90a74b480c, rgb(255, 205, 125))", opacity: "1"}}>
                     <div className="framer-3nflbn" data-framer-name="Get Started" data-framer-component-type="RichTextContainer" style={{"--extracted-r6o4lv": "var(--token-839225cb-b1fc-470d-a0c2-2eb7fcc590b8, rgb(255, 255, 255))", "--framer-paragraph-spacing": "0px", transform: "none", opacity: "1"}}>
                       <p className="framer-text framer-styles-preset-79ayo0" data-styles-preset="AVSIklFkd" style={{"--framer-text-color": "var(--extracted-r6o4lv, var(--token-839225cb-b1fc-470d-a0c2-2eb7fcc590b8, rgb(255, 255, 255)))"}}>
-                        Know More
+                        View on GitHub
                       </p>
                     </div>
                   </div>
