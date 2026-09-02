@@ -29,4 +29,5 @@ testpaths = ["tests"]
 markers = [
     "integration: exercises a real on-disk Sibyl store",
     "compliance: hackathon gate-criterion checks",
+    "llm: makes a real call to the configured model provider",
 ]
