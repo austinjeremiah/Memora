@@ -1,0 +1,40 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.venv/
+venv/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+
+# Environment / secrets — never commit keys
+.env
+.env.local
+*.pem
+*.key
+
+# Sibyl Memory stores (local SQLite + WAL sidecars)
+*.db
+*.db-wal
+*.db-shm
+.sibyl-memory/
+
+# Synthea (cloned + built locally, multi-GB)
+vendor/
+backend/vendor/
+
+# Foundry
+contracts/out/
+contracts/cache/
+contracts/broadcast/
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
