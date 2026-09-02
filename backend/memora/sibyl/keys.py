@@ -21,6 +21,24 @@ from dataclasses import dataclass
 _FORBIDDEN = set(';<>|"`\\') | {"\x00"}
 
 
+def is_safe_identifier(value: object) -> bool:
+    """Whether a string is safe to use as a Sibyl category/name.
+
+    Sibyl validates identifiers on WRITE but not on READ (verified: get_entity
+    on "drug; rm -rf" raises NotFoundError, not ValidationError). So anything
+    accepting untrusted identifiers -- notably model-proposed citations in the
+    Evidence Resolver -- has to check them itself rather than relying on the
+    SDK to refuse.
+    """
+    if not isinstance(value, str) or not value.strip():
+        return False
+    if len(value) > 1024:
+        return False
+    if _FORBIDDEN & set(value):
+        return False
+    return not any(ord(ch) < 32 for ch in value)
+
+
 def validate_patient_id(patient_id: str) -> str:
     if not isinstance(patient_id, str) or not patient_id.strip():
         raise ValueError("patient_id must be a non-empty string")
