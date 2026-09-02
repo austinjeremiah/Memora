@@ -30,6 +30,14 @@ class Settings(BaseSettings):
     base_rpc_url: str = "https://sepolia.base.org"
     base_private_key: str = ""
     base_commitment_contract_address: str = ""
+    base_attestation_contract_address: str = ""
+    base_chain_id: int = 84532  # Base Sepolia
+
+    # Master seed for SYNTHETIC DEMO CLINICIAN KEYS ONLY. These are not, and
+    # must never be described as, real clinician identities or an
+    # authentication mechanism -- they exist so a hackathon demo can show a
+    # cryptographically attributed signature. Never commit a real value.
+    attestation_seed: str = ""
 
     max_evidence_items: int = 8
     gate_strict_mode: bool = True

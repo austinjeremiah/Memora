@@ -49,7 +49,7 @@ run () {
 echo "MEMORA cumulative end-to-end"
 echo "store: $STORE"
 
-stage "STAGE 1/7 · Synthea ingestion into Sibyl  (phases 6-8)"
+stage "STAGE 1/8 · Synthea ingestion into Sibyl  (phases 6-8)"
 run "3 real Synthea patients ingested" "final:" 5 -- \
   "$PY" scripts/ingest_demo.py "$FHIR" 3
 
@@ -57,22 +57,22 @@ PATIENT="$("$PY" -c 'from memora.sibyl.client import known_patient_ids; print(kn
 if [ -z "$PATIENT" ]; then echo "FATAL: no patient discovered"; exit 1; fi
 echo "  demo patient: $PATIENT"
 
-stage "STAGE 2/7 · Cold-start situational recall  (phases 4-5, 9)"
+stage "STAGE 2/8 · Cold-start situational recall  (phases 4-5, 9)"
 run "fresh process recalled state; per-situation subsets differ" \
     "situational recall across a process boundary" 26 -- \
   "$PY" scripts/session_situations.py "$PATIENT"
 
-stage "STAGE 3/7 · LLM proposal -> evidence -> gate  (phases 10-13)"
+stage "STAGE 3/8 · LLM proposal -> evidence -> gate  (phases 10-13)"
 run "model proposed; every claim verified against memory" \
     "nothing reached a clinician unverified" 30 -- \
   "$PY" scripts/session_brief.py "$PATIENT" dr_arun
 
-stage "STAGE 4/7 · Role-dependent authority on identical evidence  (phase 11)"
+stage "STAGE 4/8 · Role-dependent authority on identical evidence  (phase 11)"
 run "same evidence judged differently by role" \
     "role-dependent verdicts" 12 -- \
   "$PY" scripts/session_gate.py "$PATIENT"
 
-stage "STAGE 5/7 · SENTINEL: proactive drift detection, no LLM  (v2)"
+stage "STAGE 5/8 · SENTINEL: proactive drift detection, no LLM  (v2)"
 run "drift detected and announced as NEW" "NEW      " 22 -- \
   "$PY" scripts/session_sentinel.py icu_to_ward --seed-drift "$PATIENT"
 echo
@@ -80,12 +80,17 @@ echo "  --- second sweep: the same finding must NOT re-announce ---"
 run "finding tracked as PERSISTING, not re-alerted" "PERSISTING" 8 -- \
   "$PY" scripts/session_sentinel.py icu_to_ward
 
-stage "STAGE 6/7 · Clinician approval anchored on Base Sepolia  (phase 15)"
+stage "STAGE 6/8 · Clinician approval anchored on Base Sepolia  (phase 15)"
 run "approved state hashed, committed onchain, read back" \
     "anchored and verified onchain" 12 -- \
   "$PY" scripts/session_approve.py "$PATIENT" dr_maya
 
-stage "STAGE 7/7 · THE GATE CRITERION: delete memory, must refuse"
+stage "STAGE 7/8 · EIP-712 clinician attestation on Base  (v2)"
+run "state signed by a synthetic demo clinician key, recorded onchain" \
+    "signed state recorded and verified onchain" 16 -- \
+  "$PY" scripts/session_attest.py "$PATIENT" dr_maya
+
+stage "STAGE 8/8 · THE GATE CRITERION: delete memory, must refuse"
 rm -f "$STORE"*
 OUT="$("$PY" scripts/session_brief.py "$PATIENT" dr_arun 2>&1)"; RC=$?
 echo "$OUT" | tail -1

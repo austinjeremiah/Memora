@@ -10,6 +10,8 @@ from fastapi import APIRouter, HTTPException
 
 from memora.api.schemas import (
     ApproveRequest,
+    AttestationOut,
+    AttestationVerifyOut,
     ClaimOut,
     ClinicianOut,
     CommitmentOut,
@@ -26,6 +28,9 @@ from memora.api.schemas import (
     SourceEventOut,
     VerifyOut,
 )
+from memora.attestation.chain import next_nonce, submit_attestation, verify_onchain
+from memora.attestation.keys import clinician_for_address, synthetic_address
+from memora.attestation.sign import sign_attestation
 from memora.clinicians.roles import CLINICIANS, get_clinician
 from memora.config import settings
 from memora.context.engine import RetrievedContext, compile_plan, execute_plan
@@ -36,6 +41,8 @@ from memora.integrity.commitment import (
     canonical_commitment_payload,
     commitment_label,
     compute_commitment_hash,
+    compute_context_hash,
+    compute_evidence_root,
 )
 from memora.llm.propose import propose_claims
 from memora.sentinel.digest import SENTINEL_SYSTEM_ID
@@ -266,6 +273,93 @@ def approve_handoff(patient_id: str, request: ApproveRequest) -> CommitmentOut:
         commitment_hash="0x" + digest.hex(),
         label=label,
         **receipt,
+    )
+
+
+@router.post("/handoff/{patient_id}/attest", response_model=AttestationOut)
+def attest_handoff(patient_id: str, request: ApproveRequest) -> AttestationOut:
+    """Approve a handover and record a SIGNED attestation on Base.
+
+    The evolution of /approve: that route anchors an anonymous hash, this one
+    records WHO approved it, over WHAT evidence, in WHICH clinical context, at
+    WHICH point in the patient's memory -- cryptographically, with replay
+    protection the contract enforces.
+
+    Every claim is re-verified against live Sibyl state before anything is
+    signed, exactly as /approve does. Delete the memory layer and no attestation
+    can be produced at all.
+    """
+    _reject_reserved(patient_id)
+    if request.patient_id != patient_id:
+        raise HTTPException(status_code=400,
+                            detail="patient_id in the path and body must match.")
+
+    clinician = _require_clinician(request.clinician_id)
+    if not clinician.can_approve_handoff:
+        raise HTTPException(
+            status_code=403,
+            detail=(f"{clinician.name} ({clinician.role.value}) is not "
+                    "authorised to approve a handover."))
+
+    memory = PatientMemory(patient_id, require_data=True)
+
+    verified: list[dict] = []
+    evidence_ids: list[str] = []
+    for claim in request.claims:
+        check = resolve_claim(memory, claim.text, claim.related_kind,
+                              claim.related_name)
+        decision = evaluate_claim(memory, check, clinician.role)
+        if decision.result is GateResult.BLOCK:
+            raise HTTPException(status_code=409, detail={
+                "error": "claim_not_verifiable",
+                "detail": ("Refusing to attest: a submitted claim does not pass "
+                           "verification against current memory."),
+                "claim": claim.text, "reason": decision.reason})
+        verified.append({"text": claim.text, "gate_result": decision.result.value})
+        evidence_ids.extend(e.source_id for e in check.source_events if e.source_id)
+
+    state_hash = compute_commitment_hash(
+        canonical_commitment_payload(patient_id, request.situation.value, verified))
+    evidence_root = compute_evidence_root(evidence_ids)
+    context_hash = compute_context_hash(request.situation.value,
+                                        clinician.role.value)
+
+    signer = synthetic_address(clinician.id)
+    attestation = sign_attestation(
+        clinician_id=clinician.id,
+        state_hash=state_hash,
+        evidence_root=evidence_root,
+        context_hash=context_hash,
+        memory_version=memory.memory_version(),
+        nonce=next_nonce(signer),
+    )
+    receipt = submit_attestation(attestation)
+
+    return AttestationOut(**attestation.as_dict(), **receipt)
+
+
+@router.get("/attestation/{state_hash}/verify", response_model=AttestationVerifyOut)
+def verify_attestation_onchain(state_hash: str) -> AttestationVerifyOut:
+    """Read an attestation back off Base. No key, no gas, no patient data."""
+    raw = state_hash.removeprefix("0x")
+    try:
+        digest = bytes.fromhex(raw)
+    except ValueError as e:
+        raise HTTPException(status_code=422, detail="state_hash must be hex.") from e
+    if len(digest) != 32:
+        raise HTTPException(status_code=422,
+                            detail="state_hash must be 32 bytes (SHA-256).")
+
+    result = verify_onchain(digest)
+    return AttestationVerifyOut(
+        state_hash="0x" + digest.hex(),
+        exists=result["exists"],
+        signer=result["signer"],
+        clinician_id=clinician_for_address(result["signer"]),
+        timestamp=result["timestamp"],
+        memory_version=result["memory_version"],
+        basescan_url=("https://sepolia.basescan.org/address/"
+                      f"{settings.base_attestation_contract_address}"),
     )
 
 

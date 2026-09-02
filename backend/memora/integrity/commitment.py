@@ -56,3 +56,30 @@ def compute_commitment_hash(payload: dict) -> bytes:
 def commitment_label(patient_id: str, situation: str) -> str:
     """Short onchain label. Synthetic identifier only."""
     return f"{patient_id}:{situation}"
+
+
+def compute_evidence_root(evidence_ids: list[str]) -> bytes:
+    """A single digest over the evidence backing an approved brief.
+
+    Sorted before hashing so the same evidence set produces the same root
+    regardless of the order claims happened to be resolved in -- otherwise two
+    identical approvals would attest to different roots.
+
+    A flat hash of sorted ids, not a Merkle tree. A tree would let someone prove
+    one specific piece of evidence was included without revealing the rest;
+    nothing in MEMORA needs that today, and building it speculatively would be
+    complexity without a caller.
+    """
+    payload = {"version": 1, "evidence": sorted(set(evidence_ids))}
+    return hashlib.sha256(canonical_json(payload)).digest()
+
+
+def compute_context_hash(situation: str, role: str) -> bytes:
+    """A digest of the clinical context an approval was made in.
+
+    Binds an attestation to the situation and role it was reviewed under, so a
+    brief approved for an ICU-to-ward handover cannot later be presented as
+    having been approved for a pre-operative review.
+    """
+    payload = {"version": 1, "situation": situation, "role": role}
+    return hashlib.sha256(canonical_json(payload)).digest()

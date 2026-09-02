@@ -40,6 +40,9 @@ from memora.sibyl.preflight import (
 
 log = logging.getLogger("memora.sibyl")
 
+# HOT-state key holding the per-patient monotonic event counter.
+MEMORY_VERSION_KEY = "memory_version"
+
 # Read every tier well past any realistic per-patient volume. The SDK's own
 # default of 50 would silently hide older history from the Evidence Resolver,
 # which would then reject a true claim for lack of a source event.
@@ -118,11 +121,41 @@ class PatientMemory:
     # ---- COLD: append-only history --------------------------------------
     def log_event(self, event: ClinicalEvent) -> str:
         with self._quota_guard():
-            return self._memory.write_event(
+            event_id = self._memory.write_event(
                 acted=[event.summary],
                 extra=event.to_extra(),
                 ts=event.timestamp or None,
             )
+        self._bump_memory_version()
+        return event_id
+
+    # ---- Memory version -------------------------------------------------
+    #
+    # A monotonic per-patient counter of how many things have been recorded.
+    # An attestation cites it so a signature is bound to a specific point in
+    # this patient's history: the same approved brief signed before and after
+    # new events are recorded produces different attestations, which is what
+    # makes "this was true as of this state" a checkable claim.
+    #
+    # It is deliberately NOT derived from len(read_history()) -- that depends
+    # on the query's limit and is not a stable count. It is incremented in the
+    # same write path that appends to the journal, and stored as HOT state,
+    # which is an upsert on (tenant, key): one row per patient no matter how
+    # many times it is bumped, so the row-count discipline is preserved.
+
+    def _bump_memory_version(self) -> int:
+        current = self.memory_version()
+        self._memory.set_state(MEMORY_VERSION_KEY, {"n": current + 1})
+        return current + 1
+
+    def memory_version(self) -> int:
+        state = self._memory.get_state(MEMORY_VERSION_KEY)
+        if not state:
+            return 0
+        try:
+            return int(state["body"]["n"])
+        except (KeyError, TypeError, ValueError):
+            return 0
 
     def read_history(self, *, limit: int = FULL_READ_LIMIT,
                      since: str | None = None, until: str | None = None) -> list[dict]:

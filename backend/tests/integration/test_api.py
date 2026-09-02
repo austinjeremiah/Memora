@@ -378,3 +378,84 @@ def test_sentinel_never_lists_its_own_tenant_as_a_patient(client, drifting_patie
     from memora.sentinel.digest import SENTINEL_SYSTEM_ID
     body = client.post("/sentinel/run", json={"situation": "icu_to_ward"}).json()
     assert all(f["patient_id"] != SENTINEL_SYSTEM_ID for f in body["findings"])
+
+
+# ---- EIP-712 attestation over HTTP --------------------------------------
+
+def _attest_body(claims=None):
+    return {
+        "patient_id": PATIENT,
+        "situation": "icu_to_ward",
+        "clinician_id": "dr_maya",
+        "claims": claims or [{"text": "Drug B is currently active",
+                              "related_kind": KIND_MEDICATION,
+                              "related_name": "drug_b"}],
+    }
+
+
+def test_attestation_requires_approval_authority(client, seeded):
+    body = _attest_body()
+    body["clinician_id"] = "dr_priya"      # surgeon
+    assert client.post(f"/handoff/{PATIENT}/attest", json=body).status_code == 403
+
+
+def test_attestation_refuses_an_unverifiable_claim(client, seeded):
+    r = client.post(f"/handoff/{PATIENT}/attest", json=_attest_body([
+        {"text": "Patient tolerated Drug Z well",
+         "related_kind": KIND_MEDICATION, "related_name": "drug_z"}]))
+    assert r.status_code == 409
+    assert r.json()["detail"]["error"] == "claim_not_verifiable"
+
+
+def test_attestation_is_503_without_the_memory_layer(client, seeded):
+    """No memory, no signature. The onchain action depends on Sibyl."""
+    seeded.unlink()
+    r = client.post(f"/handoff/{PATIENT}/attest", json=_attest_body())
+    assert r.status_code == 503
+    assert r.json()["error"] == "sibyl_unavailable"
+
+
+def test_attestation_verify_rejects_a_malformed_hash(client, seeded):
+    assert client.get("/attestation/nothex/verify").status_code == 422
+    assert client.get("/attestation/0xabcd/verify").status_code == 422
+
+
+def test_the_sentinel_tenant_cannot_be_attested(client, seeded):
+    from memora.sentinel.digest import SENTINEL_SYSTEM_ID
+    body = _attest_body()
+    body["patient_id"] = SENTINEL_SYSTEM_ID
+    assert client.post(f"/handoff/{SENTINEL_SYSTEM_ID}/attest",
+                       json=body).status_code == 404
+
+
+@pytest.mark.chain
+def test_attested_handoff_is_signed_recorded_and_reads_back(client, seeded):
+    """Full flow over HTTP: verify claims -> sign -> submit -> read back."""
+    import uuid
+
+    from memora.ontology.kinds import STATUS_ACTIVE
+
+    # A unique fact so the state hash differs from any previous run.
+    marker = uuid.uuid4().hex[:8]
+    PatientMemory(PATIENT).set_fact(KIND_MEDICATION, f"drug_{marker}",
+                                    {"label": marker}, status=STATUS_ACTIVE)
+
+    r = client.post(f"/handoff/{PATIENT}/attest", json=_attest_body([
+        {"text": f"Marker medication {marker} is active",
+         "related_kind": KIND_MEDICATION, "related_name": f"drug_{marker}"}]))
+    assert r.status_code == 200, r.text
+    body = r.json()
+
+    assert body["signer_kind"] == "synthetic_demo_key", \
+        "the response must say the signer is not a real identity"
+    assert body["clinician_id"] == "dr_maya"
+    assert len(body["state_hash"]) == 66
+    assert body["memory_version"] > 0
+    assert body["expires_at"] > body["issued_at"]
+    assert body["relayer"] != body["signer"], "relayer must not be the signer"
+
+    verified = client.get(f"/attestation/{body['state_hash']}/verify").json()
+    assert verified["exists"] is True
+    assert verified["signer"] == body["signer"]
+    assert verified["clinician_id"] == "dr_maya"
+    assert verified["memory_version"] == body["memory_version"]

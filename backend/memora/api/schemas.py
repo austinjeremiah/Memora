@@ -166,3 +166,40 @@ class SinceLastReviewOut(BaseModel):
     new: list[FindingOut] = []
     persisting: list[FindingOut] = []
     escalated: list[FindingOut] = []
+
+
+class AttestationOut(BaseModel):
+    """A clinician-signed attestation, recorded on Base.
+
+    `signer` is a SYNTHETIC DEMO KEY held server-side. It is not a real
+    clinician identity and not an authentication mechanism -- `signer_kind`
+    says so in the response itself, not only in the docs.
+    """
+
+    clinician_id: str
+    signer: str
+    signer_kind: str = "synthetic_demo_key"
+    signature: str
+    digest: str
+    state_hash: str
+    evidence_root: str
+    context_hash: str
+    memory_version: int
+    issued_at: int
+    expires_at: int
+    nonce: int
+    tx_hash: str
+    block_number: int
+    gas_used: int
+    relayer: str
+    basescan_url: str
+
+
+class AttestationVerifyOut(BaseModel):
+    state_hash: str
+    exists: bool
+    signer: str
+    clinician_id: str | None = None
+    timestamp: int
+    memory_version: int
+    basescan_url: str
