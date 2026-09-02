@@ -19,6 +19,7 @@ from fastapi.responses import JSONResponse
 
 from memora.api.routes import router
 from memora.config import settings
+from memora.integrity.errors import BaseUnavailableError, CommitmentExistsError
 from memora.llm.errors import LLMUnavailableError
 from memora.sibyl.errors import (
     SibylPatientUnknownError,
@@ -68,6 +69,24 @@ def _llm_unavailable(_request: Request, exc: LLMUnavailableError) -> JSONRespons
     return JSONResponse(
         status_code=503,
         content={"error": "llm_unavailable", "detail": str(exc)},
+    )
+
+
+@app.exception_handler(BaseUnavailableError)
+def _base_unavailable(_request: Request, exc: BaseUnavailableError) -> JSONResponse:
+    return JSONResponse(
+        status_code=503,
+        content={"error": "base_unavailable", "detail": str(exc)},
+    )
+
+
+@app.exception_handler(CommitmentExistsError)
+def _commitment_exists(_request: Request, exc: CommitmentExistsError) -> JSONResponse:
+    """409, not an error: the contract refuses to overwrite an earlier
+    timestamp, which is the property that makes the registry meaningful."""
+    return JSONResponse(
+        status_code=409,
+        content={"error": "commitment_exists", "detail": str(exc)},
     )
 
 

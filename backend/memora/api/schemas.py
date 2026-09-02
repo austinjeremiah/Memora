@@ -89,3 +89,40 @@ class HandoffOut(BaseModel):
     proposed_count: int
     model: str
     memory: MemoryStatusOut
+
+
+class ApproveClaimIn(BaseModel):
+    """A claim the clinician is approving, as it was shown to them."""
+
+    text: str = Field(min_length=1)
+    related_kind: str | None = None
+    related_name: str | None = None
+
+
+class ApproveRequest(BaseModel):
+    patient_id: str = Field(min_length=1, max_length=512)
+    situation: Situation
+    clinician_id: str = Field(min_length=1, max_length=64)
+    claims: list[ApproveClaimIn] = Field(min_length=1)
+
+
+class CommitmentOut(BaseModel):
+    patient_id: str
+    situation: str
+    approved_by: str
+    claim_count: int
+    commitment_hash: str
+    label: str
+    tx_hash: str
+    block_number: int
+    gas_used: int
+    committer: str
+    basescan_url: str
+
+
+class VerifyOut(BaseModel):
+    commitment_hash: str
+    exists: bool
+    timestamp: int
+    committer: str
+    basescan_url: str

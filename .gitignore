@@ -30,9 +30,9 @@ vendor/
 backend/vendor/
 
 # Foundry
-contracts/out/
-contracts/cache/
-contracts/broadcast/
+**/contracts/out/
+**/contracts/cache/
+**/contracts/broadcast/
 
 # OS / editor
 .DS_Store

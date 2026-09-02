@@ -192,3 +192,99 @@ def test_handoff_flags_the_contraindicated_medication(client, seeded):
             assert claim["gate_result"] == "NEEDS_REVIEW"
             assert "contraindicated_record" in claim["triggered_rules"]
             assert claim["source_events"], "flagged claim carried no cited events"
+
+
+# ---- approval + onchain commitment --------------------------------------
+
+def _approve_body(claims=None):
+    return {
+        "patient_id": PATIENT,
+        "situation": "icu_to_ward",
+        "clinician_id": "dr_maya",
+        "claims": claims or [{"text": "Drug B is currently active",
+                              "related_kind": KIND_MEDICATION,
+                              "related_name": "drug_b"}],
+    }
+
+
+def test_approval_requires_a_role_with_approval_authority(client, seeded):
+    """Comes from the same authority table the gate uses, not a parallel list."""
+    body = _approve_body()
+    body["clinician_id"] = "dr_priya"      # surgeon
+    r = client.post(f"/handoff/{PATIENT}/approve", json=body)
+    assert r.status_code == 403
+    assert "not" in r.json()["detail"].lower()
+
+
+def test_unverifiable_claim_is_refused_before_anything_is_signed(client, seeded):
+    """A claim the server cannot re-verify must never reach the chain."""
+    r = client.post(f"/handoff/{PATIENT}/approve", json=_approve_body([
+        {"text": "Patient tolerated Drug Z well",
+         "related_kind": KIND_MEDICATION, "related_name": "drug_z"},
+    ]))
+    assert r.status_code == 409
+    assert r.json()["detail"]["error"] == "claim_not_verifiable"
+
+
+def test_unsourced_claim_is_refused_at_approval(client, seeded):
+    r = client.post(f"/handoff/{PATIENT}/approve", json=_approve_body([
+        {"text": "Patient is ready for discharge"},
+    ]))
+    assert r.status_code == 409
+
+
+def test_approval_is_503_when_the_memory_layer_is_gone(client, seeded):
+    """No memory, no commitment -- the onchain action depends on Sibyl."""
+    seeded.unlink()
+    r = client.post(f"/handoff/{PATIENT}/approve", json=_approve_body())
+    assert r.status_code == 503
+    assert r.json()["error"] == "sibyl_unavailable"
+
+
+def test_path_and_body_patient_must_match(client, seeded):
+    r = client.post("/handoff/P-OTHER/approve", json=_approve_body())
+    assert r.status_code == 400
+
+
+def test_verify_rejects_a_malformed_hash(client, seeded):
+    assert client.get("/commitment/nothex/verify").status_code == 422
+    assert client.get("/commitment/0xabcd/verify").status_code == 422
+
+
+@pytest.mark.chain
+def test_verify_reports_an_uncommitted_hash_as_absent(client, seeded):
+    r = client.get("/commitment/" + "11" * 32 + "/verify")
+    assert r.status_code == 200
+    assert r.json()["exists"] is False
+
+
+@pytest.mark.chain
+@pytest.mark.llm
+def test_approved_handoff_is_anchored_onchain_and_reads_back(client, seeded):
+    """End to end: recall -> propose -> gate -> approve -> Base -> verify."""
+    handoff = client.post("/handoff", json={"patient_id": PATIENT,
+                                            "situation": "icu_to_ward",
+                                            "clinician_id": "dr_maya"}).json()
+    approvable = [
+        {"text": c["text"], "related_kind": c["source_kind"],
+         "related_name": c["source_name"]}
+        for c in handoff["claims"] if c["gate_result"] != "BLOCK"
+    ]
+    assert approvable, "nothing survived the gate to approve"
+
+    body = _approve_body(approvable)
+    r = client.post(f"/handoff/{PATIENT}/approve", json=body)
+    assert r.status_code == 200, r.text
+    commitment = r.json()
+
+    assert commitment["commitment_hash"].startswith("0x")
+    assert len(commitment["commitment_hash"]) == 66
+    assert commitment["tx_hash"].startswith("0x")
+    assert commitment["block_number"] > 0
+    assert commitment["approved_by"] == "Dr. Maya"
+    assert commitment["claim_count"] == len(approvable)
+
+    verified = client.get(f"/commitment/{commitment['commitment_hash']}/verify").json()
+    assert verified["exists"] is True
+    assert verified["timestamp"] > 0
+    assert verified["committer"] == commitment["committer"]

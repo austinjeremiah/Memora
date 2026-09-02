@@ -9,8 +9,10 @@ anywhere, never a 200 carrying an empty brief.
 from fastapi import APIRouter, HTTPException
 
 from memora.api.schemas import (
+    ApproveRequest,
     ClaimOut,
     ClinicianOut,
+    CommitmentOut,
     ContextOut,
     EventOut,
     FactOut,
@@ -18,12 +20,19 @@ from memora.api.schemas import (
     HandoffRequest,
     MemoryStatusOut,
     SourceEventOut,
+    VerifyOut,
 )
 from memora.clinicians.roles import CLINICIANS, get_clinician
 from memora.config import settings
 from memora.context.engine import RetrievedContext, compile_plan, execute_plan
-from memora.evidence.resolver import resolve_all
-from memora.gate.gate import evaluate_all, summarise
+from memora.evidence.resolver import resolve_all, resolve_claim
+from memora.gate.gate import GateResult, evaluate_all, evaluate_claim, summarise
+from memora.integrity.base_client import commit_hash, verify_hash
+from memora.integrity.commitment import (
+    canonical_commitment_payload,
+    commitment_label,
+    compute_commitment_hash,
+)
 from memora.llm.propose import propose_claims
 from memora.sibyl.client import PatientMemory
 from memora.sibyl.errors import SibylUnavailableError
@@ -167,4 +176,101 @@ def handoff(request: HandoffRequest) -> HandoffOut:
         proposed_count=len(proposed),
         model=settings.llm_model,
         memory=_memory_out(memory),
+    )
+
+
+@router.post("/handoff/{patient_id}/approve", response_model=CommitmentOut)
+def approve_handoff(patient_id: str, request: ApproveRequest) -> CommitmentOut:
+    """Anchor a clinician-approved handover on Base.
+
+    Two things happen before anything is signed, and both matter:
+
+    1. The clinician's role must carry approval authority. A surgeon reviewing
+       a ward handover cannot approve it, and that comes from the same
+       authority table the gate uses -- not a separate permission list that
+       could drift out of step with it.
+
+    2. Every submitted claim is RE-VERIFIED against Sibyl right now. The client
+       submits what it was shown, and the server independently re-resolves and
+       re-gates each claim against current memory. Trusting a client-supplied
+       verdict would let a caller anchor whatever it liked; re-checking means
+       the onchain commitment attests to a state the server confirmed against
+       persistent memory at approval time. Delete the memory layer and this
+       endpoint cannot produce a commitment at all.
+
+    Only a hash reaches the chain. No claim text, no clinical detail.
+    """
+    if request.patient_id != patient_id:
+        raise HTTPException(
+            status_code=400,
+            detail="patient_id in the path and body must match.",
+        )
+
+    clinician = _require_clinician(request.clinician_id)
+    if not clinician.can_approve_handoff:
+        raise HTTPException(
+            status_code=403,
+            detail=(f"{clinician.name} ({clinician.role.value}) is not "
+                    "authorised to approve a handover."),
+        )
+
+    memory = PatientMemory(patient_id, require_data=True)
+
+    verified: list[dict] = []
+    for claim in request.claims:
+        check = resolve_claim(memory, claim.text, claim.related_kind,
+                              claim.related_name)
+        decision = evaluate_claim(memory, check, clinician.role)
+        if decision.result is GateResult.BLOCK:
+            raise HTTPException(
+                status_code=409,
+                detail={
+                    "error": "claim_not_verifiable",
+                    "detail": ("Refusing to commit: a submitted claim does not "
+                               "pass verification against current memory."),
+                    "claim": claim.text,
+                    "reason": decision.reason,
+                },
+            )
+        verified.append({"text": claim.text, "gate_result": decision.result.value})
+
+    payload = canonical_commitment_payload(patient_id, request.situation.value,
+                                           verified)
+    digest = compute_commitment_hash(payload)
+    label = commitment_label(patient_id, request.situation.value)
+
+    receipt = commit_hash(digest, label)
+
+    return CommitmentOut(
+        patient_id=patient_id,
+        situation=request.situation.value,
+        approved_by=clinician.name,
+        claim_count=len(verified),
+        commitment_hash="0x" + digest.hex(),
+        label=label,
+        **receipt,
+    )
+
+
+@router.get("/commitment/{commitment_hash}/verify", response_model=VerifyOut)
+def verify_commitment(commitment_hash: str) -> VerifyOut:
+    """Read a commitment back off Base. No key, no gas, no patient data."""
+    raw = commitment_hash.removeprefix("0x")
+    try:
+        digest = bytes.fromhex(raw)
+    except ValueError as e:
+        raise HTTPException(status_code=422,
+                            detail="commitment_hash must be hex.") from e
+    if len(digest) != 32:
+        raise HTTPException(status_code=422,
+                            detail="commitment_hash must be 32 bytes (SHA-256).")
+
+    result = verify_hash(digest)
+    return VerifyOut(
+        commitment_hash="0x" + digest.hex(),
+        exists=result["exists"],
+        timestamp=result["timestamp"],
+        committer=result["committer"],
+        basescan_url=("https://sepolia.basescan.org/address/"
+                      f"{settings.base_commitment_contract_address}"),
     )

@@ -30,4 +30,5 @@ markers = [
     "integration: exercises a real on-disk Sibyl store",
     "compliance: hackathon gate-criterion checks",
     "llm: makes a real call to the configured model provider",
+    "chain: sends a real transaction to Base Sepolia (costs testnet gas)",
 ]
