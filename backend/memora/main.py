@@ -15,6 +15,7 @@ The mapping is the honest-failure contract:
 import logging
 
 from fastapi import FastAPI, Request
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
 from memora.api.routes import router
@@ -89,5 +90,13 @@ def _commitment_exists(_request: Request, exc: CommitmentExistsError) -> JSONRes
         content={"error": "commitment_exists", "detail": str(exc)},
     )
 
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=settings.cors_allow_origins,
+    allow_credentials=False,
+    allow_methods=["GET", "POST"],
+    allow_headers=["Content-Type"],
+)
 
 app.include_router(router)

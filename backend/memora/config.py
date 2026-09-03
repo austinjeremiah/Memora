@@ -42,6 +42,20 @@ class Settings(BaseSettings):
     max_evidence_items: int = 8
     gate_strict_mode: bool = True
 
+    # Frontend origins allowed to call this API from a browser. No CORS
+    # middleware existed before this was added -- without it, every
+    # browser-based fetch from the frontend is silently blocked. Defaults
+    # cover the two hosts a local Next.js dev server binds to; override via
+    # CORS_ALLOW_ORIGINS (comma-separated) for a deployed frontend origin.
+    cors_allow_origins: list[str] = ["http://localhost:3000", "http://127.0.0.1:3000"]
+
+    @field_validator("cors_allow_origins", mode="before")
+    @classmethod
+    def _split_origins(cls, v):
+        if isinstance(v, str):
+            return [origin.strip() for origin in v.split(",") if origin.strip()]
+        return v
+
     @field_validator("sibyl_db_path")
     @classmethod
     def _expand(cls, v: Path) -> Path:
