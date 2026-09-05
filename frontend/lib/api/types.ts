@@ -203,6 +203,28 @@ export interface ContextOut {
   memory: MemoryStatusOut;
 }
 
+/**
+ * Documenting a clinical event. An ordinary write path — this is how an
+ * adverse reaction reaches a record — and the thing that makes memory
+ * contradict itself, which is what Sentinel then detects.
+ */
+export interface RecordEventRequest {
+  event_type: string;
+  summary: string;
+  related_kind: string;
+  related_name: string;
+  severity?: string | null;
+  timestamp?: string | null;
+  source_id?: string | null;
+}
+
+export interface RecordEventOut {
+  patient_id: string;
+  event_id: string;
+  memory_version: number;
+  recorded_at: string;
+}
+
 // ---------------------------------------------------------------------------
 // Sentinel — the proactive path. No model is involved in producing any of this.
 // ---------------------------------------------------------------------------

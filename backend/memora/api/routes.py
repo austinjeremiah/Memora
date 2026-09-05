@@ -7,6 +7,8 @@ anywhere, never a 200 carrying an empty brief.
 """
 
 import time
+from datetime import UTC, datetime
+from uuid import uuid4
 
 from fastapi import APIRouter, HTTPException
 
@@ -27,6 +29,8 @@ from memora.api.schemas import (
     MemoryStatusOut,
     PatientMemoryOut,
     PatientSummaryOut,
+    RecordEventOut,
+    RecordEventRequest,
     SentinelRunOut,
     SentinelRunRequest,
     SinceLastReviewOut,
@@ -61,6 +65,8 @@ from memora.integrity.commitment import (
     compute_evidence_root,
 )
 from memora.llm.propose import propose_claims
+from memora.ontology.events import ALL_EVENT_TYPES, ClinicalEvent
+from memora.ontology.kinds import ALL_KINDS
 from memora.sentinel.digest import SENTINEL_SYSTEM_ID
 from memora.sentinel.runner import since_last_review, sweep
 from memora.sibyl.client import (
@@ -164,6 +170,54 @@ def get_patient_memory(patient_id: str, event_limit: int = 200) -> PatientMemory
     """
     _reject_reserved(patient_id)
     return PatientMemoryOut(**full_memory(patient_id, event_limit=event_limit))
+
+
+@router.post("/patients/{patient_id}/events", response_model=RecordEventOut)
+def record_event(patient_id: str, request: RecordEventRequest) -> RecordEventOut:
+    """Document a clinical event against a patient's journal.
+
+    An ordinary write path, not a demo affordance -- this is how an adverse
+    reaction gets onto a record in the first place. It goes through the same
+    repository facade as ingestion, so it is quota-checked and it bumps the
+    patient's memory version like any other write.
+
+    It is also what makes Sentinel demonstrable on real data. Synthea never
+    prescribes a drug a patient is allergic to, so genuine drift does not occur
+    in the generated set. Recording a reaction to a medication that memory
+    still holds as active creates a REAL contradiction, which Sentinel then
+    detects independently -- rather than a finding being planted directly.
+    """
+    _reject_reserved(patient_id)
+
+    if request.event_type not in ALL_EVENT_TYPES:
+        raise HTTPException(
+            status_code=422,
+            detail=f"Unknown event_type '{request.event_type}'. "
+                   f"Known: {', '.join(sorted(ALL_EVENT_TYPES))}")
+    if request.related_kind not in ALL_KINDS:
+        raise HTTPException(
+            status_code=422,
+            detail=f"Unknown related_kind '{request.related_kind}'. "
+                   f"Known: {', '.join(ALL_KINDS)}")
+
+    memory = PatientMemory(patient_id, require_data=True)
+    event = ClinicalEvent(
+        event_type=request.event_type,
+        summary=request.summary,
+        timestamp=request.timestamp or datetime.now(UTC).isoformat(),
+        related_kind=request.related_kind,
+        related_name=request.related_name,
+        source_id=request.source_id or f"recorded-{uuid4().hex[:12]}",
+        severity=request.severity,
+    )
+    event_id = memory.log_event(event)
+
+    return RecordEventOut(
+        patient_id=patient_id,
+        event_id=event_id,
+        memory_version=memory.memory_version(),
+        recorded_at=event.timestamp,
+    )
 
 
 @router.get("/patients/{patient_id}/context", response_model=ContextOut)

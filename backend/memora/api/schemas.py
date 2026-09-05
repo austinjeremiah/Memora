@@ -303,3 +303,29 @@ class AttestationPayloadOut(BaseModel):
     expected_signer: str | None = None
     signer_mode: str            # "wallet" | "synthetic_demo_key"
     claim_count: int
+
+
+class RecordEventRequest(BaseModel):
+    """A clinical event being documented now.
+
+    This is an ordinary clinical operation, not a demo affordance: adverse
+    reactions, discontinuations and results are recorded as they happen. It
+    matters for Sentinel because new information is precisely what makes
+    memory contradict itself -- a medication recorded as active becomes a
+    contradiction the moment a reaction to it is documented.
+    """
+
+    event_type: str = Field(min_length=1, max_length=64)
+    summary: str = Field(min_length=1, max_length=500)
+    related_kind: str = Field(min_length=1, max_length=64)
+    related_name: str = Field(min_length=1, max_length=512)
+    severity: str | None = None
+    timestamp: str | None = None      # ISO 8601; defaults to now
+    source_id: str | None = None
+
+
+class RecordEventOut(BaseModel):
+    patient_id: str
+    event_id: str
+    memory_version: int
+    recorded_at: str

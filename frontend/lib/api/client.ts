@@ -17,6 +17,8 @@ import {
   MemoraApiError,
   PatientMemoryOut,
   PatientSummaryOut,
+  RecordEventOut,
+  RecordEventRequest,
   ReadyzOut,
   SentinelRunOut,
   SentinelRunRequest,
@@ -205,6 +207,17 @@ export function getPatientContext(
   const q = new URLSearchParams({ situation, clinician_id: clinicianId });
   return request<ContextOut>(
     `/patients/${encodeURIComponent(patientId)}/context?${q}`
+  );
+}
+
+/** Document a clinical event against a patient's journal. */
+export function recordEvent(
+  patientId: string,
+  body: RecordEventRequest
+): Promise<RecordEventOut> {
+  return request<RecordEventOut>(
+    `/patients/${encodeURIComponent(patientId)}/events`,
+    { method: "POST", body: JSON.stringify(body) }
   );
 }
 
