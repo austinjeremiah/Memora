@@ -261,7 +261,21 @@ def test_verify_reports_an_uncommitted_hash_as_absent(client, seeded):
 @pytest.mark.chain
 @pytest.mark.llm
 def test_approved_handoff_is_anchored_onchain_and_reads_back(client, seeded):
-    """End to end: recall -> propose -> gate -> approve -> Base -> verify."""
+    """End to end: recall -> propose -> gate -> approve -> Base -> verify.
+
+    A unique marker fact is added first so this run's approved state differs
+    from every previous run's. The commitment hash is a digest of the approved
+    CONTENT, so without it a re-run would produce an identical hash and the
+    contract would correctly refuse to re-commit -- the replay protection
+    working, but indistinguishable here from a broken test.
+    """
+    import uuid
+
+    from memora.ontology.kinds import STATUS_ACTIVE
+    marker = uuid.uuid4().hex[:8]
+    PatientMemory(PATIENT).set_fact(KIND_MEDICATION, f"drug_{marker}",
+                                    {"label": marker}, status=STATUS_ACTIVE)
+
     handoff = client.post("/handoff", json={"patient_id": PATIENT,
                                             "situation": "icu_to_ward",
                                             "clinician_id": "dr_maya"}).json()
@@ -271,6 +285,9 @@ def test_approved_handoff_is_anchored_onchain_and_reads_back(client, seeded):
         for c in handoff["claims"] if c["gate_result"] != "BLOCK"
     ]
     assert approvable, "nothing survived the gate to approve"
+    approvable.append({"text": f"Marker medication {marker} is active",
+                       "related_kind": KIND_MEDICATION,
+                       "related_name": f"drug_{marker}"})
 
     body = _approve_body(approvable)
     r = client.post(f"/handoff/{PATIENT}/approve", json=body)

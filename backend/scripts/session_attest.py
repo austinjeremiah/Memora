@@ -38,6 +38,7 @@ from memora.integrity.commitment import (
     compute_context_hash,
     compute_evidence_root,
 )
+from memora.integrity.errors import CommitmentExistsError
 from memora.ontology.kinds import KIND_ALLERGY, KIND_MEDICATION
 from memora.sibyl.client import PatientMemory
 
@@ -94,11 +95,22 @@ print(f"    digest  {attestation.digest}")
 print(f"    expires in {attestation.expires_at - attestation.issued_at}s")
 
 print("\n[5] submitting to Base Sepolia -- the CONTRACT verifies the signature")
-receipt = submit_attestation(attestation)
-print(f"    tx:       {receipt['tx_hash']}")
-print(f"    block:    {receipt['block_number']}  gas: {receipt['gas_used']}")
-print(f"    relayer:  {receipt['relayer']}  (pays gas, did NOT sign)")
-print(f"    basescan: {receipt['basescan_url']}")
+
+# The state hash is a digest of the APPROVED CONTENT, so approving the same
+# claims for the same patient and situation twice produces the same hash by
+# design. The contract refuses to re-attest it, which is the replay protection
+# doing its job rather than an error -- so re-running this script reports the
+# existing attestation instead of failing. That keeps the demo repeatable
+# without weakening the contract or making the hash artificially unique.
+try:
+    receipt = submit_attestation(attestation)
+    print(f"    tx:       {receipt['tx_hash']}")
+    print(f"    block:    {receipt['block_number']}  gas: {receipt['gas_used']}")
+    print(f"    relayer:  {receipt['relayer']}  (pays gas, did NOT sign)")
+    print(f"    basescan: {receipt['basescan_url']}")
+except CommitmentExistsError:
+    print("    REPLAY REFUSED by the contract -- this exact approved state was")
+    print("    already attested. The first attestation stands unchanged.")
 
 print("\n[6] reading it back from the chain...")
 confirmed = verify_onchain(state_hash)
