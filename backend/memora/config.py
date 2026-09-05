@@ -39,6 +39,29 @@ class Settings(BaseSettings):
     # cryptographically attributed signature. Never commit a real value.
     attestation_seed: str = ""
 
+    # OPTION B signer authorisation: clinician_id -> wallet address, as
+    # "dr_maya:0xABC...,dr_arun:0xDEF...". Only a pre-registered address may
+    # sign as that clinician; a wallet signing as someone it is not mapped to
+    # is refused even though its signature is cryptographically valid.
+    #
+    # A clinician with no registered wallet falls back to their synthetic demo
+    # key, so the system still works with no wallet configured at all.
+    clinician_wallets: dict[str, str] = {}
+
+    @field_validator("clinician_wallets", mode="before")
+    @classmethod
+    def _parse_wallets(cls, v):
+        if isinstance(v, str):
+            mapping = {}
+            for pair in v.split(","):
+                if ":" not in pair:
+                    continue
+                cid, _, addr = pair.partition(":")
+                if cid.strip() and addr.strip():
+                    mapping[cid.strip()] = addr.strip()
+            return mapping
+        return v
+
     max_evidence_items: int = 8
     gate_strict_mode: bool = True
 

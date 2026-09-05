@@ -45,19 +45,57 @@ def synthetic_address(clinician_id: str) -> str:
     return Account.from_key(synthetic_private_key(clinician_id)).address
 
 
-def authorized_signers() -> dict[str, str]:
-    """address -> clinician_id, for every persona that may sign.
+def registered_wallet(clinician_id: str) -> str | None:
+    """The wallet address pre-registered for this persona, if any.
 
-    An address outside this map is not an authorised signer, however valid its
-    signature is cryptographically -- a correct signature from an unknown party
-    is exactly what this check exists to reject.
+    OPTION B authorisation: a clinician may sign from their own wallet only if
+    that exact address is mapped to them in config. This is stricter than
+    accepting whatever address a request presents -- a valid signature from an
+    unregistered wallet is refused, and a registered wallet cannot sign as a
+    different clinician.
     """
-    return {synthetic_address(cid): cid for cid in CLINICIANS}
+    addr = settings.clinician_wallets.get(clinician_id)
+    return addr
+
+
+def authorized_signers() -> dict[str, str]:
+    """address -> clinician_id, for every key that may sign.
+
+    Two sources: each persona's synthetic demo key, and any wallet address
+    registered to them in config. An address in neither is not an authorised
+    signer, however valid its signature is cryptographically -- a correct
+    signature from an unknown party is exactly what this check exists to
+    reject.
+    """
+    signers = {synthetic_address(cid): cid for cid in CLINICIANS}
+    for cid, addr in settings.clinician_wallets.items():
+        if cid in CLINICIANS and addr:
+            signers[addr.lower()] = cid
+            signers[addr] = cid
+    return signers
+
+
+def may_sign_as(address: str, clinician_id: str) -> bool:
+    """Whether THIS address is permitted to sign as THIS clinician.
+
+    Not the same question as is_authorized. Without this check, dr_priya's
+    registered wallet could produce a valid signature attributed to dr_maya --
+    the signature would verify, the signer would be authorised, and the
+    attribution would still be wrong.
+    """
+    if not address:
+        return False
+    if address.lower() == synthetic_address(clinician_id).lower():
+        return True
+    registered = settings.clinician_wallets.get(clinician_id)
+    return bool(registered) and registered.lower() == address.lower()
 
 
 def is_authorized(address: str) -> bool:
-    return address in authorized_signers()
+    signers = authorized_signers()
+    return address in signers or address.lower() in signers
 
 
 def clinician_for_address(address: str) -> str | None:
-    return authorized_signers().get(address)
+    signers = authorized_signers()
+    return signers.get(address) or signers.get(address.lower())
