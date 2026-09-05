@@ -29,7 +29,7 @@ export default function Exceptionalities() {
               <div className="framer-lusdcv" data-framer-name="Main">
                 <div className="framer-kz5tbq" data-framer-name="Alpha Range Technology" data-framer-component-type="RichTextContainer" style={{transform: "none"}}>
                   <h2 className="framer-text framer-styles-preset-mnfyzd" data-styles-preset="muXEgmE57">
-                    What makes the memory load-bearing
+                    Why the memory has to be there
                   </h2>
                 </div>
               </div>

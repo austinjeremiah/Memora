@@ -25,6 +25,17 @@ STORE="$TMP/memory.db"
 # SIBYL_DB_PATH is the real setting name, so it is honoured by every entry
 # point including inline -c calls. MEMORA_DB is kept for the demo scripts.
 export MEMORA_DB="$STORE" SIBYL_DB_PATH="$STORE"
+
+# HOME is redirected because Sibyl's free-tier cap is per ACCOUNT, not per
+# store: sibyl_memory_client.aggregate_db_size() sums this run's store WITH
+# ~/.sibyl-memory/memory.db and the Hermes profile stores. Without this the
+# script competed for one 5 MB budget against the developer's demo store and
+# died in stage 1 with CapExceededError -- measured at 5,246,976 bytes against
+# a 5,242,880 cap, over by 4 KB, with every later stage failing for want of
+# ingested data. A test whose result depends on unrelated state elsewhere on
+# the machine is not a test, so this run gets a home of its own.
+export HOME="$TMP/home"
+mkdir -p "$HOME"
 cd "$BACKEND"
 
 PASS=0; FAIL=0

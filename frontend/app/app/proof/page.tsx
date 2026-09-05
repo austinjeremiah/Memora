@@ -102,27 +102,22 @@ export default function ProofPage() {
   return (
     <div className="stack stack--loose">
       <div className="stack stack--tight">
-        <h1 className="page-title">The gate criterion</h1>
+        <h1 className="page-title">Endpoint probe</h1>
         <p className="subtle" style={{ margin: 0, maxWidth: 700 }}>
-          <em>
-            &ldquo;Delete the Sibyl Memory layer. Does the project still do what it
-            claims? If yes, it is not load-bearing, and it is disqualified.&rdquo;
-          </em>
-        </p>
-        <p className="subtle" style={{ margin: 0, maxWidth: 700 }}>
-          Run the probe below with memory present, then delete{" "}
-          <code className="mono">memory.db</code> and run it again. Every clinical
-          endpoint must <strong>refuse</strong> — not return an empty result that
-          looks like an answer.
+          Calls every endpoint and shows what came back. Run it once with the
+          store in place, then delete <code className="mono">memory.db</code> and
+          run it again: every clinical endpoint should <strong>refuse</strong>,
+          rather than return an empty result that reads like an answer.
         </p>
       </div>
 
-      <Notice tone="warn" title="Why this needed an explicit guard">
-        <code className="mono">MemoryClient.local()</code> silently <strong>recreates</strong>{" "}
-        an empty store when <code className="mono">memory.db</code> is missing — it does
-        not raise. Without a check before the client is ever constructed, MEMORA
-        would have answered 200 with an empty brief and failed this criterion
-        while every test stayed green.
+      <Notice tone="warn" title="Why the store is checked before it is opened">
+        <code className="mono">MemoryClient.local()</code> silently{" "}
+        <strong>recreates</strong> an empty store when{" "}
+        <code className="mono">memory.db</code> is missing. It does not raise. So
+        the file is checked before the client is constructed; without that,
+        MEMORA would answer 200 from an empty store while every test stayed
+        green.
       </Notice>
 
       <Card>
@@ -197,8 +192,7 @@ export default function ProofPage() {
       {done && refused === clinical.length && (
         <Notice tone="warn" title="Memory is gone, and MEMORA refused">
           Every clinical endpoint returned 503. Nothing answered from an empty
-          store, and the store was not silently recreated. That is the criterion
-          satisfied — the refusal is the feature.
+          store, and the store was not silently recreated.
         </Notice>
       )}
 

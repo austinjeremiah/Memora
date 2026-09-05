@@ -104,7 +104,11 @@ export default function SentinelPage() {
           </div>
 
           {run.findings.length === 0 ? (
-            <NoDrift onRecorded={() => void sweep()} />
+            <EmptyState title="No contradictions found">
+              Memory is self-consistent across every record checked. Synthea
+              never prescribes a drug a patient is allergic to, so a freshly
+              ingested store has no drift to find.
+            </EmptyState>
           ) : (
             <Section title="Findings">
               <div className="stack">
@@ -114,6 +118,14 @@ export default function SentinelPage() {
               </div>
             </Section>
           )}
+
+          {/* Always available. This used to live inside the no-drift empty
+              state, so the moment ANY patient had a finding the only way to
+              document a reaction disappeared -- and the sweep is global across
+              all three patients, so one finding hid the control for every one
+              of them. Recording a clinical event is an ordinary operation, not
+              something that should be gated on the store being clean. */}
+          <DocumentReaction onRecorded={() => void sweep()} />
 
           {history.length > 1 && (
             <Section title="Across runs">
@@ -195,12 +207,14 @@ function FindingCard({ finding }: { finding: FindingOut }) {
 }
 
 /**
+ * Document a real adverse reaction and let Sentinel find the contradiction.
+ *
  * Synthea never prescribes a drug a patient is allergic to, so a clean store
- * genuinely has no drift. Rather than plant a finding, this documents a real
- * clinical event — which is how contradictions arise in practice — and lets
- * Sentinel detect the result on its own.
+ * genuinely has no drift. Rather than plant a finding, this records an
+ * ordinary clinical event — which is how contradictions arise in practice —
+ * and the finding that follows is detected rather than seeded.
  */
-function NoDrift({ onRecorded }: { onRecorded: () => void }) {
+function DocumentReaction({ onRecorded }: { onRecorded: () => void }) {
   const [patients, setPatients] = useState<PatientSummaryOut[] | null>(null);
   const [patientId, setPatientId] = useState("");
   const [memory, setMemory] = useState<PatientMemoryOut | null>(null);
@@ -245,17 +259,13 @@ function NoDrift({ onRecorded }: { onRecorded: () => void }) {
   };
 
   return (
-    <EmptyState title="No contradictions found">
-      <div className="stack" style={{ marginTop: 10 }}>
-        <p style={{ margin: 0 }}>
-          Memory is self-consistent across every record checked. Synthea never
-          prescribes a drug a patient is allergic to, so a freshly ingested store
-          has no drift to find.
-        </p>
-        <p style={{ margin: 0 }}>
-          To see Sentinel work, document a real adverse reaction to a medication
-          the store still holds as active. That is how contradictions arise in
-          practice — and the finding will then be <em>detected</em>, not planted.
+    <Section title="Document an adverse reaction">
+      <Card>
+      <div className="stack">
+        <p className="subtle" style={{ margin: 0, maxWidth: 640 }}>
+          Record a reaction to a medication the store still holds as active.
+          That is how contradictions arise in practice, and the finding that
+          follows is <em>detected</em> by Sentinel rather than planted.
         </p>
 
         {err && <Notice tone="error" title="Could not record">{err}</Notice>}
@@ -311,11 +321,13 @@ function NoDrift({ onRecorded }: { onRecorded: () => void }) {
               </select>
             </Field>
           </div>
-          <Button onClick={() => void submit()} disabled={busy || !medication}>
+          <Button variant="primary" onClick={() => void submit()}
+                  disabled={busy || !medication}>
             {busy ? "Recording…" : "Document a reaction"}
           </Button>
         </div>
       </div>
-    </EmptyState>
+      </Card>
+    </Section>
   );
 }

@@ -42,7 +42,7 @@ export default function SettingsPage() {
           <div className="stack">
             <Field
               label="Base URL"
-              hint={`Default ${DEFAULT_API_BASE_URL} — matches scripts/run_api.sh. Stored in this browser only.`}
+              hint={`Default ${DEFAULT_API_BASE_URL}, matching scripts/run_api.sh. Stored in this browser only.`}
             >
               <input className="input" value={url} onChange={(e) => setUrl(e.target.value)}
                      placeholder={DEFAULT_API_BASE_URL} spellCheck={false} />
@@ -72,16 +72,15 @@ export default function SettingsPage() {
         <Card>
           <div className="stack stack--tight">
             <p style={{ margin: 0 }} className="subtle">
-              Almost nothing. Patients, clinicians and quota limits are read from
-              the backend on every request rather than cached here — an earlier
-              version hardcoded a patient id and a quota cap, and both went stale.
+              Almost nothing. Patients, clinicians and quota limits are fetched
+              from the backend on every request, so nothing here can go stale.
             </p>
             <ul className="subtle" style={{ margin: "6px 0 0", paddingLeft: 18 }}>
               <li>The API base URL above, in <code className="mono">localStorage</code></li>
               <li>
-                Situations — {SITUATIONS.length} values (
-                {SITUATIONS.map((s) => s.value).join(", ")}). The one genuinely
-                static list, because no endpoint exposes the enum.
+                Situations: {SITUATIONS.length} values (
+                {SITUATIONS.map((s) => s.value).join(", ")}). The only static
+                list, because no endpoint exposes the enum.
               </li>
             </ul>
           </div>
@@ -92,8 +91,8 @@ export default function SettingsPage() {
         <Card>
           {lastKnownDbSizeBytes === null ? (
             <span className="dim">
-              Nothing observed yet — open a patient and the store size appears here
-              and in the status strip.
+              Nothing observed yet. Open a patient and the store size appears
+              here and in the status strip.
             </span>
           ) : (
             <div className="stack stack--tight">
@@ -103,8 +102,8 @@ export default function SettingsPage() {
                   ` of ${(lastKnownCapBytes / 1024).toFixed(0)} KB`}
               </span>
               <span className="dim">
-                Both figures come from the backend on every response. The cap is
-                never a constant here — it changed once already.
+                Both figures come from the backend on every response, including
+                the cap.
               </span>
             </div>
           )}
