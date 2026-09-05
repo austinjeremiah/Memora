@@ -3,6 +3,8 @@
 import { getApiBaseUrl } from "./baseUrl";
 import {
   ApproveRequest,
+  AskOut,
+  AskRequest,
   AttestationOut,
   AttestationPayloadOut,
   AttestationVerifyOut,
@@ -208,6 +210,19 @@ export function getPatientContext(
   return request<ContextOut>(
     `/patients/${encodeURIComponent(patientId)}/context?${q}`
   );
+}
+
+/**
+ * Ask a question of a patient's memory.
+ *
+ * Retrieval is driven by the question via Sibyl's FTS5 index rather than by a
+ * fixed situation. Everything after retrieval is unchanged -- the same gate
+ * decides, so a question earns the model no extra latitude.
+ */
+export function askMemory(patientId: string, body: AskRequest): Promise<AskOut> {
+  return request<AskOut>(`/patients/${encodeURIComponent(patientId)}/ask`, {
+    method: "POST", body: JSON.stringify(body),
+  });
 }
 
 /** Document a clinical event against a patient's journal. */

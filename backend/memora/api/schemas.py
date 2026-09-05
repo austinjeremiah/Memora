@@ -329,3 +329,36 @@ class RecordEventOut(BaseModel):
     event_id: str
     memory_version: int
     recorded_at: str
+
+
+class AskRequest(BaseModel):
+    question: str = Field(min_length=3, max_length=500)
+    clinician_id: str = Field(min_length=1, max_length=64)
+
+
+class MatchedRecordOut(BaseModel):
+    kind: str
+    name: str
+    status: str | None
+    body: dict | list | None
+
+
+class AskOut(BaseModel):
+    """An answer to a clinician's question, and everything behind it.
+
+    `answer` is what a clinician reads first, but it is not trusted on its own:
+    `claims` are the individual assertions it rests on, each carrying the
+    gate's verdict. An answer whose claims were all blocked is shown as a
+    refusal, not as prose.
+    """
+
+    patient_id: str
+    question: str
+    search_terms: list[str]
+    matched: list[MatchedRecordOut]
+    answer: str
+    claims: list[ClaimOut]
+    summary: dict[str, int]
+    answered: bool
+    model: str
+    memory: MemoryStatusOut

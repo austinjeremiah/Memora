@@ -24,7 +24,7 @@ These describe what was actually built.
 | [F6](F6-sentinel-and-drift.md) | Sentinel UI, drift graph, record events | done |
 | [F7](F7-attestation-and-wallet.md) | Attestation + wallet signing (wagmi) | done |
 | [F8](F8-gate-proof-and-polish.md) | Gate-proof page + polish | done |
-| F9 | Question box — FTS search → propose → gate | next |
+| [F9](F9-ask-memory.md) | Ask memory a question (FTS5 → propose → gate) | done |
 
 ## Running everything
 

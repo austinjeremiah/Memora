@@ -203,6 +203,41 @@ export interface ContextOut {
   memory: MemoryStatusOut;
 }
 
+// ---------------------------------------------------------------------------
+// Asking a question of memory
+// ---------------------------------------------------------------------------
+
+export interface AskRequest {
+  question: string;
+  clinician_id: string;
+}
+
+export interface MatchedRecordOut {
+  kind: string;
+  name: string;
+  status: string | null;
+  body: Record<string, unknown> | unknown[] | null;
+}
+
+/**
+ * `answer` is what a clinician reads first, but it is not trusted on its own:
+ * `claims` are the assertions it rests on, each carrying the gate's verdict.
+ * When `answered` is false the answer is empty — either nothing matched, or
+ * every supporting claim was refused.
+ */
+export interface AskOut {
+  patient_id: string;
+  question: string;
+  search_terms: string[];
+  matched: MatchedRecordOut[];
+  answer: string;
+  claims: ClaimOut[];
+  summary: Record<string, number>;
+  answered: boolean;
+  model: string;
+  memory: MemoryStatusOut;
+}
+
 /**
  * Documenting a clinical event. An ordinary write path — this is how an
  * adverse reaction reaches a record — and the thing that makes memory

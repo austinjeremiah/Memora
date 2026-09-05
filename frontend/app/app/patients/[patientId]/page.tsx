@@ -8,6 +8,7 @@ import {
   MemoraApiError, PatientMemoryOut, StoredEventOut, StoredFactOut, TrendOut,
 } from "@/lib/api/types";
 import { KIND_LABELS } from "@/lib/config/demo-data";
+import AskMemory from "@/components/app/AskMemory";
 import {
   Badge, Button, Card, Mono, Notice, QuotaMeter, Section,
   SeverityDot, SkeletonList, StatTile,
@@ -82,6 +83,8 @@ export default function PatientMemoryPage({ params }: {
               </div>
             </Card>
           </div>
+
+          <AskMemory patientId={decoded} />
 
           <Trajectories trends={data.trends} />
           <Facts facts={data.facts} />

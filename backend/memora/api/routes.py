@@ -14,6 +14,8 @@ from fastapi import APIRouter, HTTPException
 
 from memora.api.schemas import (
     ApproveRequest,
+    AskOut,
+    AskRequest,
     AttestationOut,
     AttestationPayloadOut,
     AttestationVerifyOut,
@@ -26,6 +28,7 @@ from memora.api.schemas import (
     FindingOut,
     HandoffOut,
     HandoffRequest,
+    MatchedRecordOut,
     MemoryStatusOut,
     PatientMemoryOut,
     PatientSummaryOut,
@@ -64,6 +67,7 @@ from memora.integrity.commitment import (
     compute_context_hash,
     compute_evidence_root,
 )
+from memora.llm.answer import answer_question, search_memory
 from memora.llm.propose import propose_claims
 from memora.ontology.events import ALL_EVENT_TYPES, ClinicalEvent
 from memora.ontology.kinds import ALL_KINDS
@@ -170,6 +174,77 @@ def get_patient_memory(patient_id: str, event_limit: int = 200) -> PatientMemory
     """
     _reject_reserved(patient_id)
     return PatientMemoryOut(**full_memory(patient_id, event_limit=event_limit))
+
+
+@router.post("/patients/{patient_id}/ask", response_model=AskOut)
+def ask(patient_id: str, request: AskRequest) -> AskOut:
+    """Answer a clinician's question from this patient's memory.
+
+    Retrieval here is driven by the QUESTION rather than by a fixed situation,
+    using Sibyl's FTS5 index -- the search capability the rest of the app never
+    exercises. Everything after retrieval is unchanged: the model proposes, the
+    Evidence Resolver checks each claim against the record, and the same Gate
+    decides. A question earns the model no extra latitude.
+
+    When nothing matches, the model is never asked. Inviting it to answer from
+    an empty result set is precisely how a confident fabrication happens.
+    """
+    _reject_reserved(patient_id)
+    clinician = _require_clinician(request.clinician_id)
+
+    memory = PatientMemory(patient_id, require_data=True)
+    context = search_memory(memory, request.question)
+
+    if context.is_empty():
+        quota = memory.quota()
+        return AskOut(
+            patient_id=patient_id, question=request.question,
+            search_terms=context.terms, matched=[], answer="", claims=[],
+            summary={r.value: 0 for r in GateResult}, answered=False,
+            model=settings.llm_model,
+            memory=MemoryStatusOut(db_size_bytes=quota["db_size_bytes"],
+                                   soft_cap_bytes=quota["soft_cap_bytes"],
+                                   pct_used=quota.get("pct_used")),
+        )
+
+    proposed = answer_question(context)
+    checks = resolve_all(memory, proposed["claims"])
+    decisions = evaluate_all(memory, checks, clinician.role)
+
+    claims = [
+        ClaimOut(
+            text=check.claim_text, gate_result=decision.result.value,
+            reason=decision.reason, triggered_rules=list(decision.triggered_rules),
+            source_kind=check.source_kind, source_name=check.source_name,
+            fact_status=check.fact_status,
+            source_events=[
+                SourceEventOut(source_id=e.source_id, event_type=e.event_type,
+                               timestamp=e.timestamp, summary=e.summary,
+                               severity=e.severity)
+                for e in check.source_events
+            ],
+        )
+        for check, decision in zip(checks, decisions, strict=True)
+    ]
+
+    # An answer is only presentable if something behind it survived the gate.
+    # Prose with every supporting claim blocked is a refusal, not an answer.
+    supported = any(c.gate_result != GateResult.BLOCK.value for c in claims)
+
+    return AskOut(
+        patient_id=patient_id,
+        question=request.question,
+        search_terms=context.terms,
+        matched=[MatchedRecordOut(kind=m["category"], name=m["name"],
+                                  status=m["status"], body=m["body"])
+                 for m in context.matches],
+        answer=proposed["answer"] if supported else "",
+        claims=claims,
+        summary=summarise(decisions),
+        answered=supported,
+        model=settings.llm_model,
+        memory=_memory_out(memory),
+    )
 
 
 @router.post("/patients/{patient_id}/events", response_model=RecordEventOut)
