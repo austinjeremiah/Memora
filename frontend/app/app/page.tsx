@@ -2,88 +2,103 @@
 
 import Link from "next/link";
 import { useAppStatus } from "@/lib/api/AppStatusContext";
+import { Button, Card, Notice, QuotaMeter, Section, SkeletonList } from "@/components/app/ui";
 
-export default function HomePage() {
-  const { backendReachable, sibylReady, checking } = useAppStatus();
+/**
+ * The first thing a judge sees. It answers one question before anything
+ * else: is the memory layer actually alive?
+ *
+ * That framing is deliberate. MEMORA's whole claim is that it cannot answer
+ * without Sibyl, so the app opens by showing whether Sibyl is there rather
+ * than by showing a dashboard that would look identical either way.
+ */
+export default function StatusPage() {
+  const { backendReachable, sibylReady, lastKnownDbSizeBytes, lastKnownCapBytes } =
+    useAppStatus();
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
-      <h1 style={{ margin: 0 }}>MEMORA — System Status</h1>
-      <p style={{ opacity: 0.75, margin: 0 }}>
-        Persistent clinical memory with a deterministic safety gate. This confirms the
-        backend and Sibyl memory are reachable before you start a handoff.
-      </p>
-
-      <section
-        style={{
-          border: "1px solid rgba(255,255,255,0.15)",
-          borderRadius: "12px",
-          padding: "20px",
-          display: "flex",
-          flexDirection: "column",
-          gap: "10px",
-        }}
-      >
-        {backendReachable === null && (
-          // First mount, nothing fetched yet — a skeleton shape, not the
-          // "actively re-checking" spinner text used lower down (§9.6).
-          <div style={{ display: "flex", flexDirection: "column", gap: "8px" }} aria-label="Loading status">
-            <div style={{ height: "16px", width: "55%", borderRadius: "4px", background: "rgba(255,255,255,0.08)" }} />
-            <div style={{ height: "16px", width: "40%", borderRadius: "4px", background: "rgba(255,255,255,0.08)" }} />
-          </div>
-        )}
-
-        {/* backendReachable === false is handled by BackendGate one level up —
-            it replaces this whole page before it renders, so there's no
-            corresponding branch here to duplicate that message. */}
-
-        {backendReachable === true && (
-          <p style={{ margin: 0, color: "#4ade80" }}>Backend is reachable.</p>
-        )}
-
-        {backendReachable === true && sibylReady === false && (
-          <p style={{ margin: 0, color: "#ffb020" }}>
-            Backend is up, but Sibyl memory isn&apos;t available right now. Handoff
-            requests will fail until this is resolved — you can still browse this app.
-          </p>
-        )}
-
-        {backendReachable === true && sibylReady === true && (
-          <p style={{ margin: 0, color: "#4ade80" }}>Sibyl memory is ready.</p>
-        )}
-      </section>
-
-      <div style={{ display: "flex", gap: "12px", flexWrap: "wrap" }}>
-        <Link
-          href="/app/handoff/new"
-          style={{
-            padding: "12px 20px",
-            borderRadius: "10px",
-            background: "#fff",
-            color: "#000",
-            textDecoration: "none",
-            fontWeight: 600,
-          }}
-        >
-          Start a New Handoff
-        </Link>
-        <Link
-          href="/app/compare"
-          style={{
-            padding: "12px 20px",
-            borderRadius: "10px",
-            border: "1px solid rgba(255,255,255,0.3)",
-            color: "#fff",
-            textDecoration: "none",
-          }}
-        >
-          Compare Situations
-        </Link>
+    <div className="stack stack--loose">
+      <div className="stack stack--tight">
+        <h1 className="page-title">System status</h1>
+        <p className="subtle" style={{ margin: 0, maxWidth: 620 }}>
+          Persistent clinical memory with a deterministic safety gate. Every claim an
+          AI proposes is checked against real records before a clinician sees it — so
+          the first thing worth confirming is that those records are reachable.
+        </p>
       </div>
 
-      {checking && backendReachable !== null && (
-        <p style={{ margin: 0, opacity: 0.5, fontSize: "13px" }}>Refreshing status...</p>
-      )}
+      <Section title="Memory layer">
+        <Card>
+          {backendReachable === null && <SkeletonList rows={2} />}
+
+          {/* backendReachable === false is handled by BackendGate one level up,
+              which replaces this page entirely — no duplicate branch here. */}
+
+          {backendReachable === true && (
+            <div className="stack">
+              <div className="row" style={{ gap: 10 }}>
+                <span
+                  style={{
+                    width: 8, height: 8, borderRadius: 999,
+                    background: sibylReady ? "var(--allow)" : "var(--review)",
+                  }}
+                />
+                <span style={{ fontWeight: 600 }}>
+                  {sibylReady === null
+                    ? "Checking Sibyl…"
+                    : sibylReady
+                      ? "Sibyl memory is ready"
+                      : "Sibyl memory is unavailable"}
+                </span>
+              </div>
+
+              {sibylReady === false && (
+                <Notice tone="warn" title="Handoffs will refuse, not guess">
+                  The backend is up but cannot open its memory store. Every clinical
+                  request will return 503 rather than answer from nothing — that
+                  refusal is the intended behaviour, not a bug.
+                </Notice>
+              )}
+
+              {lastKnownDbSizeBytes !== null && (
+                <QuotaMeter used={lastKnownDbSizeBytes} cap={lastKnownCapBytes} />
+              )}
+            </div>
+          )}
+        </Card>
+      </Section>
+
+      <Section title="Start here">
+        <div className="grid grid--3">
+          <Card tight>
+            <div className="stack stack--tight">
+              <strong>Run a handoff</strong>
+              <span className="subtle">
+                Recall, propose, verify, gate. Watch unsourced claims get refused.
+              </span>
+              <div><Button href="/app/handoff/new" variant="primary">New handoff</Button></div>
+            </div>
+          </Card>
+
+          <Card tight>
+            <div className="stack stack--tight">
+              <strong>Compare situations</strong>
+              <span className="subtle">
+                One patient, one store, three clinical questions — three different
+                answers.
+              </span>
+              <div><Button href="/app/compare">Compare</Button></div>
+            </div>
+          </Card>
+        </div>
+      </Section>
+
+      <p className="dim" style={{ margin: 0 }}>
+        Synthetic patient data only — generated with Synthea. Not for clinical use.{" "}
+        <Link href="/app/settings" style={{ color: "var(--accent-text)" }}>
+          Configure the API endpoint
+        </Link>
+      </p>
     </div>
   );
 }

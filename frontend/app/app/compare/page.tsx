@@ -56,7 +56,7 @@ function Column({ label, state }: { label: string; state: ColumnState }) {
 }
 
 export default function ComparePage() {
-  const { reportDbSize } = useAppStatus();
+  const { reportMemory } = useAppStatus();
 
   const [patientId, setPatientId] = useState("");
   const [clinicianId, setClinicianId] = useState("");
@@ -104,7 +104,7 @@ export default function ComparePage() {
     requestHandoff({ patient_id: patientId, situation, clinician_id: clinicianId })
       .then((res) => {
         setState({ status: "loaded", response: res });
-        reportDbSize(res.memory.db_size_bytes);
+        reportMemory(res.memory);
       })
       .catch((e) => setState({ status: "error", error: errorMessage(e) }));
   };

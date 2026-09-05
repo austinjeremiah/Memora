@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import "@/styles/framer.css";
 import "@/styles/breakpoints.css";
 import "@/styles/fonts.css";
+import "@/styles/app.css";
 
 const FAVICON =
   "https://framerusercontent.com/images/1VtXtUrlVK0Y1WHlW4GIfnhxFho.png";

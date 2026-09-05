@@ -26,7 +26,7 @@ export default function HandoffResultPage() {
 
 function HandoffResultInner() {
   const params = useSearchParams();
-  const { reportDbSize } = useAppStatus();
+  const { reportMemory } = useAppStatus();
 
   const patientId = params.get("patientId") ?? "";
   const situation = (params.get("situation") ?? "") as Situation | "";
@@ -61,7 +61,7 @@ function HandoffResultInner() {
       .then((res) => {
         setResponse(res);
         setStatus("loaded");
-        reportDbSize(res.memory.db_size_bytes);
+        reportMemory(res.memory);
       })
       .catch((e) => {
         setError(errorMessage(e));

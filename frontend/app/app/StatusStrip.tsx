@@ -1,83 +1,68 @@
 "use client";
 
 import { useAppStatus } from "@/lib/api/AppStatusContext";
+import { QuotaMeter } from "@/components/app/ui";
 
-function formatBytes(bytes: number): string {
-  return `${(bytes / 1024).toFixed(0)} KB`;
-}
-
+/**
+ * Always-visible truth about whether memory is actually reachable.
+ *
+ * The store size and its cap both come from the backend. An earlier version
+ * hardcoded a 2 MiB cap here, which was the figure in Sibyl's own docs and
+ * wrong -- the real cap is 5,242,880 bytes. A frontend constant for a
+ * backend fact goes stale silently, so there isn't one any more.
+ */
 export default function StatusStrip() {
   const {
-    backendReachable,
-    sibylReady,
-    checking,
-    lastCheckedAt,
-    lastKnownDbSizeBytes,
-    lastKnownDbSizeCheckedAt,
-    refresh,
+    backendReachable, sibylReady, checking, lastCheckedAt,
+    lastKnownDbSizeBytes, lastKnownCapBytes, refresh,
   } = useAppStatus();
 
-  const FREE_TIER_CAP_BYTES = 2_097_152; // documented Sibyl free-tier cap
-
-  let backendLabel = "Checking backend...";
-  if (backendReachable === true) backendLabel = "Backend: reachable";
-  if (backendReachable === false) backendLabel = "Backend: unreachable";
-
-  let sibylLabel = "";
-  if (backendReachable === true) {
-    if (sibylReady === true) sibylLabel = "Sibyl: ready";
-    else if (sibylReady === false) sibylLabel = "Sibyl: unavailable";
-    else sibylLabel = "Sibyl: checking...";
-  }
+  const dot = (colour: string) => (
+    <span style={{ width: 7, height: 7, borderRadius: 999, background: colour, display: "inline-block" }} />
+  );
 
   return (
     <div
+      className="row"
       style={{
-        display: "flex",
-        flexWrap: "wrap",
-        gap: "16px",
-        alignItems: "center",
-        padding: "10px 20px",
-        borderBottom: "1px solid rgba(255,255,255,0.12)",
-        fontSize: "13px",
-        color: "rgba(255,255,255,0.75)",
+        padding: "9px 24px",
+        borderBottom: "0.5px solid var(--border)",
+        fontSize: 13,
+        color: "var(--text-muted)",
+        gap: 20,
       }}
     >
-      <span style={{ color: backendReachable === false ? "#ff6b6b" : "inherit" }}>
-        {backendLabel}
+      <span className="row" style={{ gap: 7 }}>
+        {backendReachable === null ? dot("var(--text-dim)")
+          : backendReachable ? dot("var(--allow)") : dot("var(--block)")}
+        {backendReachable === null ? "Checking backend…"
+          : backendReachable ? "Backend reachable" : "Backend unreachable"}
       </span>
-      {sibylLabel && (
-        <span style={{ color: sibylReady === false ? "#ffb020" : "inherit" }}>
-          {sibylLabel}
+
+      {backendReachable === true && (
+        <span className="row" style={{ gap: 7 }}>
+          {sibylReady === null ? dot("var(--text-dim)")
+            : sibylReady ? dot("var(--allow)") : dot("var(--review)")}
+          {sibylReady === null ? "Sibyl…" : sibylReady ? "Sibyl memory ready" : "Sibyl unavailable"}
         </span>
       )}
-      <span>
-        {lastKnownDbSizeBytes !== null
-          ? `Sibyl store: ${formatBytes(lastKnownDbSizeBytes)} of ${formatBytes(
-              FREE_TIER_CAP_BYTES
-            )} (${((lastKnownDbSizeBytes / FREE_TIER_CAP_BYTES) * 100).toFixed(1)}% of free tier) — observed ${
-              lastKnownDbSizeCheckedAt ? new Date(lastKnownDbSizeCheckedAt).toLocaleTimeString() : ""
-            }`
-          : "Sibyl quota: not known yet — observed after your first handoff request"}
-      </span>
-      <span style={{ marginLeft: "auto", opacity: 0.6 }}>
-        {lastCheckedAt ? `Last checked ${new Date(lastCheckedAt).toLocaleTimeString()}` : ""}
+
+      {lastKnownDbSizeBytes !== null ? (
+        <QuotaMeter used={lastKnownDbSizeBytes} cap={lastKnownCapBytes} compact />
+      ) : (
+        <span className="dim">Store size unknown until the first memory read</span>
+      )}
+
+      <span style={{ marginLeft: "auto" }} className="dim">
+        {lastCheckedAt ? `checked ${new Date(lastCheckedAt).toLocaleTimeString()}` : ""}
       </span>
       <button
         type="button"
+        className="btn btn--ghost btn--sm"
         onClick={() => void refresh()}
         disabled={checking}
-        style={{
-          background: "rgba(255,255,255,0.08)",
-          border: "1px solid rgba(255,255,255,0.2)",
-          borderRadius: "6px",
-          color: "inherit",
-          padding: "4px 10px",
-          fontSize: "12px",
-          cursor: checking ? "default" : "pointer",
-        }}
       >
-        {checking ? "Refreshing..." : "Refresh status"}
+        {checking ? "Checking…" : "Refresh"}
       </button>
     </div>
   );

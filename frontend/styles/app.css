@@ -1,0 +1,185 @@
+/**
+ * MEMORA app design tokens.
+ *
+ * Extracted from the Framer-exported landing page rather than invented, so
+ * the app and the marketing site read as one product. The landing's own CSS
+ * is generated class-soup (`framer-13xxj9k` and friends) which cannot be
+ * reused for data-dense clinical UI -- so the VALUES are lifted and given
+ * names here, and the app builds its own components on top.
+ *
+ * Source of each value is noted where it came from a specific landing rule.
+ */
+
+:root {
+  /* Surfaces — landing uses rgb(12,15,22) as page ground, rgba(6,7,10,.95) for cards */
+  --bg: rgb(12, 15, 22);
+  --bg-elevated: rgba(6, 7, 10, 0.95);
+  --bg-subtle: rgba(255, 255, 255, 0.04);
+  --bg-hover: rgba(255, 255, 255, 0.07);
+  --bg-active: rgba(255, 255, 255, 0.1);
+
+  /* Text — the landing's four-step ramp */
+  --text: rgb(255, 255, 255);
+  --text-secondary: rgb(209, 212, 227);
+  --text-muted: rgb(155, 169, 196);
+  --text-dim: rgb(132, 145, 171);
+
+  /* The signature border: blue-tinted, hairline. Used on every landing card. */
+  --border: rgba(125, 164, 255, 0.16);
+  --border-strong: rgba(125, 164, 255, 0.32);
+
+  /* Brand */
+  --accent: rgb(1, 117, 255);
+  --accent-soft: rgba(1, 117, 255, 0.12);
+  --accent-text: rgb(125, 164, 255);
+
+  /* Gate verdicts. Semantic, not decorative — these three colours carry the
+     product's core meaning and must stay distinguishable at a glance. */
+  --allow: rgb(74, 222, 128);
+  --allow-soft: rgba(74, 222, 128, 0.12);
+  --review: rgb(255, 205, 125);      /* the landing's amber */
+  --review-soft: rgba(255, 205, 125, 0.12);
+  --block: rgb(255, 107, 107);
+  --block-soft: rgba(255, 107, 107, 0.12);
+
+  /* Severity, for clinical events */
+  --critical: rgb(255, 107, 107);
+  --warning: rgb(255, 205, 125);
+  --info: rgb(155, 169, 196);
+
+  /* Radii — landing uses 999px pills and 24px cards */
+  --r-pill: 999px;
+  --r-lg: 24px;
+  --r-md: 14px;
+  --r-sm: 8px;
+
+  --space-1: 4px;  --space-2: 8px;  --space-3: 12px;
+  --space-4: 16px; --space-5: 24px; --space-6: 32px; --space-8: 48px;
+
+  --font: "Inter", "Inter Display", -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-display: "Edgar Sigma", "Inter Display", sans-serif;
+  --font-mono: ui-monospace, "SF Mono", Menlo, monospace;
+}
+
+/* ---------- app shell ---------- */
+
+.app-root {
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 14px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+
+.app-main { max-width: 1120px; margin: 0 auto; padding: var(--space-6) var(--space-5) var(--space-8); }
+.app-main--wide { max-width: 1400px; }
+
+.app-nav {
+  display: flex; align-items: center; gap: var(--space-5);
+  padding: var(--space-4) var(--space-5);
+  border-bottom: 0.5px solid var(--border);
+  background: var(--bg-elevated);
+  position: sticky; top: 0; z-index: 20;
+  backdrop-filter: blur(12px);
+}
+.app-nav__brand {
+  font-family: var(--font-display); font-size: 18px;
+  letter-spacing: 0.02em; margin-right: var(--space-3);
+}
+.app-nav__link {
+  color: var(--text-muted); text-decoration: none; font-size: 14px;
+  padding: 6px 12px; border-radius: var(--r-pill); transition: 140ms ease;
+}
+.app-nav__link:hover { color: var(--text); background: var(--bg-hover); }
+.app-nav__link--active { color: var(--text); background: var(--bg-active); font-weight: 600; }
+
+/* ---------- primitives ---------- */
+
+.card {
+  border: 0.5px solid var(--border);
+  border-radius: var(--r-lg);
+  background: var(--bg-elevated);
+  padding: var(--space-5);
+}
+.card--tight { padding: var(--space-4); border-radius: var(--r-md); }
+.card--flush { padding: 0; overflow: hidden; }
+
+.stack { display: flex; flex-direction: column; gap: var(--space-4); }
+.stack--tight { gap: var(--space-2); }
+.stack--loose { gap: var(--space-6); }
+.row { display: flex; align-items: center; gap: var(--space-3); flex-wrap: wrap; }
+.row--between { justify-content: space-between; }
+.grid { display: grid; gap: var(--space-4); }
+.grid--3 { grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); }
+
+h1.page-title { font-family: var(--font-display); font-size: 30px; font-weight: 400; margin: 0; letter-spacing: 0.01em; }
+h2.section-title { font-size: 15px; font-weight: 600; margin: 0; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); }
+.subtle { color: var(--text-muted); }
+.dim { color: var(--text-dim); font-size: 13px; }
+.mono { font-family: var(--font-mono); font-size: 12px; letter-spacing: -0.01em; }
+
+.btn {
+  display: inline-flex; align-items: center; gap: var(--space-2);
+  padding: 10px 20px; border-radius: var(--r-pill);
+  border: 0.5px solid var(--border); background: var(--bg-hover);
+  color: var(--text); font-family: var(--font); font-size: 14px; font-weight: 500;
+  cursor: pointer; text-decoration: none; transition: 140ms ease;
+}
+.btn:hover:not(:disabled) { background: var(--bg-active); border-color: var(--border-strong); }
+.btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.btn--primary { background: var(--text); color: rgb(0, 0, 0); border-color: transparent; font-weight: 600; }
+.btn--primary:hover:not(:disabled) { background: var(--text-secondary); }
+.btn--accent { background: var(--accent); color: #fff; border-color: transparent; font-weight: 600; }
+.btn--ghost { background: transparent; }
+.btn--sm { padding: 6px 14px; font-size: 13px; }
+
+.badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 4px 12px; border-radius: var(--r-pill);
+  font-size: 12px; font-weight: 600; letter-spacing: 0.03em;
+  border: 0.5px solid transparent; white-space: nowrap;
+}
+.badge--allow  { color: var(--allow);  background: var(--allow-soft);  border-color: var(--allow); }
+.badge--review { color: var(--review); background: var(--review-soft); border-color: var(--review); }
+.badge--block  { color: var(--block);  background: var(--block-soft);  border-color: var(--block); }
+.badge--neutral{ color: var(--text-muted); background: var(--bg-hover); border-color: var(--border); }
+.badge--accent { color: var(--accent-text); background: var(--accent-soft); border-color: var(--border-strong); }
+
+.field { display: flex; flex-direction: column; gap: 6px; }
+.field__label { font-size: 12px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; }
+.input, .select {
+  padding: 11px 14px; border-radius: var(--r-md);
+  border: 0.5px solid var(--border); background: var(--bg-subtle);
+  color: var(--text); font-family: var(--font); font-size: 14px; width: 100%;
+}
+.input:focus, .select:focus { outline: none; border-color: var(--accent); }
+.select option { background: var(--bg); color: var(--text); }
+
+.notice { border-radius: var(--r-md); padding: var(--space-4); border: 0.5px solid var(--border); background: var(--bg-subtle); }
+.notice--error { border-color: var(--block); background: var(--block-soft); }
+.notice--warn { border-color: var(--review); background: var(--review-soft); }
+.notice__title { font-weight: 600; margin: 0 0 4px 0; }
+
+.meter { height: 4px; border-radius: var(--r-pill); background: var(--bg-active); overflow: hidden; }
+.meter__fill { height: 100%; background: var(--accent); border-radius: var(--r-pill); transition: width 300ms ease; }
+.meter__fill--warn { background: var(--review); }
+.meter__fill--full { background: var(--block); }
+
+.skeleton { border-radius: var(--r-sm); background: var(--bg-hover); animation: pulse 1.4s ease-in-out infinite; }
+@keyframes pulse { 0%,100% { opacity: 0.5 } 50% { opacity: 0.9 } }
+
+.table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.table th { text-align: left; font-weight: 600; color: var(--text-muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; padding: 10px 14px; border-bottom: 0.5px solid var(--border); }
+.table td { padding: 11px 14px; border-bottom: 0.5px solid rgba(125,164,255,0.08); vertical-align: top; }
+.table tr:last-child td { border-bottom: none; }
+.table tr:hover td { background: var(--bg-subtle); }
+
+.scroll-x { overflow-x: auto; }
+
+@media (max-width: 720px) {
+  .app-nav { gap: var(--space-2); padding: var(--space-3); overflow-x: auto; }
+  .app-main { padding: var(--space-4) var(--space-3) var(--space-6); }
+  h1.page-title { font-size: 24px; }
+}

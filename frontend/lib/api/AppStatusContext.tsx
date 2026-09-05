@@ -8,10 +8,17 @@ interface AppStatus {
   sibylReady: boolean | null;
   lastCheckedAt: number | null;
   lastKnownDbSizeBytes: number | null;
+  /**
+   * The free-tier cap, as reported by the backend — never a frontend
+   * constant. It has already changed once (docs said 2 MiB; the real value
+   * is 5,242,880), and a hardcoded copy went stale silently. Every response
+   * carrying MemoryStatusOut refreshes this.
+   */
+  lastKnownCapBytes: number | null;
   lastKnownDbSizeCheckedAt: number | null;
   checking: boolean;
   refresh: () => Promise<void>;
-  reportDbSize: (bytes: number) => void;
+  reportMemory: (memory: { db_size_bytes: number; soft_cap_bytes: number | null }) => void;
 }
 
 const AppStatusCtx = createContext<AppStatus | null>(null);
@@ -24,6 +31,7 @@ export function AppStatusProvider({ children }: { children: React.ReactNode }) {
   const [lastCheckedAt, setLastCheckedAt] = useState<number | null>(null);
   const [checking, setChecking] = useState(false);
   const [lastKnownDbSizeBytes, setLastKnownDbSizeBytes] = useState<number | null>(null);
+  const [lastKnownCapBytes, setLastKnownCapBytes] = useState<number | null>(null);
   const [lastKnownDbSizeCheckedAt, setLastKnownDbSizeCheckedAt] = useState<number | null>(null);
 
   const refresh = useCallback(async () => {
@@ -53,10 +61,14 @@ export function AppStatusProvider({ children }: { children: React.ReactNode }) {
     setChecking(false);
   }, []);
 
-  const reportDbSize = useCallback((bytes: number) => {
-    setLastKnownDbSizeBytes(bytes);
-    setLastKnownDbSizeCheckedAt(Date.now());
-  }, []);
+  const reportMemory = useCallback(
+    (memory: { db_size_bytes: number; soft_cap_bytes: number | null }) => {
+      setLastKnownDbSizeBytes(memory.db_size_bytes);
+      setLastKnownCapBytes(memory.soft_cap_bytes);
+      setLastKnownDbSizeCheckedAt(Date.now());
+    },
+    []
+  );
 
   const didInit = useRef(false);
   useEffect(() => {
@@ -74,10 +86,11 @@ export function AppStatusProvider({ children }: { children: React.ReactNode }) {
         sibylReady,
         lastCheckedAt,
         lastKnownDbSizeBytes,
+        lastKnownCapBytes,
         lastKnownDbSizeCheckedAt,
         checking,
         refresh,
-        reportDbSize,
+        reportMemory,
       }}
     >
       {children}
