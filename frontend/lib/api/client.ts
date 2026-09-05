@@ -26,6 +26,11 @@ import {
   SentinelRunRequest,
   Situation,
   SinceLastReviewOut,
+  OpenSessionOut,
+  PriorContextOut,
+  RuntimeOut,
+  SessionOut,
+  ThreadOut,
 } from "./types";
 
 /**
@@ -294,4 +299,57 @@ export function verifyCommitment(hash: string): Promise<CommitmentVerifyOut> {
   return request<CommitmentVerifyOut>(
     `/commitment/${encodeURIComponent(hash)}/verify`
   );
+}
+
+// ---------------------------------------------------------------------------
+// Sessions and threads
+// ---------------------------------------------------------------------------
+
+/** Identity of the API process. Changes only when the backend restarts. */
+export function getRuntime(): Promise<RuntimeOut> {
+  return request<RuntimeOut>("/runtime");
+}
+
+/**
+ * Open a clinician session and receive what it inherited.
+ *
+ * The response's `prior` is read BEFORE the new session is written, so a
+ * session never inherits itself, and `crossed_restart` reports whether any of
+ * what it inherited was written by a process that is no longer running.
+ */
+export function openSession(patientId: string, clinicianId: string): Promise<OpenSessionOut> {
+  return request<OpenSessionOut>(`/patients/${encodeURIComponent(patientId)}/sessions`, {
+    method: "POST", body: JSON.stringify({ clinician_id: clinicianId }),
+  });
+}
+
+export function listSessions(patientId: string): Promise<SessionOut[]> {
+  return request<SessionOut[]>(`/patients/${encodeURIComponent(patientId)}/sessions`);
+}
+
+export function closeSession(patientId: string, sessionId: string): Promise<SessionOut> {
+  return request<SessionOut>(
+    `/patients/${encodeURIComponent(patientId)}/sessions/${encodeURIComponent(sessionId)}/close`,
+    { method: "POST" }
+  );
+}
+
+export function getPriorContext(patientId: string, excludeSessionId?: string
+                                ): Promise<PriorContextOut> {
+  const q = excludeSessionId
+    ? `?exclude_session_id=${encodeURIComponent(excludeSessionId)}` : "";
+  return request<PriorContextOut>(
+    `/patients/${encodeURIComponent(patientId)}/prior-context${q}`);
+}
+
+export function openThread(patientId: string, sessionId: string, title?: string
+                           ): Promise<ThreadOut> {
+  return request<ThreadOut>(`/patients/${encodeURIComponent(patientId)}/threads`, {
+    method: "POST", body: JSON.stringify({ session_id: sessionId, title: title ?? null }),
+  });
+}
+
+export function listThreads(patientId: string, sessionId?: string): Promise<ThreadOut[]> {
+  const q = sessionId ? `?session_id=${encodeURIComponent(sessionId)}` : "";
+  return request<ThreadOut[]>(`/patients/${encodeURIComponent(patientId)}/threads${q}`);
 }

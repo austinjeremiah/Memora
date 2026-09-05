@@ -350,6 +350,10 @@ class RecordEventOut(BaseModel):
 class AskRequest(BaseModel):
     question: str = Field(min_length=3, max_length=500)
     clinician_id: str = Field(min_length=1, max_length=64)
+    # Optional so every existing caller and test keeps working unchanged. When
+    # present, the question is recorded on the thread and the answer reports
+    # what earlier sessions contributed to it.
+    thread_id: str | None = None
 
 
 class MatchedRecordOut(BaseModel):
@@ -378,3 +382,111 @@ class AskOut(BaseModel):
     answered: bool
     model: str
     memory: MemoryStatusOut
+    influence: SessionInfluenceOut | None = None
+
+
+# ---------------------------------------------------------------------------
+# Sessions and threads
+#
+# The eligibility gate asks for recall "in a genuinely fresh session". These
+# carry `boot_id` for exactly that reason: a session written by a process that
+# no longer exists proves the recall crossed a restart, rather than asking a
+# judge to take the demo's word for it.
+# ---------------------------------------------------------------------------
+
+class OpenSessionRequest(BaseModel):
+    clinician_id: str
+
+
+class OpenThreadRequest(BaseModel):
+    session_id: str
+    title: str | None = None
+
+
+class AskInThreadRequest(BaseModel):
+    question: str
+    clinician_id: str
+    thread_id: str | None = None
+
+
+class ThreadQuestionOut(BaseModel):
+    question: str
+    asked_at: str
+    answered: bool
+    answer_preview: str
+    verdicts: dict[str, int] = {}
+    records_matched: int = 0
+    boot_id: str | None = None
+    thread_id: str | None = None
+    session_id: str | None = None
+    clinician_id: str | None = None
+
+
+class ThreadOut(BaseModel):
+    thread_id: str
+    session_id: str
+    patient_id: str
+    clinician_id: str | None = None
+    title: str | None = None
+    opened_at: str
+    boot_id: str | None = None
+    questions: list[ThreadQuestionOut] = []
+
+
+class SessionDecisionOut(BaseModel):
+    kind: str
+    detail: str
+    at: str
+    boot_id: str | None = None
+    session_id: str | None = None
+    clinician_id: str | None = None
+
+
+class SessionOut(BaseModel):
+    session_id: str
+    clinician_id: str
+    clinician_name: str | None = None
+    patient_id: str
+    started_at: str
+    ended_at: str | None = None
+    boot_id: str | None = None
+    threads: list[str] = []
+    questions_asked: int = 0
+    decisions: list[SessionDecisionOut] = []
+
+
+class PriorContextOut(BaseModel):
+    """What a fresh session inherits. `crossed_restart` is the gate's evidence."""
+
+    current_boot_id: str
+    prior_session_count: int
+    sessions_from_dead_processes: int
+    crossed_restart: bool
+    memory_version: int
+    sessions: list[SessionOut] = []
+    questions: list[ThreadQuestionOut] = []
+    decisions: list[SessionDecisionOut] = []
+    critical_events: list[StoredEventOut] = []
+
+
+class SessionInfluenceOut(BaseModel):
+    """How memory written before this session changed this answer.
+
+    `changed_the_answer` is true when a claim was blocked or flagged by a rule
+    that fired on evidence an earlier session recorded. That is the difference
+    between recalling context and being changed by it -- the distinction the
+    eligibility gate is built around.
+    """
+
+    prior_sessions: int
+    sessions_from_dead_processes: int
+    crossed_restart: bool
+    current_boot_id: str
+    shaping_events: list[StoredEventOut] = []
+    changed_the_answer: bool = False
+    changed_claims: list[str] = []
+
+
+class OpenSessionOut(BaseModel):
+    session: SessionOut
+    prior: PriorContextOut

@@ -9,10 +9,10 @@ memora.sibyl.preflight, not by importing this module.
 """
 
 from pathlib import Path
-from typing import Literal
+from typing import Annotated, Literal
 
 from pydantic import field_validator
-from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic_settings import BaseSettings, NoDecode, SettingsConfigDict
 
 
 class Settings(BaseSettings):
@@ -46,7 +46,15 @@ class Settings(BaseSettings):
     #
     # A clinician with no registered wallet falls back to their synthetic demo
     # key, so the system still works with no wallet configured at all.
-    clinician_wallets: dict[str, str] = {}
+    #
+    # NoDecode is load-bearing. pydantic-settings JSON-decodes complex
+    # fields (dict, list) inside the env source itself, BEFORE any
+    # validator runs -- so without it the documented
+    # "dr_arun:0xABC" form raises JSONDecodeError from the dotenv
+    # source and _parse_wallets below is never reached. Confirmed by
+    # running it: the string form had never worked from .env at all,
+    # only when a dict was passed directly in Python.
+    clinician_wallets: Annotated[dict[str, str], NoDecode] = {}
 
     @field_validator("clinician_wallets", mode="before")
     @classmethod

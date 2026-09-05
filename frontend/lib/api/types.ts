@@ -208,6 +208,7 @@ export interface ContextOut {
 // ---------------------------------------------------------------------------
 
 export interface AskRequest {
+  thread_id?: string | null;
   question: string;
   clinician_id: string;
 }
@@ -235,6 +236,7 @@ export interface AskOut {
   summary: Record<string, number>;
   answered: boolean;
   model: string;
+  influence?: SessionInfluenceOut | null;
   memory: MemoryStatusOut;
 }
 
@@ -441,4 +443,93 @@ export class MemoraApiError extends Error {
     this.code = params.code;
     this.detail = params.detail;
   }
+}
+
+// ---------------------------------------------------------------------------
+// Sessions and threads
+//
+// `boot_id` is the load-bearing field. It identifies the API process that
+// wrote a record, so a session carrying a different boot_id than the running
+// process is proof its writer is gone — and therefore that everything recalled
+// from it came out of Sibyl rather than out of anything still in memory.
+// ---------------------------------------------------------------------------
+
+export interface ThreadQuestionOut {
+  question: string;
+  asked_at: string;
+  answered: boolean;
+  answer_preview: string;
+  verdicts: Record<string, number>;
+  records_matched: number;
+  boot_id: string | null;
+  thread_id: string | null;
+  session_id: string | null;
+  clinician_id: string | null;
+}
+
+export interface ThreadOut {
+  thread_id: string;
+  session_id: string;
+  patient_id: string;
+  clinician_id: string | null;
+  title: string | null;
+  opened_at: string;
+  boot_id: string | null;
+  questions: ThreadQuestionOut[];
+}
+
+export interface SessionDecisionOut {
+  kind: string;
+  detail: string;
+  at: string;
+  boot_id: string | null;
+  session_id: string | null;
+  clinician_id: string | null;
+}
+
+export interface SessionOut {
+  session_id: string;
+  clinician_id: string;
+  clinician_name: string | null;
+  patient_id: string;
+  started_at: string;
+  ended_at: string | null;
+  boot_id: string | null;
+  threads: string[];
+  questions_asked: number;
+  decisions: SessionDecisionOut[];
+}
+
+export interface PriorContextOut {
+  current_boot_id: string;
+  prior_session_count: number;
+  sessions_from_dead_processes: number;
+  crossed_restart: boolean;
+  memory_version: number;
+  sessions: SessionOut[];
+  questions: ThreadQuestionOut[];
+  decisions: SessionDecisionOut[];
+  critical_events: StoredEventOut[];
+}
+
+export interface OpenSessionOut {
+  session: SessionOut;
+  prior: PriorContextOut;
+}
+
+/** How memory written before this session changed this answer. */
+export interface SessionInfluenceOut {
+  prior_sessions: number;
+  sessions_from_dead_processes: number;
+  crossed_restart: boolean;
+  current_boot_id: string;
+  shaping_events: StoredEventOut[];
+  changed_the_answer: boolean;
+  changed_claims: string[];
+}
+
+export interface RuntimeOut {
+  boot_id: string;
+  pid: number;
+  booted_at: number;
 }

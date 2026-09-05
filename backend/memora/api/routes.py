@@ -14,6 +14,15 @@ from uuid import uuid4
 from fastapi import APIRouter, HTTPException
 
 from memora.api.schemas import (
+    AskInThreadRequest,
+    OpenSessionOut,
+    SessionInfluenceOut,
+    StoredEventOut,
+    OpenSessionRequest,
+    OpenThreadRequest,
+    PriorContextOut,
+    SessionOut,
+    ThreadOut,
     ApproveRequest,
     AskOut,
     AskRequest,
@@ -71,6 +80,19 @@ from memora.integrity.commitment import (
     compute_evidence_root,
 )
 from memora.llm.answer import answer_question, search_memory
+from memora.sessions.recall import prior_context
+from memora.sessions.runtime import BOOT_ID, boot_info
+from memora.sessions.store import (
+    close_session,
+    get_session,
+    get_thread,
+    list_sessions,
+    list_threads,
+    open_session,
+    open_thread,
+    record_decision,
+    record_question,
+)
 from memora.llm.propose import propose_claims
 from memora.ontology.events import ALL_EVENT_TYPES, ClinicalEvent
 from memora.ontology.kinds import ALL_KINDS
@@ -236,6 +258,14 @@ def ask(patient_id: str, request: AskRequest) -> AskOut:
     # Prose with every supporting claim blocked is a refusal, not an answer.
     supported = any(c.gate_result != GateResult.BLOCK.value for c in claims)
 
+    influence = _influence(memory, claims)
+    if request.thread_id:
+        record_question(memory, request.thread_id, question=request.question,
+                        answered=supported,
+                        answer=proposed["answer"] if supported else "",
+                        verdicts=summarise(decisions),
+                        matched=len(context.matches))
+
     return AskOut(
         patient_id=patient_id,
         question=request.question,
@@ -249,6 +279,37 @@ def ask(patient_id: str, request: AskRequest) -> AskOut:
         answered=supported,
         model=settings.llm_model,
         memory=_memory_out(memory),
+        influence=influence,
+    )
+
+
+def _influence(memory: PatientMemory, claims: list[ClaimOut]) -> SessionInfluenceOut:
+    """Report which earlier-session evidence actually moved this answer.
+
+    A claim counts as changed only when the gate did NOT simply allow it and
+    the record it cites is backed by a critical journal entry -- i.e. by
+    something a previous session wrote. Merely having prior sessions is not
+    influence; a wrapper would show that number and change nothing.
+    """
+    prior = prior_context(memory)
+    shaping = prior["critical_events"]
+    keys = {(e.get("related_kind"), e.get("related_name"))
+            for e in shaping if e.get("related_name")}
+
+    changed = [
+        c.text for c in claims
+        if c.gate_result != GateResult.ALLOW.value
+        and (c.source_kind, c.source_name) in keys
+    ]
+
+    return SessionInfluenceOut(
+        prior_sessions=prior["prior_session_count"],
+        sessions_from_dead_processes=prior["sessions_from_dead_processes"],
+        crossed_restart=prior["crossed_restart"],
+        current_boot_id=prior["current_boot_id"],
+        shaping_events=[StoredEventOut(**e) for e in shaping],
+        changed_the_answer=bool(changed),
+        changed_claims=changed,
     )
 
 
@@ -775,3 +836,76 @@ def sentinel_since_last_review(patient_id: str, situation: str) -> SinceLastRevi
         persisting=_findings_out(buckets["persisting"]),
         escalated=_findings_out(buckets["escalated"]),
     )
+
+
+# ---------------------------------------------------------------------------
+# Sessions and threads
+#
+# These exist to make the eligibility gate checkable. A session records the
+# BOOT_ID of the process that opened it, so a later session can report -- as
+# data, not narration -- that the process which wrote what it just recalled is
+# no longer running.
+# ---------------------------------------------------------------------------
+
+@router.get("/runtime")
+def runtime() -> dict:
+    """Identity of the running process. Changes only when the API restarts."""
+    return boot_info()
+
+
+@router.post("/patients/{patient_id}/sessions", response_model=OpenSessionOut)
+def start_session(patient_id: str, req: OpenSessionRequest) -> OpenSessionOut:
+    clinician = get_clinician(req.clinician_id)
+    if clinician is None:
+        raise HTTPException(400, f"Unknown clinician_id {req.clinician_id!r}")
+
+    memory = PatientMemory(patient_id, require_data=True)
+
+    # Read BEFORE writing, so a session never inherits itself.
+    prior = prior_context(memory)
+    session = open_session(memory, clinician.id, clinician.name)
+
+    log.info("session %s opened by %s (boot %s), %d prior sessions, %d from dead processes",
+             session["session_id"], clinician.id, BOOT_ID,
+             prior["prior_session_count"], prior["sessions_from_dead_processes"])
+    return OpenSessionOut(session=SessionOut(**session),
+                          prior=PriorContextOut(**prior))
+
+
+@router.get("/patients/{patient_id}/sessions", response_model=list[SessionOut])
+def get_sessions(patient_id: str) -> list[SessionOut]:
+    memory = PatientMemory(patient_id, require_data=True)
+    return [SessionOut(**s) for s in list_sessions(memory)]
+
+
+@router.get("/patients/{patient_id}/prior-context", response_model=PriorContextOut)
+def get_prior_context(patient_id: str, exclude_session_id: str | None = None
+                      ) -> PriorContextOut:
+    """What earlier sessions left behind for this one."""
+    memory = PatientMemory(patient_id, require_data=True)
+    return PriorContextOut(**prior_context(memory, exclude_session_id=exclude_session_id))
+
+
+@router.post("/patients/{patient_id}/sessions/{session_id}/close",
+             response_model=SessionOut)
+def end_session(patient_id: str, session_id: str) -> SessionOut:
+    memory = PatientMemory(patient_id, require_data=True)
+    body = close_session(memory, session_id)
+    if body is None:
+        raise HTTPException(404, f"Unknown session_id {session_id!r}")
+    return SessionOut(**body)
+
+
+@router.post("/patients/{patient_id}/threads", response_model=ThreadOut)
+def start_thread(patient_id: str, req: OpenThreadRequest) -> ThreadOut:
+    memory = PatientMemory(patient_id, require_data=True)
+    body = open_thread(memory, req.session_id, req.title)
+    if body is None:
+        raise HTTPException(404, f"Unknown session_id {req.session_id!r}")
+    return ThreadOut(**body)
+
+
+@router.get("/patients/{patient_id}/threads", response_model=list[ThreadOut])
+def get_threads(patient_id: str, session_id: str | None = None) -> list[ThreadOut]:
+    memory = PatientMemory(patient_id, require_data=True)
+    return [ThreadOut(**t) for t in list_threads(memory, session_id=session_id)]

@@ -9,6 +9,8 @@ import {
 } from "@/lib/api/types";
 import { KIND_LABELS } from "@/lib/config/demo-data";
 import AskMemory from "@/components/app/AskMemory";
+import SessionBar, { SessionState } from "@/components/app/SessionBar";
+import TrendChart from "@/components/app/TrendChart";
 import {
   Badge, Button, Card, Mono, Notice, QuotaMeter, Section,
   SeverityDot, SkeletonList, StatTile,
@@ -31,6 +33,10 @@ export default function PatientMemoryPage({ params }: {
 
   const [data, setData] = useState<PatientMemoryOut | null>(null);
   const [error, setError] = useState<MemoraApiError | null>(null);
+  // Held here rather than inside SessionBar so the question box can record
+  // into the open thread, and so the clinician is the session's rather than a
+  // second, separately-chosen one.
+  const [session, setSession] = useState<SessionState | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -68,7 +74,7 @@ export default function PatientMemoryPage({ params }: {
 
       {data && (
         <>
-          <div className="grid grid--3">
+          <div className="match-grid">
             <StatTile label="Facts" value={data.fact_count}
                       hint="current state — one row per record" />
             <StatTile label="Journal events" value={data.event_count}
@@ -84,7 +90,11 @@ export default function PatientMemoryPage({ params }: {
             </Card>
           </div>
 
-          <AskMemory patientId={decoded} />
+          <SessionBar patientId={decoded} onChange={setSession} />
+
+          <AskMemory patientId={decoded}
+                     threadId={session?.thread?.thread_id ?? null}
+                     clinicianId={session?.session.clinician_id ?? null} />
 
           <Trajectories trends={data.trends} />
           <Facts facts={data.facts} />
@@ -107,41 +117,102 @@ export default function PatientMemoryPage({ params }: {
 
 /** A single value is a number; the same store holding every value is a trend. */
 function Trajectories({ trends }: { trends: TrendOut[] }) {
+  const [showFlat, setShowFlat] = useState(false);
   const real = trends.filter((t) => (t.readings ?? 0) >= 2);
   if (real.length === 0) return null;
 
+  // Rank by how far a value actually moved relative to its own scale, so a
+  // heart rate that fell 25/min outranks a body height that did not move at
+  // all. Showing 25 charts at equal weight is not a summary -- it is the store
+  // dumped onto the page, and it buries the two readings worth reading.
+  const scored = real
+    .map((t) => ({ t, move: relativeMove(t) }))
+    .sort((a, b) => b.move - a.move);
+
+  const moving = scored.filter((s) => s.move > 0.02).map((s) => s.t);
+  const flat = scored.filter((s) => s.move <= 0.02).map((s) => s.t);
+  const shown = showFlat ? [...moving, ...flat] : moving;
+
   return (
-    <Section title={`Lab trajectories — ${real.length} tests with repeat readings`}>
-      <p className="dim" style={{ margin: 0 }}>
+    <Section title={`Lab trajectories — ${moving.length} of ${real.length} tests have moved`}>
+      <p className="dim" style={{ margin: 0, maxWidth: 640 }}>
         A single result is a number. The same store holding every result is a
-        trajectory — which is a different clinical fact.
+        trajectory — which is a different clinical fact. Ordered by how far each
+        value moved against its own scale; {flat.length} unchanged
+        {flat.length === 1 ? " test is" : " tests are"} folded away rather than
+        given equal weight.
       </p>
-      <div className="grid grid--3">
-        {real.map((t) => (
-          <Card key={t.name} tight>
-            <div className="stack stack--tight">
-              <div className="row row--between">
-                <strong style={{ fontSize: 13 }}>{t.test ?? t.name}</strong>
-                <DirectionBadge direction={t.direction} />
-              </div>
-              <Sparkline series={t.series} />
-              <div className="row row--between">
-                <span className="dim">
-                  {t.latest_value} {t.unit} · {t.readings} readings
-                </span>
-                {t.delta !== null && (
-                  <span className="dim">
-                    {t.delta > 0 ? "+" : ""}{t.delta}
-                  </span>
-                )}
-              </div>
-              {t.loinc && <span className="dim">LOINC {t.loinc}</span>}
+      <div className="match-grid">
+        {shown.map((t) => (
+          <div key={t.name} className="match">
+            <div className="match__head">
+              <span className="match__title">{t.test ?? t.name}</span>
+              <DirectionBadge direction={t.direction} />
             </div>
-          </Card>
+            <TrendChart series={t.series} unit={t.unit}
+                        direction={t.direction} delta={t.delta} height={104} />
+            <p className="match__read">{readTrend(t)}</p>
+            <div className="match__facts">
+              <Fact k="readings" v={t.readings ?? t.series.length} />
+              {t.latest_at && <Fact k="latest" v={t.latest_at} />}
+              {t.loinc && <Fact k="LOINC" v={t.loinc} />}
+            </div>
+          </div>
         ))}
       </div>
+      {flat.length > 0 && (
+        <div>
+          <Button onClick={() => setShowFlat(!showFlat)}>
+            {showFlat
+              ? `Hide ${flat.length} unchanged`
+              : `Show ${flat.length} unchanged test${flat.length === 1 ? "" : "s"}`}
+          </Button>
+        </div>
+      )}
     </Section>
   );
+}
+
+function Fact({ k, v }: { k: string; v: string | number }) {
+  return (
+    <div className="match__fact">
+      <span className="match__k">{k}</span>
+      <span className="match__v">{v}</span>
+    </div>
+  );
+}
+
+/** Movement as a fraction of the value's own scale, so units do not decide rank. */
+function relativeMove(t: TrendOut): number {
+  const vs = t.series.map((p) => p.value);
+  if (vs.length < 2) return 0;
+  const lo = Math.min(...vs), hi = Math.max(...vs);
+  const base = Math.abs(vs[0]) || 1;
+  return (hi - lo) / base;
+}
+
+/**
+ * The trend in a sentence.
+ *
+ * Every number here is read off the stored series -- this is the difference
+ * between displaying a record and saying what it means, and it is the whole
+ * reason a trajectory is worth keeping.
+ */
+function readTrend(t: TrendOut): string {
+  const s = t.series;
+  if (s.length < 2) return `Single reading of ${s[0]?.value ?? "—"}${unitOf(t)}.`;
+  const first = s[0], last = s[s.length - 1];
+  const span = `${first.at} to ${last.at}`;
+  const u = unitOf(t);
+  if (t.direction === "stable") {
+    return `Held at ${last.value}${u} across ${s.length} readings, ${span}.`;
+  }
+  const verb = t.direction === "rising" ? "Rose" : "Fell";
+  return `${verb} from ${first.value}${u} to ${last.value}${u} across ${s.length} readings, ${span}.`;
+}
+
+function unitOf(t: TrendOut): string {
+  return t.unit ? ` ${t.unit}` : "";
 }
 
 function DirectionBadge({ direction }: { direction: string | null }) {
@@ -149,33 +220,6 @@ function DirectionBadge({ direction }: { direction: string | null }) {
   if (direction === "falling") return <Badge tone="accent">↓ falling</Badge>;
   if (direction === "stable") return <Badge>→ stable</Badge>;
   return <Badge>single</Badge>;
-}
-
-/** Plain SVG — no chart library for six points. */
-function Sparkline({ series }: { series: { value: number; at: string }[] }) {
-  if (series.length < 2) return null;
-  const values = series.map((p) => p.value);
-  const min = Math.min(...values), max = Math.max(...values);
-  const span = max - min || 1;
-  const w = 220, h = 40;
-  const points = series.map((p, i) => {
-    const x = (i / (series.length - 1)) * w;
-    const y = h - ((p.value - min) / span) * (h - 8) - 4;
-    return `${x.toFixed(1)},${y.toFixed(1)}`;
-  }).join(" ");
-
-  return (
-    <svg viewBox={`0 0 ${w} ${h}`} width="100%" height={h} role="img"
-         aria-label={`${series.length} readings from ${series[0].at} to ${series[series.length - 1].at}`}>
-      <polyline points={points} fill="none" stroke="var(--accent)" strokeWidth="1.5"
-                strokeLinecap="round" strokeLinejoin="round" />
-      {series.map((p, i) => {
-        const x = (i / (series.length - 1)) * w;
-        const y = h - ((p.value - min) / span) * (h - 8) - 4;
-        return <circle key={i} cx={x} cy={y} r="2" fill="var(--accent)" />;
-      })}
-    </svg>
-  );
 }
 
 /** WARM state, grouped by kind, with the coding systems visible. */

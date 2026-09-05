@@ -2,9 +2,48 @@
 
 import { useEffect, useState } from "react";
 import { askMemory, getClinicians } from "@/lib/api/client";
-import { AskOut, ClinicianOut, MemoraApiError } from "@/lib/api/types";
+import { AskOut, ClinicianOut, MemoraApiError, SessionInfluenceOut } from "@/lib/api/types";
 import ClaimCard, { GateSummary } from "./ClaimCard";
-import { Badge, Button, Card, Mono, Notice, Section, SkeletonList } from "./ui";
+import MatchedRecords from "./MatchedRecords";
+import { Badge, Button, Card, Notice, Section, SkeletonList } from "./ui";
+
+/**
+ * What memory written before this session did to this answer.
+ *
+ * Only rendered when it actually changed something. A panel that appeared on
+ * every answer saying "0 prior sessions considered" would be the decorative
+ * integration the rules disqualify -- the claim is only worth making when
+ * there is a changed verdict to point at.
+ */
+function Influence({ influence }: { influence: SessionInfluenceOut }) {
+  if (!influence.changed_the_answer) return null;
+  const dead = influence.sessions_from_dead_processes;
+
+  return (
+    <div className="influence">
+      <div className="influence__head">
+        <span className="influence__title">This answer was changed by earlier memory</span>
+        <Badge tone="allow">
+          {influence.crossed_restart ? "recalled across a restart" : "same process"}
+        </Badge>
+      </div>
+      <span className="dim">
+        {influence.prior_sessions} prior session{influence.prior_sessions === 1 ? "" : "s"}
+        {dead > 0 && <> · {dead} written by {dead === 1 ? "a process" : "processes"} that has since ended</>}
+        {" · this process "}{influence.current_boot_id}
+      </span>
+      {influence.changed_claims.map((c) => (
+        <p key={c} className="influence__claim">{c}</p>
+      ))}
+      {influence.shaping_events.slice(0, 3).map((e, i) => (
+        <div key={`${e.source_id ?? i}-${i}`} className="recall__item">
+          <span className="recall__when">{e.timestamp.slice(0, 10)}</span>
+          <span className="recall__what">{e.summary}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
 
 const SUGGESTIONS = [
   "Can I restart this medication?",
@@ -24,7 +63,13 @@ const SUGGESTIONS = [
  * The interesting outcome is the refusal: ask something memory cannot support
  * and it says so, rather than producing fluent prose.
  */
-export default function AskMemory({ patientId }: { patientId: string }) {
+export default function AskMemory({ patientId, threadId, clinicianId: pinned }: {
+  patientId: string;
+  /** When inside a session, the question is recorded on this thread. */
+  threadId?: string | null;
+  /** Inside a session the clinician is the session's, not a local choice. */
+  clinicianId?: string | null;
+}) {
   const [question, setQuestion] = useState("");
   const [clinicianId, setClinicianId] = useState("");
   const [clinicians, setClinicians] = useState<ClinicianOut[] | null>(null);
@@ -41,13 +86,16 @@ export default function AskMemory({ patientId }: { patientId: string }) {
 
   const ask = async (q?: string) => {
     const text = (q ?? question).trim();
-    if (text.length < 3 || !clinicianId) return;
+    const who = pinned || clinicianId;
+    if (text.length < 3 || !who) return;
     setQuestion(text);
     setAsking(true);
     setError(null);
     setResult(null);
     try {
-      setResult(await askMemory(patientId, { question: text, clinician_id: clinicianId }));
+      setResult(await askMemory(patientId, {
+        question: text, clinician_id: who, thread_id: threadId ?? null,
+      }));
     } catch (e) {
       setError(e as MemoraApiError);
     } finally {
@@ -71,14 +119,16 @@ export default function AskMemory({ patientId }: { patientId: string }) {
               onChange={(e) => setQuestion(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && void ask()}
             />
-            <select className="select" style={{ width: 170 }} value={clinicianId}
-                    onChange={(e) => setClinicianId(e.target.value)} disabled={!clinicians}>
-              {clinicians?.map((c) => (
-                <option key={c.id} value={c.id}>{c.name}</option>
-              ))}
-            </select>
+            {!pinned && (
+              <select className="select" style={{ width: 170 }} value={clinicianId}
+                      onChange={(e) => setClinicianId(e.target.value)} disabled={!clinicians}>
+                {clinicians?.map((c) => (
+                  <option key={c.id} value={c.id}>{c.name}</option>
+                ))}
+              </select>
+            )}
             <Button variant="primary" onClick={() => void ask()}
-                    disabled={asking || question.trim().length < 3}>
+                    disabled={asking || question.trim().length < 3 || !(pinned || clinicianId)}>
               {asking ? "Searching memory…" : "Ask"}
             </Button>
           </div>
@@ -118,11 +168,13 @@ export default function AskMemory({ patientId }: { patientId: string }) {
                 </span>
               </div>
 
+              {result.influence && <Influence influence={result.influence} />}
+
               {!result.answered ? (
                 <Notice tone="warn" title="Memory does not answer this">
                   {result.matched.length === 0
                     ? "Nothing in this patient's record matches that question, so the model was never asked. Answering from an empty result set is how a confident fabrication happens."
-                    : "Records matched, but nothing the model proposed could be supported by them. Prose whose every claim was refused is a refusal, not an answer."}
+                    : `The search matched ${result.matched.length} record${result.matched.length === 1 ? "" : "s"}, but none of them support an answer to this question — so nothing is asserted. The matched records are shown below exactly as stored, rather than summarised into prose that would read as an answer.`}
                 </Notice>
               ) : (
                 <>
@@ -147,21 +199,7 @@ export default function AskMemory({ patientId }: { patientId: string }) {
                 </>
               )}
 
-              {result.matched.length > 0 && (
-                <details>
-                  <summary className="dim" style={{ cursor: "pointer" }}>
-                    What the search found in memory
-                  </summary>
-                  <div className="stack stack--tight" style={{ marginTop: 10 }}>
-                    {result.matched.map((m) => (
-                      <div key={`${m.kind}/${m.name}`} className="row" style={{ gap: 8 }}>
-                        <Mono truncate={44}>{`${m.kind}/${m.name}`}</Mono>
-                        {m.status && <Badge>{m.status}</Badge>}
-                      </div>
-                    ))}
-                  </div>
-                </details>
-              )}
+              {result.matched.length > 0 && <MatchedRecords matched={result.matched} />}
             </div>
           )}
         </div>

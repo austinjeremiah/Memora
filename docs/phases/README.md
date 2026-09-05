@@ -26,6 +26,7 @@ These describe what was actually built.
 | [F8](F8-gate-proof-and-polish.md) | Gate-proof page + polish | done |
 | [F9](F9-ask-memory.md) | Ask memory a question (FTS5 → propose → gate) | done |
 | [F10](F10-autonomous-agent.md) | Sentinel acts autonomously and writes to the record | done |
+| [F11](F11-sessions-and-fresh-session-recall.md) | Sessions + threads in Sibyl; recall proven across a process restart | done |
 
 ## Running everything
 

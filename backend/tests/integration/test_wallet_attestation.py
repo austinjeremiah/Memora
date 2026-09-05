@@ -43,6 +43,17 @@ def seeded(store):
 
 
 @pytest.fixture
+def no_wallets(monkeypatch):
+    """An empty registry, stated rather than inherited.
+
+    These tests used to read whatever the developer's .env happened to hold.
+    That passed only while CLINICIAN_WALLETS was unset -- registering a real
+    wallet, which is the entire point of the feature, broke them.
+    """
+    monkeypatch.setattr(settings, "clinician_wallets", {})
+
+
+@pytest.fixture
 def maya_wallet(monkeypatch):
     """dr_maya signs from a registered wallet; nobody else has one."""
     monkeypatch.setattr(settings, "clinician_wallets", {"dr_maya": WALLET.address})
@@ -73,7 +84,7 @@ def test_a_wallet_cannot_sign_as_a_different_clinician(maya_wallet):
     assert may_sign_as(WALLET.address, "dr_priya") is False
 
 
-def test_synthetic_keys_still_work_when_no_wallet_is_registered():
+def test_synthetic_keys_still_work_when_no_wallet_is_registered(no_wallets):
     """The system must function with no wallet configured at all."""
     assert registered_wallet("dr_arun") is None
     assert may_sign_as(synthetic_address("dr_arun"), "dr_arun") is True
@@ -95,7 +106,8 @@ def test_payload_names_the_registered_wallet_as_expected_signer(client, seeded,
     assert body["signer_mode"] == "wallet"
 
 
-def test_payload_falls_back_to_the_synthetic_key_without_a_wallet(client, seeded):
+def test_payload_falls_back_to_the_synthetic_key_without_a_wallet(client, seeded,
+                                                                  no_wallets):
     body = client.post(f"/handoff/{PATIENT}/attestation-payload",
                        json=_body()).json()
     assert body["signer_mode"] == "synthetic_demo_key"

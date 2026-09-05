@@ -220,3 +220,415 @@ h2.section-title { font-size: 13px; font-weight: 600; margin: 0; text-transform:
   .status-strip { padding: 8px 16px 12px; gap: 12px; }
   h1.page-title { font-size: 26px; }
 }
+
+/* ---------------------------------------------------------------------------
+   Trend charts and provenance
+   --------------------------------------------------------------------------- */
+
+/* TrendChart. Every label is HTML laid out by the browser -- see the note in
+   TrendChart.tsx about why nothing here positions text by glyph arithmetic. */
+.trend {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.trend__head {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  flex-wrap: nowrap;
+  overflow: hidden;
+  height: 24px;
+}
+
+.trend__value {
+  font-family: var(--font-mono);
+  font-size: 19px;
+  font-weight: 600;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+  line-height: 1.1;
+}
+
+.trend__unit {
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--text-muted);
+  margin-left: 3px;
+}
+
+.trend__at {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+  margin-left: auto;
+  white-space: nowrap;
+}
+
+/* Fixed height and nowrap: this line changes content on hover, and anything
+   that reflows here resizes every card in the grid. */
+.trend__status {
+  height: 15px;
+  line-height: 15px;
+  font-size: 11px;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.trend__status[data-dir="rising"] { color: var(--review); }
+.trend__status[data-dir="falling"] { color: var(--accent); }
+.trend__status[data-dir="hover"] { color: var(--text-secondary); }
+
+.trend__plot {
+  position: relative;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg-elevated);
+  overflow: hidden;
+}
+
+.trend__svg {
+  position: absolute;
+  inset: 8px 10px 8px 42px;
+  width: calc(100% - 52px);
+  height: calc(100% - 16px);
+  overflow: visible;
+}
+
+.trend__ax {
+  position: absolute;
+  left: 8px;
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+  pointer-events: none;
+}
+.trend__ax--hi { top: 6px; }
+.trend__ax--lo { bottom: 6px; }
+
+.trend__hit {
+  position: absolute;
+  inset: 0 10px 0 42px;
+  display: flex;
+}
+
+.trend__hitcell {
+  flex: 1;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  cursor: crosshair;
+}
+.trend__hitcell:focus-visible {
+  outline: 1px solid var(--accent);
+  outline-offset: -2px;
+}
+
+.trend__foot {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Provenance chain. Was SVG with hand-placed labels that overlapped; now a
+   grid, so a long record name can never collide with its status badge. */
+.prov {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  border-left: 1px solid var(--border);
+  margin-left: 5px;
+  padding-left: 16px;
+}
+
+.prov__node {
+  position: relative;
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 5px 0;
+}
+
+.prov__node::before {
+  content: "";
+  position: absolute;
+  left: -21px;
+  top: 11px;
+  width: 9px;
+  height: 1px;
+  background: var(--border);
+}
+
+.prov__node::after {
+  content: "";
+  position: absolute;
+  left: -24px;
+  top: 8px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--text-muted);
+  border: 1px solid var(--bg);
+}
+
+.prov__node--root::after { background: var(--accent); }
+.prov__node--root { padding-top: 0; }
+.prov__node--crit::after { background: var(--critical); }
+
+.prov__name {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text);
+  font-weight: 600;
+  word-break: break-all;
+}
+
+.prov__type {
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  color: var(--text-secondary);
+}
+
+.prov__meta {
+  margin-left: auto;
+  display: flex;
+  gap: 12px;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.prov__verdict {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+  padding-top: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+.prov__verdict::after {
+  content: "";
+  position: absolute;
+  left: -24px;
+  top: 11px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: currentColor;
+  border: 1px solid var(--bg);
+}
+
+/* Matched-record panel in the answer view. */
+.match {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--bg-elevated);
+}
+
+.match__head {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.match__title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  min-height: 2.8em;
+  flex: 1;
+  min-width: 0;
+}
+
+.match__path {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  color: var(--text-muted);
+  word-break: break-all;
+}
+
+.match__facts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(118px, 1fr));
+  gap: 8px 14px;
+}
+
+.match__fact {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.match__k {
+  font-size: 9.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--text-muted);
+}
+
+.match__v {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-secondary);
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+
+.match-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 12px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .trend__hitcell { cursor: default; }
+}
+
+/* The trend in a sentence -- interpretation, not another field dump. */
+.match__read {
+  margin: 0;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--text-secondary);
+  border-left: 2px solid var(--border);
+  padding-left: 10px;
+}
+
+/* ---------------------------------------------------------------------------
+   Sessions and recall
+   --------------------------------------------------------------------------- */
+
+.session {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.session__who {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-right: auto;
+  min-width: 0;
+}
+
+.session__name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.session__ids {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  color: var(--text-muted);
+}
+
+.session__boot {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+/* The process identity. Monospaced and boxed because it is evidence a viewer
+   is meant to compare against the value shown after a restart, not decoration. */
+.session__bootid {
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  color: var(--accent);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  padding: 2px 7px;
+  background: var(--bg-elevated);
+}
+
+.recall__item {
+  display: flex;
+  gap: 12px;
+  align-items: baseline;
+  padding: 5px 0;
+  border-top: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+
+.recall__when {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.recall__what {
+  flex: 1;
+  min-width: 180px;
+  font-size: 12.5px;
+  color: var(--text-secondary);
+  line-height: 1.45;
+}
+
+.recall__boot {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+.recall__boot--dead { color: var(--allow); }
+
+/* The influence panel: what earlier memory did to THIS answer. */
+.influence {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+  border: 1px solid var(--allow);
+  border-radius: 10px;
+  background: var(--allow-soft);
+}
+
+.influence__head {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.influence__title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.influence__claim {
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--text-secondary);
+  border-left: 2px solid var(--allow);
+  padding-left: 10px;
+}
