@@ -1,159 +1,116 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { Suspense, useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { getClinicians } from "@/lib/api/client";
-import { ClinicianOut, Situation } from "@/lib/api/types";
+import { ClinicianOut, MemoraApiError, Situation } from "@/lib/api/types";
 import { SITUATIONS } from "@/lib/config/demo-data";
 import PatientPicker from "@/components/app/PatientPicker";
-import SibylWarningBanner from "@/app/app/_components/SibylWarningBanner";
+import { Button, Card, Field, Notice, SkeletonList } from "@/components/app/ui";
 
 export default function StartHandoffPage() {
-  const router = useRouter();
+  return (
+    <Suspense fallback={<SkeletonList rows={3} />}>
+      <StartHandoffInner />
+    </Suspense>
+  );
+}
 
-  const [patientId, setPatientId] = useState("");
+function StartHandoffInner() {
+  const router = useRouter();
+  const params = useSearchParams();
+
+  // Prefilled when arriving from a patient's memory page.
+  const [patientId, setPatientId] = useState(params.get("patientId") ?? "");
   const [situation, setSituation] = useState<Situation | "">("");
   const [clinicianId, setClinicianId] = useState("");
 
   const [clinicians, setClinicians] = useState<ClinicianOut[] | null>(null);
-  const [clinicianError, setClinicianError] = useState<string | null>(null);
+  const [error, setError] = useState<MemoraApiError | null>(null);
 
   useEffect(() => {
     let cancelled = false;
     getClinicians()
-      .then((list) => {
-        if (!cancelled) setClinicians(list);
-      })
-      .catch((e) => {
-        if (!cancelled)
-          setClinicianError(e instanceof Error ? e.message : "Could not load clinicians.");
-      });
-    return () => {
-      cancelled = true;
-    };
+      .then((list) => !cancelled && setClinicians(list))
+      .catch((e) => !cancelled && setError(e as MemoraApiError));
+    return () => { cancelled = true; };
   }, []);
 
-  const canSubmit = Boolean(patientId && situation && clinicianId);
-
-  const selectedClinician = clinicians?.find((c) => c.id === clinicianId) ?? null;
+  const clinician = clinicians?.find((c) => c.id === clinicianId) ?? null;
+  const focus = SITUATIONS.find((s) => s.value === situation);
+  const ready = Boolean(patientId && situation && clinicianId);
 
   const submit = () => {
-    if (!canSubmit) return;
-    const params = new URLSearchParams({
-      patientId,
-      situation,
-      clinicianId,
-    });
-    router.push(`/app/handoff/result?${params.toString()}`);
+    if (!ready) return;
+    router.push(`/app/handoff/result?${new URLSearchParams({
+      patientId, situation, clinicianId,
+    })}`);
   };
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
-      <h1 style={{ margin: 0 }}>Start a Handoff</h1>
-
-      <SibylWarningBanner />
-
-      {!(patientId && situation && clinicianId) && (
-        <p style={{ margin: 0, opacity: 0.7 }}>
-          Choose a patient, situation, and clinician to begin.
+    <div className="stack stack--loose">
+      <div className="stack stack--tight">
+        <h1 className="page-title">New handoff</h1>
+        <p className="subtle" style={{ margin: 0, maxWidth: 620 }}>
+          The situation decides what gets recalled; the clinician&apos;s role decides
+          what they are allowed to see. Both are part of the gate&apos;s decision, not
+          presentation applied afterwards.
         </p>
-      )}
+      </div>
 
-      <section style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-        <label htmlFor="patient" style={{ fontSize: "13px", opacity: 0.7 }}>
-          Patient
-        </label>
-        <PatientPicker value={patientId} onChange={setPatientId} />
-              </section>
+      {error && <Notice tone="error" title="Could not load clinicians">{error.detail}</Notice>}
 
-      <section style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-        <label htmlFor="situation" style={{ fontSize: "13px", opacity: 0.7 }}>
-          Situation
-        </label>
-        <select
-          id="situation"
-          value={situation}
-          onChange={(e) => setSituation(e.target.value as Situation)}
-          style={selectStyle}
-        >
-          <option value="">Select a situation...</option>
-          {SITUATIONS.map((s) => (
-            <option key={s.value} value={s.value}>
-              {s.label}
-            </option>
-          ))}
-        </select>
-        {situation && (
-          <p style={{ margin: 0, fontSize: "12px", opacity: 0.6 }}>
-            Focus: {SITUATIONS.find((s) => s.value === situation)?.focusHint} — descriptive
-            copy only, mirrors the backend's own SITUATION_FOCUS for context; has no effect
-            on the actual request.
-          </p>
-        )}
-      </section>
+      <Card>
+        <div className="stack">
+          <PatientPicker value={patientId} onChange={setPatientId} />
 
-      <section style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-        <label htmlFor="clinician" style={{ fontSize: "13px", opacity: 0.7 }}>
-          Clinician
-        </label>
-        {clinicianError && (
-          <p style={{ margin: 0, fontSize: "13px", color: "#ff6b6b" }}>
-            Could not load clinicians from the backend: {clinicianError}
-          </p>
-        )}
-        {!clinicianError && clinicians === null && (
-          <p style={{ margin: 0, fontSize: "13px", opacity: 0.6 }}>Loading clinicians...</p>
-        )}
-        {clinicians !== null && (
-          <select
-            id="clinician"
-            value={clinicianId}
-            onChange={(e) => setClinicianId(e.target.value)}
-            style={selectStyle}
+          <Field
+            label="Clinical situation"
+            hint={focus ? `Recalls: ${focus.focusHint}` : undefined}
           >
-            <option value="">Select a clinician...</option>
-            {clinicians.map((c) => (
-              <option key={c.id} value={c.id} disabled={!c.can_approve_handoff}>
-                {c.name} — {c.role}
-                {!c.can_approve_handoff ? " (cannot approve handoffs)" : ""}
-              </option>
-            ))}
-          </select>
-        )}
-        {selectedClinician && !selectedClinician.can_approve_handoff && (
-          <p style={{ margin: 0, fontSize: "12px", color: "#ffb020" }}>
-            {selectedClinician.name} cannot approve a handoff (role: {selectedClinician.role}) —
-            you can still get a Handoff Brief, but the Approve &amp; Commit step will 403
-            if attempted with this clinician.
-          </p>
-        )}
-      </section>
+            <select className="select" value={situation}
+                    onChange={(e) => setSituation(e.target.value as Situation)}>
+              <option value="">Select a situation…</option>
+              {SITUATIONS.map((s) => (
+                <option key={s.value} value={s.value}>{s.label}</option>
+              ))}
+            </select>
+          </Field>
 
-      <button
-        type="button"
-        onClick={submit}
-        disabled={!canSubmit}
-        style={{
-          alignSelf: "flex-start",
-          padding: "12px 22px",
-          borderRadius: "10px",
-          border: "none",
-          background: canSubmit ? "#fff" : "rgba(255,255,255,0.1)",
-          color: canSubmit ? "#000" : "rgba(255,255,255,0.4)",
-          fontWeight: 600,
-          cursor: canSubmit ? "pointer" : "default",
-        }}
-      >
-        Get Handoff Brief
-      </button>
+          <Field
+            label="Clinician"
+            hint={clinician
+              ? `${clinician.role.replace(/_/g, " ")}${clinician.can_approve_handoff
+                  ? " · can approve a handover"
+                  : " · cannot approve a handover"}`
+              : "Fetched live from the backend, not hardcoded"}
+          >
+            <select className="select" value={clinicianId}
+                    onChange={(e) => setClinicianId(e.target.value)}
+                    disabled={!clinicians}>
+              <option value="">{clinicians ? "Select a clinician…" : "Loading…"}</option>
+              {clinicians?.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.name} — {c.role.replace(/_/g, " ")}
+                </option>
+              ))}
+            </select>
+          </Field>
+
+          {clinician && !clinician.can_approve_handoff && (
+            <Notice tone="warn">
+              {clinician.name} can review this handover but cannot approve it. That
+              restriction comes from the same authority table the gate uses.
+            </Notice>
+          )}
+
+          <div>
+            <Button variant="primary" onClick={submit} disabled={!ready}>
+              Run handoff
+            </Button>
+          </div>
+        </div>
+      </Card>
     </div>
   );
 }
-
-const selectStyle: React.CSSProperties = {
-  padding: "10px 12px",
-  borderRadius: "8px",
-  border: "1px solid rgba(255,255,255,0.25)",
-  background: "rgba(255,255,255,0.05)",
-  color: "#fff",
-};

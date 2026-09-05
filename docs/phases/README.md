@@ -20,9 +20,8 @@ These describe what was actually built.
 | [B](B-api-additions-for-ui.md) | Backend API additions for the UI | done |
 | [F1](F1-design-system-shell.md) | App design system and shell | done |
 | [F2+F3](F2-F3-client-and-memory-explorer.md) | Client layer, patients, memory explorer | done |
-| F4 | Handoff flow + per-claim evidence graph | next |
-| F5 | Compare situations | planned |
-| F6 | Sentinel UI + drift graph | planned |
+| [F4+F5](F4-F5-handoff-and-compare.md) | Handoff flow, evidence graph, compare | done |
+| F6 | Sentinel UI + drift graph | next |
 | F7 | Attestation + wallet (RainbowKit) | planned |
 | F8 | Gate-proof page + polish | planned |
 | F9 | Question box — FTS search → propose → gate | planned |
