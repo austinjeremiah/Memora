@@ -3,106 +3,131 @@
 import { useState } from "react";
 import { DEFAULT_API_BASE_URL, getApiBaseUrl, setApiBaseUrl } from "@/lib/api/baseUrl";
 import { getHealth } from "@/lib/api/client";
-import { SITUATIONS } from "@/lib/config/demo-data";
 import { useAppStatus } from "@/lib/api/AppStatusContext";
-
-type TestState = { status: "idle" | "testing" | "ok" | "error"; message?: string; at?: number };
+import { SITUATIONS } from "@/lib/config/demo-data";
+import {
+  Badge, Button, Card, Field, Mono, Notice, Section,
+} from "@/components/app/ui";
 
 export default function SettingsPage() {
   const [url, setUrl] = useState(() => getApiBaseUrl());
-  const [test, setTest] = useState<TestState>({ status: "idle" });
-  const { refresh } = useAppStatus();
-
-  const save = () => {
-    setApiBaseUrl(url || DEFAULT_API_BASE_URL);
-  };
+  const [test, setTest] = useState<{ state: "idle" | "testing" | "ok" | "error"; msg?: string }>({
+    state: "idle",
+  });
+  const { refresh, lastKnownDbSizeBytes, lastKnownCapBytes } = useAppStatus();
 
   const testConnection = async () => {
-    save();
-    setTest({ status: "testing" });
+    setApiBaseUrl(url || DEFAULT_API_BASE_URL);
+    setTest({ state: "testing" });
     try {
       await getHealth();
-      setTest({ status: "ok", at: Date.now() });
+      setTest({ state: "ok" });
       void refresh();
     } catch (e) {
-      setTest({
-        status: "error",
-        message: e instanceof Error ? e.message : "Could not connect.",
-        at: Date.now(),
-      });
+      setTest({ state: "error", msg: e instanceof Error ? e.message : "Could not connect." });
     }
   };
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
-      <h1 style={{ margin: 0 }}>Settings</h1>
+    <div className="stack stack--loose">
+      <div className="stack stack--tight">
+        <h1 className="page-title">Settings</h1>
+        <p className="subtle" style={{ margin: 0 }}>
+          Where this app looks for the MEMORA backend, and what it knows about it.
+        </p>
+      </div>
 
-      <section style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-        <label htmlFor="api-base-url" style={{ fontSize: "13px", opacity: 0.7 }}>
-          API Base URL
-        </label>
-        <div style={{ display: "flex", gap: "10px" }}>
-          <input
-            id="api-base-url"
-            type="text"
-            value={url}
-            onChange={(e) => setUrl(e.target.value)}
-            onBlur={save}
-            placeholder={DEFAULT_API_BASE_URL}
-            style={{
-              flex: 1,
-              padding: "10px 12px",
-              borderRadius: "8px",
-              border: "1px solid rgba(255,255,255,0.25)",
-              background: "rgba(255,255,255,0.05)",
-              color: "#fff",
-            }}
-          />
-          <button
-            type="button"
-            onClick={() => void testConnection()}
-            disabled={test.status === "testing"}
-            style={{
-              padding: "10px 16px",
-              borderRadius: "8px",
-              border: "none",
-              background: "#fff",
-              color: "#000",
-              fontWeight: 600,
-              cursor: test.status === "testing" ? "default" : "pointer",
-            }}
-          >
-            {test.status === "testing" ? "Testing..." : "Test Connection"}
-          </button>
-        </div>
+      <Section title="API endpoint">
+        <Card>
+          <div className="stack">
+            <Field
+              label="Base URL"
+              hint={`Default ${DEFAULT_API_BASE_URL} — matches scripts/run_api.sh. Stored in this browser only.`}
+            >
+              <input className="input" value={url} onChange={(e) => setUrl(e.target.value)}
+                     placeholder={DEFAULT_API_BASE_URL} spellCheck={false} />
+            </Field>
+            <div className="row">
+              <Button variant="primary" onClick={() => void testConnection()}
+                      disabled={test.state === "testing"}>
+                {test.state === "testing" ? "Testing…" : "Save and test"}
+              </Button>
+              {test.state === "ok" && <Badge tone="allow">reachable</Badge>}
+              {test.state === "error" && <Badge tone="block">unreachable</Badge>}
+            </div>
+            {test.state === "error" && (
+              <Notice tone="error" title="Could not reach the backend">
+                {test.msg}
+                <p style={{ marginBottom: 0, marginTop: 8 }}>
+                  Start it with <code className="mono">scripts/run_api.sh</code> from the
+                  backend directory.
+                </p>
+              </Notice>
+            )}
+          </div>
+        </Card>
+      </Section>
 
-        {test.status === "ok" && (
-          <p style={{ margin: 0, color: "#4ade80", fontSize: "13px" }}>
-            Connected — {test.at ? new Date(test.at).toLocaleTimeString() : ""}
-          </p>
-        )}
-        {test.status === "error" && (
-          <p style={{ margin: 0, color: "#ff6b6b", fontSize: "13px" }}>
-            Could not connect to {url || DEFAULT_API_BASE_URL}
-            {test.message ? ` — ${test.message}` : ""}
-          </p>
-        )}
-      </section>
+      <Section title="What this app holds locally">
+        <Card>
+          <div className="stack stack--tight">
+            <p style={{ margin: 0 }} className="subtle">
+              Almost nothing. Patients, clinicians and quota limits are read from
+              the backend on every request rather than cached here — an earlier
+              version hardcoded a patient id and a quota cap, and both went stale.
+            </p>
+            <ul className="subtle" style={{ margin: "6px 0 0", paddingLeft: 18 }}>
+              <li>The API base URL above, in <code className="mono">localStorage</code></li>
+              <li>
+                Situations — {SITUATIONS.length} values (
+                {SITUATIONS.map((s) => s.value).join(", ")}). The one genuinely
+                static list, because no endpoint exposes the enum.
+              </li>
+            </ul>
+          </div>
+        </Card>
+      </Section>
 
-      <section
-        style={{
-          border: "1px solid rgba(255,255,255,0.15)",
-          borderRadius: "12px",
-          padding: "16px 20px",
-          fontSize: "13px",
-          opacity: 0.8,
-          display: "flex",
-          flexDirection: "column",
-          gap: "6px",
-        }}
-      >
-        <p style={{ margin: 0 }}>Situations: {SITUATIONS.length} (hardcoded — no backend endpoint exists)</p>
-      </section>
+      <Section title="Last observed store">
+        <Card>
+          {lastKnownDbSizeBytes === null ? (
+            <span className="dim">
+              Nothing observed yet — open a patient and the store size appears here
+              and in the status strip.
+            </span>
+          ) : (
+            <div className="stack stack--tight">
+              <span>
+                {(lastKnownDbSizeBytes / 1024).toFixed(0)} KB
+                {lastKnownCapBytes !== null &&
+                  ` of ${(lastKnownCapBytes / 1024).toFixed(0)} KB`}
+              </span>
+              <span className="dim">
+                Both figures come from the backend on every response. The cap is
+                never a constant here — it changed once already.
+              </span>
+            </div>
+          )}
+        </Card>
+      </Section>
+
+      <Section title="Data">
+        <Card>
+          <div className="stack stack--tight">
+            <Badge tone="review">synthetic patients only</Badge>
+            <span className="subtle">
+              All patient data is generated by Synthea. Nobody in this system ever
+              existed. Not for clinical use.
+            </span>
+            <span className="dim">
+              Attestation signers are <Mono>synthetic demo keys</Mono> held
+              server-side, or a wallet explicitly registered in{" "}
+              <code className="mono">CLINICIAN_WALLETS</code>. Neither is a real
+              clinician identity or an authentication mechanism.
+            </span>
+          </div>
+        </Card>
+      </Section>
     </div>
   );
 }

@@ -23,8 +23,8 @@ These describe what was actually built.
 | [F4+F5](F4-F5-handoff-and-compare.md) | Handoff flow, evidence graph, compare | done |
 | [F6](F6-sentinel-and-drift.md) | Sentinel UI, drift graph, record events | done |
 | [F7](F7-attestation-and-wallet.md) | Attestation + wallet signing (wagmi) | done |
-| F8 | Gate-proof page + polish | next |
-| F9 | Question box — FTS search → propose → gate | planned |
+| [F8](F8-gate-proof-and-polish.md) | Gate-proof page + polish | done |
+| F9 | Question box — FTS search → propose → gate | next |
 
 ## Running everything
 

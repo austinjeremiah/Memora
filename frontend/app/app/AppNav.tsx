@@ -18,6 +18,7 @@ const LINKS = [
   { href: "/app/handoff/new", label: "Handoff" },
   { href: "/app/compare", label: "Compare" },
   { href: "/app/sentinel", label: "Sentinel" },
+  { href: "/app/proof", label: "Proof" },
   { href: "/app/settings", label: "Settings" },
 ];
 
