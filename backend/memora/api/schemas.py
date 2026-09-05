@@ -105,6 +105,16 @@ class ApproveRequest(BaseModel):
     clinician_id: str = Field(min_length=1, max_length=64)
     claims: list[ApproveClaimIn] = Field(min_length=1)
 
+    # WALLET MODE (optional). When both are supplied the server does NOT sign:
+    # it verifies this signature came from an address registered to this
+    # clinician. Omit both and the server falls back to the clinician's
+    # synthetic demo key, so the flow still works with no wallet connected.
+    signature: str | None = None
+    signer: str | None = None
+    issued_at: int | None = None   # must match what the wallet actually signed
+    expires_at: int | None = None
+    nonce: int | None = None
+
 
 class CommitmentOut(BaseModel):
     patient_id: str
@@ -178,7 +188,7 @@ class AttestationOut(BaseModel):
 
     clinician_id: str
     signer: str
-    signer_kind: str = "synthetic_demo_key"
+    signer_kind: str = "synthetic_demo_key"   # or "registered_wallet"
     signature: str
     digest: str
     state_hash: str
@@ -203,3 +213,93 @@ class AttestationVerifyOut(BaseModel):
     timestamp: int
     memory_version: int
     basescan_url: str
+
+
+class PatientSummaryOut(BaseModel):
+    """Enough to choose a patient from a list.
+
+    Real patient ids are Synthea UUIDs generated per ingestion run, so they
+    cannot be hardcoded anywhere -- they have to be discovered from the store.
+    """
+
+    patient_id: str
+    fact_count: int
+    event_count: int
+    memory_version: int
+    kinds: dict[str, int]
+    has_drug_allergy: bool
+    last_updated: str | None = None
+
+
+class StoredFactOut(BaseModel):
+    name: str
+    status: str | None
+    body: dict | list | None
+    created_at: str
+    updated_at: str
+
+
+class TrendOut(BaseModel):
+    name: str
+    test: str | None
+    loinc: str | None
+    unit: str | None
+    direction: str | None
+    delta: float | None
+    readings: int | None
+    latest_value: float | str | None
+    latest_at: str | None
+    series: list[dict]
+
+
+class StoredEventOut(BaseModel):
+    timestamp: str
+    event_type: str
+    summary: str
+    severity: str | None = None
+    related_kind: str | None = None
+    related_name: str | None = None
+    source_id: str | None = None
+
+
+class PatientMemoryOut(BaseModel):
+    """The raw record, unfiltered.
+
+    Distinct from ContextOut, which is one situation's ranked and capped
+    retrieval. This is what is actually stored.
+    """
+
+    patient_id: str
+    memory_version: int
+    fact_count: int
+    event_count: int
+    facts: dict[str, list[StoredFactOut]]
+    trends: list[TrendOut]
+    events: list[StoredEventOut]
+    active_situation: dict | None = None
+    memory: MemoryStatusOut
+
+
+class AttestationPayloadOut(BaseModel):
+    """The exact EIP-712 payload a wallet should sign.
+
+    The server computes this because producing it requires re-verifying every
+    claim against live Sibyl state -- a browser cannot be trusted to decide
+    what the approved state hash is. The wallet's job is only to sign what
+    memory has already justified.
+    """
+
+    domain: dict
+    types: dict
+    primary_type: str = "ClinicalAttestation"
+    message: dict
+    state_hash: str
+    evidence_root: str
+    context_hash: str
+    memory_version: int
+    issued_at: int
+    expires_at: int
+    nonce: int
+    expected_signer: str | None = None
+    signer_mode: str            # "wallet" | "synthetic_demo_key"
+    claim_count: int

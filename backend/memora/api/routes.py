@@ -6,11 +6,14 @@ That matters most for SibylUnavailableError: it must become a clean 503 from
 anywhere, never a 200 carrying an empty brief.
 """
 
+import time
+
 from fastapi import APIRouter, HTTPException
 
 from memora.api.schemas import (
     ApproveRequest,
     AttestationOut,
+    AttestationPayloadOut,
     AttestationVerifyOut,
     ClaimOut,
     ClinicianOut,
@@ -22,6 +25,8 @@ from memora.api.schemas import (
     HandoffOut,
     HandoffRequest,
     MemoryStatusOut,
+    PatientMemoryOut,
+    PatientSummaryOut,
     SentinelRunOut,
     SentinelRunRequest,
     SinceLastReviewOut,
@@ -29,8 +34,19 @@ from memora.api.schemas import (
     VerifyOut,
 )
 from memora.attestation.chain import next_nonce, submit_attestation, verify_onchain
-from memora.attestation.keys import clinician_for_address, synthetic_address
-from memora.attestation.sign import sign_attestation
+from memora.attestation.domain import (
+    ATTESTATION_TTL_SECONDS,
+    ATTESTATION_TYPES,
+    build_domain,
+)
+from memora.attestation.keys import (
+    clinician_for_address,
+    may_sign_as,
+    registered_wallet,
+    synthetic_address,
+)
+from memora.attestation.sign import SignedAttestation, sign_attestation
+from memora.attestation.verify import verify_attestation
 from memora.clinicians.roles import CLINICIANS, get_clinician
 from memora.config import settings
 from memora.context.engine import RetrievedContext, compile_plan, execute_plan
@@ -47,7 +63,12 @@ from memora.integrity.commitment import (
 from memora.llm.propose import propose_claims
 from memora.sentinel.digest import SENTINEL_SYSTEM_ID
 from memora.sentinel.runner import since_last_review, sweep
-from memora.sibyl.client import PatientMemory, known_patient_ids
+from memora.sibyl.client import (
+    PatientMemory,
+    full_memory,
+    known_patient_ids,
+    patient_summary,
+)
 from memora.sibyl.errors import SibylUnavailableError
 from memora.sibyl.preflight import assert_store_available
 
@@ -116,6 +137,33 @@ def readyz() -> dict:
 @router.get("/clinicians", response_model=list[ClinicianOut])
 def list_clinicians() -> list[ClinicianOut]:
     return [_clinician_out(c) for c in CLINICIANS.values()]
+
+
+@router.get("/patients", response_model=list[PatientSummaryOut])
+def list_patients() -> list[PatientSummaryOut]:
+    """Every patient actually present in the Sibyl store.
+
+    Real ids are Synthea UUIDs generated per ingestion run, so nothing
+    downstream can hardcode them -- they have to be discovered. The reserved
+    Sentinel pseudo-tenant is excluded by known_patient_ids and is not a
+    patient.
+    """
+    return [PatientSummaryOut(**patient_summary(pid)) for pid in known_patient_ids()]
+
+
+@router.get("/patients/{patient_id}/memory", response_model=PatientMemoryOut)
+def get_patient_memory(patient_id: str, event_limit: int = 200) -> PatientMemoryOut:
+    """The raw stored record for one patient -- unfiltered by situation.
+
+    Distinct from /context, which returns one situation's ranked, capped
+    retrieval plan. This returns what is actually in Sibyl: every WARM fact by
+    kind, every lab trajectory with its series, and the COLD journal.
+
+    It exists so the memory layer can be inspected directly. A claim that
+    persistent memory is real is worth less than the ability to open it.
+    """
+    _reject_reserved(patient_id)
+    return PatientMemoryOut(**full_memory(patient_id, event_limit=event_limit))
 
 
 @router.get("/patients/{patient_id}/context", response_model=ContextOut)
@@ -276,6 +324,115 @@ def approve_handoff(patient_id: str, request: ApproveRequest) -> CommitmentOut:
     )
 
 
+def _verified_attestation_inputs(patient_id: str, request: ApproveRequest, clinician):
+    """Re-verify every submitted claim against LIVE memory, then derive the
+    hashes an attestation commits to.
+
+    Shared by the payload endpoint and the attest endpoint so both compute the
+    same state hash from the same read. If they diverged, a wallet would sign
+    one state and the server would record another.
+    """
+    memory = PatientMemory(patient_id, require_data=True)
+
+    verified: list[dict] = []
+    evidence_ids: list[str] = []
+    for claim in request.claims:
+        check = resolve_claim(memory, claim.text, claim.related_kind,
+                              claim.related_name)
+        decision = evaluate_claim(memory, check, clinician.role)
+        if decision.result is GateResult.BLOCK:
+            raise HTTPException(status_code=409, detail={
+                "error": "claim_not_verifiable",
+                "detail": ("Refusing to attest: a submitted claim does not pass "
+                           "verification against current memory."),
+                "claim": claim.text, "reason": decision.reason})
+        verified.append({"text": claim.text, "gate_result": decision.result.value})
+        evidence_ids.extend(e.source_id for e in check.source_events if e.source_id)
+
+    state_hash = compute_commitment_hash(
+        canonical_commitment_payload(patient_id, request.situation.value, verified))
+    return {
+        "memory": memory,
+        "verified": verified,
+        "state_hash": state_hash,
+        "evidence_root": compute_evidence_root(evidence_ids),
+        "context_hash": compute_context_hash(request.situation.value,
+                                             clinician.role.value),
+        "memory_version": memory.memory_version(),
+    }
+
+
+def _signer_for(clinician) -> tuple[str, str]:
+    """(address, mode) this clinician signs with.
+
+    A registered wallet takes precedence; without one the synthetic demo key
+    is used, so the system works with no wallet configured at all.
+    """
+    wallet = registered_wallet(clinician.id)
+    if wallet:
+        return wallet, "wallet"
+    return synthetic_address(clinician.id), "synthetic_demo_key"
+
+
+@router.post("/handoff/{patient_id}/attestation-payload",
+             response_model=AttestationPayloadOut)
+def attestation_payload(patient_id: str,
+                        request: ApproveRequest) -> AttestationPayloadOut:
+    """The EIP-712 payload a wallet should sign for this approval.
+
+    Step 1 of the wallet flow. The server derives the state hash here because
+    doing so requires re-verifying every claim against live Sibyl state -- the
+    browser cannot be trusted to decide what was approved. The wallet only
+    signs what memory has already justified.
+    """
+    _reject_reserved(patient_id)
+    if request.patient_id != patient_id:
+        raise HTTPException(status_code=400,
+                            detail="patient_id in the path and body must match.")
+
+    clinician = _require_clinician(request.clinician_id)
+    if not clinician.can_approve_handoff:
+        raise HTTPException(
+            status_code=403,
+            detail=(f"{clinician.name} ({clinician.role.value}) is not "
+                    "authorised to approve a handover."))
+
+    inputs = _verified_attestation_inputs(patient_id, request, clinician)
+    signer, mode = _signer_for(clinician)
+
+    issued_at = int(time.time())
+    expires_at = issued_at + ATTESTATION_TTL_SECONDS
+    nonce = next_nonce(signer)
+
+    state_hash = "0x" + inputs["state_hash"].hex()
+    evidence_root = "0x" + inputs["evidence_root"].hex()
+    context_hash = "0x" + inputs["context_hash"].hex()
+
+    return AttestationPayloadOut(
+        domain=build_domain(),
+        types=ATTESTATION_TYPES,
+        message={
+            "stateHash": state_hash,
+            "evidenceRoot": evidence_root,
+            "contextHash": context_hash,
+            "memoryVersion": inputs["memory_version"],
+            "issuedAt": issued_at,
+            "expiresAt": expires_at,
+            "nonce": nonce,
+        },
+        state_hash=state_hash,
+        evidence_root=evidence_root,
+        context_hash=context_hash,
+        memory_version=inputs["memory_version"],
+        issued_at=issued_at,
+        expires_at=expires_at,
+        nonce=nonce,
+        expected_signer=signer,
+        signer_mode=mode,
+        claim_count=len(inputs["verified"]),
+    )
+
+
 @router.post("/handoff/{patient_id}/attest", response_model=AttestationOut)
 def attest_handoff(patient_id: str, request: ApproveRequest) -> AttestationOut:
     """Approve a handover and record a SIGNED attestation on Base.
@@ -301,41 +458,59 @@ def attest_handoff(patient_id: str, request: ApproveRequest) -> AttestationOut:
             detail=(f"{clinician.name} ({clinician.role.value}) is not "
                     "authorised to approve a handover."))
 
-    memory = PatientMemory(patient_id, require_data=True)
+    inputs = _verified_attestation_inputs(patient_id, request, clinician)
+    state_hash = inputs["state_hash"]
+    evidence_root = inputs["evidence_root"]
+    context_hash = inputs["context_hash"]
+    memory_version = inputs["memory_version"]
 
-    verified: list[dict] = []
-    evidence_ids: list[str] = []
-    for claim in request.claims:
-        check = resolve_claim(memory, claim.text, claim.related_kind,
-                              claim.related_name)
-        decision = evaluate_claim(memory, check, clinician.role)
-        if decision.result is GateResult.BLOCK:
-            raise HTTPException(status_code=409, detail={
-                "error": "claim_not_verifiable",
-                "detail": ("Refusing to attest: a submitted claim does not pass "
-                           "verification against current memory."),
-                "claim": claim.text, "reason": decision.reason})
-        verified.append({"text": claim.text, "gate_result": decision.result.value})
-        evidence_ids.extend(e.source_id for e in check.source_events if e.source_id)
+    if request.signature and request.signer:
+        # WALLET MODE. The server does not sign; it checks that this signature
+        # came from an address registered to THIS clinician. Being merely
+        # authorised is not enough -- a wallet registered to another persona
+        # would produce a valid signature with the wrong attribution.
+        if not may_sign_as(request.signer, clinician.id):
+            raise HTTPException(
+                status_code=403,
+                detail=(f"Address {request.signer} is not registered to sign as "
+                        f"{clinician.name}. Register it in CLINICIAN_WALLETS."))
+        if request.issued_at is None or request.expires_at is None \
+                or request.nonce is None:
+            raise HTTPException(
+                status_code=400,
+                detail=("Wallet mode requires issued_at, expires_at and nonce "
+                        "exactly as returned by /attestation-payload -- the "
+                        "signature covers them."))
 
-    state_hash = compute_commitment_hash(
-        canonical_commitment_payload(patient_id, request.situation.value, verified))
-    evidence_root = compute_evidence_root(evidence_ids)
-    context_hash = compute_context_hash(request.situation.value,
-                                        clinician.role.value)
+        check = verify_attestation(
+            state_hash, evidence_root, context_hash, memory_version,
+            request.issued_at, request.expires_at, request.nonce,
+            request.signature, expected_signer=request.signer)
+        if not check.valid:
+            raise HTTPException(status_code=400,
+                                detail=f"Signature rejected: {check.reason}")
 
-    signer = synthetic_address(clinician.id)
-    attestation = sign_attestation(
-        clinician_id=clinician.id,
-        state_hash=state_hash,
-        evidence_root=evidence_root,
-        context_hash=context_hash,
-        memory_version=memory.memory_version(),
-        nonce=next_nonce(signer),
-    )
+        attestation = SignedAttestation(
+            clinician_id=clinician.id, signer=request.signer,
+            signature=request.signature, digest="",
+            state_hash="0x" + state_hash.hex(),
+            evidence_root="0x" + evidence_root.hex(),
+            context_hash="0x" + context_hash.hex(),
+            memory_version=memory_version, issued_at=request.issued_at,
+            expires_at=request.expires_at, nonce=request.nonce)
+        signer_kind = "registered_wallet"
+    else:
+        # Fallback: no wallet connected, sign with the synthetic demo key.
+        signer = synthetic_address(clinician.id)
+        attestation = sign_attestation(
+            clinician_id=clinician.id, state_hash=state_hash,
+            evidence_root=evidence_root, context_hash=context_hash,
+            memory_version=memory_version, nonce=next_nonce(signer))
+        signer_kind = "synthetic_demo_key"
+
     receipt = submit_attestation(attestation)
-
-    return AttestationOut(**attestation.as_dict(), **receipt)
+    return AttestationOut(**{**attestation.as_dict(), "signer_kind": signer_kind},
+                          **receipt)
 
 
 @router.get("/attestation/{state_hash}/verify", response_model=AttestationVerifyOut)

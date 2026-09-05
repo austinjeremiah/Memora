@@ -254,3 +254,118 @@ def known_patient_ids() -> list[str]:
     prefix = "patient-"
     ids = [r[0][len(prefix):] for r in rows if r[0].startswith(prefix)]
     return sorted(i for i in ids if i != SENTINEL_SYSTEM_ID)
+
+
+def patient_summary(patient_id: str) -> dict:
+    """Enough about one patient to choose them from a list, without loading
+    their whole record.
+
+    Exists because the frontend previously had no way to discover who was in
+    the store at all, and shipped a hardcoded fixture id that may not be
+    present in whatever Sibyl store the API is pointed at. Real ids are
+    Synthea UUIDs generated per ingestion run -- they cannot be known ahead
+    of time, so they have to be asked for.
+    """
+    from memora.ontology.kinds import ALL_KINDS
+
+    memory = PatientMemory(patient_id)
+    kinds: dict[str, int] = {}
+    has_drug_allergy = False
+    latest = ""
+
+    for kind in ALL_KINDS:
+        rows = memory.list_facts(kind)
+        if rows:
+            kinds[kind] = len(rows)
+        for row in rows:
+            if isinstance(row.get("body"), dict) and row["body"].get("is_drug_allergy"):
+                has_drug_allergy = True
+            if row.get("updated_at", "") > latest:
+                latest = row["updated_at"]
+
+    return {
+        "patient_id": patient_id,
+        "fact_count": sum(kinds.values()),
+        "event_count": len(memory.read_history()),
+        "memory_version": memory.memory_version(),
+        "kinds": kinds,
+        "has_drug_allergy": has_drug_allergy,
+        "last_updated": latest or None,
+    }
+
+
+def full_memory(patient_id: str, event_limit: int = 200) -> dict:
+    """Everything Sibyl holds for one patient, shaped for inspection.
+
+    Deliberately distinct from the Context Engine's retrieval: execute_plan
+    answers "what matters for THIS situation", which is a filtered, ranked,
+    capped view. This answers "what is actually stored", unfiltered, so the
+    memory layer can be looked at directly rather than only through the lens
+    of a clinical question.
+
+    That distinction is the point. A claim that memory is real is worth less
+    than the ability to open it.
+    """
+    from memora.ontology.events import ClinicalEvent
+    from memora.ontology.kinds import ALL_KINDS
+
+    memory = PatientMemory(patient_id, require_data=True)
+
+    facts: dict[str, list[dict]] = {}
+    trends: list[dict] = []
+    for kind in ALL_KINDS:
+        rows = memory.list_facts(kind)
+        if not rows:
+            continue
+        rows.sort(key=lambda r: r["name"])
+        facts[kind] = rows
+        for row in rows:
+            body = row.get("body")
+            if isinstance(body, dict) and body.get("series"):
+                trends.append({
+                    "name": row["name"],
+                    "test": body.get("test"),
+                    "loinc": body.get("loinc"),
+                    "unit": body.get("unit"),
+                    "direction": body.get("direction"),
+                    "delta": body.get("delta"),
+                    "readings": body.get("readings"),
+                    "latest_value": body.get("latest_value"),
+                    "latest_at": body.get("latest_at"),
+                    "series": body.get("series"),
+                })
+
+    # Trajectories first -- a five-point series says more than a single value.
+    trends.sort(key=lambda t: -(t.get("readings") or 0))
+
+    history = memory.read_history(limit=event_limit)
+    events = []
+    for record in history:
+        event = ClinicalEvent.from_record(record)
+        events.append({
+            "timestamp": event.timestamp,
+            "event_type": event.event_type,
+            "summary": event.summary,
+            "severity": event.severity,
+            "related_kind": event.related_kind,
+            "related_name": event.related_name,
+            "source_id": event.source_id,
+        })
+    events.sort(key=lambda e: e["timestamp"], reverse=True)
+
+    quota = memory.quota()
+    return {
+        "patient_id": patient_id,
+        "memory_version": memory.memory_version(),
+        "fact_count": sum(len(v) for v in facts.values()),
+        "event_count": len(events),
+        "facts": facts,
+        "trends": trends,
+        "events": events,
+        "active_situation": memory.get_context("active_situation"),
+        "memory": {
+            "db_size_bytes": quota["db_size_bytes"],
+            "soft_cap_bytes": quota["soft_cap_bytes"],
+            "pct_used": quota.get("pct_used"),
+        },
+    }
