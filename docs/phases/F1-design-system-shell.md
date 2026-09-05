@@ -18,27 +18,47 @@ The repo had two unrelated design languages:
 They looked like two different products. But Framer's CSS is generated
 class-soup and cannot be reused for data-dense clinical tables.
 
-**Decision: lift the values, not the class names.** The tokens below were read
-out of the landing's own CSS, so the app matches it without depending on its
-markup.
+**First attempt was wrong.** I read colours off the landing by eye and
+hardcoded them into a new palette. That produced a *lookalike*, not the same
+theme — and it would drift the moment anything on the landing changed. Austin
+caught it: the app nav was a flat bar where the landing has a floating glass
+pill, and the wordmark was in the wrong typeface entirely.
+
+**Corrected approach: alias the landing's own tokens.** The Framer export
+publishes its real design tokens as CSS custom properties on `<body>`
+(`--token-<uuid>`). `app.css` now references those directly, so changing a
+token on the landing changes the app too. Fallbacks are each token's own
+default, so pages still render without `framer.css`.
 
 ---
 
 ## What shipped
 
-### `frontend/styles/app.css` — 185 lines of tokens
+### `frontend/styles/app.css` — 222 lines, aliasing Framer's tokens
 
 ```css
---bg          rgb(12, 15, 22)             /* landing page ground        */
---bg-elevated rgba(6, 7, 10, 0.95)        /* landing card background    */
---accent      rgb(1, 117, 255)            /* brand blue                 */
---border      rgba(125, 164, 255, 0.16)   /* the signature hairline     */
---text / --text-secondary / --text-muted / --text-dim   /* the 4-step ramp */
---allow  rgb(74, 222, 128)                /* gate verdicts — semantic,  */
---review rgb(255, 205, 125)               /* not decorative. These three */
---block  rgb(255, 107, 107)               /* carry the product's meaning */
---r-pill 999px   --r-lg 24px              /* the landing's own radii     */
+--bg:          var(--token-cef4d4a6-…, #0c0f16)   /* page ground        */
+--bg-elevated: var(--token-f8eb999f-…, #06070a)   /* card background    */
+--accent:      var(--token-991642a5-…, #0175ff)   /* brand blue         */
+--border:      var(--token-f4dc11a3-…, #7da4ff29) /* the hairline       */
+--amber:       var(--token-40eb5c15-…, #ffcd7d)
+--text-muted:  var(--token-e77749d5-…, #9ba9c4)
 ```
+
+Three specific corrections after the first attempt:
+
+| | Wrong | Right |
+|---|---|---|
+| Display font | Edgar Sigma (blocky) | **BentonSansRE, Verdana** at 34px/400 |
+| Nav | flat bar, bottom border | **floating pill**, `blur(8px)`, radius 999px, inset highlight instead of a border |
+| Primary button | flat white | the landing's **glow**: 5-layer drop shadow + two inset glows, blue from one corner and amber from the other |
+
+Card radius is 12px — the landing's dominant value (48 uses), not the 24px I
+first guessed.
+
+`--glow-primary` and `--glass-inset` are lifted verbatim from the landing's
+Get Started CTA and nav pill, so app buttons and the app nav are the same
+objects rather than approximations.
 
 Plus base classes: `.app-root`, `.app-nav`, `.card`, `.btn`, `.badge`,
 `.field`, `.notice`, `.meter`, `.table`, `.skeleton`, `.stack`, `.row`, `.grid`.
@@ -103,6 +123,37 @@ backend suite                 255 passed (unaffected)
 CORS was already configured (added in `dcd5b19`), so browser calls work.
 
 ---
+
+## Landing link cleanup
+
+The Framer template shipped 19 internal links to pages that do not exist and 6
+external links belonging to someone else. Every "Get Started" CTA (8 of them,
+across Nav, Hero, Footer, Exceptionalities, Integration and Pricing) pointed at
+`./pricing`, `./contact` or `./integration`.
+
+After: the landing has **five destinations, all real**.
+
+```
+/                                     home
+/app                              9x  the app
+/app/compare                          "See Situations"
+github.com/austinjeremiah/Memora  4x  Contact, Build Log, About
+sepolia.basescan.org/address/0xc54…   "View on Basescan" — the live contract
+```
+
+Plus in-page anchors `#platform`, `#how-it-works`, `#pricing`, each verified to
+exist as a section id.
+
+**Removed outright:** 9 footer blocks with no possible destination (Changelog,
+Privacy policy, Terms, "Launching Soon…", a `./404` link) including **four
+social links belonging to the template's author**. Two components deleted:
+`BuyNowBadge.tsx`, which carried the template seller's **LemonSqueezy checkout
+link**, and `FramerBadge.tsx`.
+
+A note for anyone debugging this later: the CTA fix looked broken for a while
+because two stale `next-server` processes were serving a pre-fix build. The
+source was correct throughout. `pkill -f next-server` before concluding a
+frontend change did not apply.
 
 ## Deliberately not done yet
 

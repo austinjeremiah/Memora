@@ -4,13 +4,14 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 /**
- * Nav order follows the demo narrative deliberately: look at the memory,
- * then ask it a question, then compare, then watch it watch itself, then
- * sign. A judge clicking straight through in order sees the argument built.
+ * The same floating glass pill the landing page uses: blurred, fully
+ * rounded, lifted off the background by an inset highlight rather than a
+ * border. The wordmark uses BentonSansRE at the landing's own weight so the
+ * two navs read as one product.
  *
- * A link is added here only once its page actually exists -- shipping a nav
- * entry that 404s is worse than a shorter nav. Patients lands in F4 and
- * Sentinel in F7; both slot into the order below when they do.
+ * A link is added here only once its page exists -- shipping a nav entry
+ * that 404s is worse than a shorter nav. Patients lands in F3 and Sentinel
+ * in F6.
  */
 const LINKS = [
   { href: "/app", label: "Status" },
@@ -24,23 +25,24 @@ export default function AppNav() {
 
   return (
     <nav className="app-nav">
-      <Link href="/" className="app-nav__brand" style={{ color: "inherit", textDecoration: "none" }}>
-        MEMORA
-      </Link>
-      {LINKS.map((link) => {
-        const active = link.href === "/app"
-          ? pathname === "/app"
-          : pathname.startsWith(link.href);
-        return (
-          <Link
-            key={link.href}
-            href={link.href}
-            className={`app-nav__link${active ? " app-nav__link--active" : ""}`}
-          >
-            {link.label}
-          </Link>
-        );
-      })}
+      <Link href="/" className="app-nav__brand">MEMORA</Link>
+
+      <div className="app-nav__inner">
+        {LINKS.map((link) => {
+          const active = link.href === "/app"
+            ? pathname === "/app"
+            : pathname.startsWith(link.href);
+          return (
+            <Link
+              key={link.href}
+              href={link.href}
+              className={`app-nav__link${active ? " app-nav__link--active" : ""}`}
+            >
+              {link.label}
+            </Link>
+          );
+        })}
+      </div>
     </nav>
   );
 }

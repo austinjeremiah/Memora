@@ -1,7 +1,7 @@
 export default function Steps() {
   return (
     <>
-      <section className="framer-q836dk" data-framer-name="Steps">
+      <section className="framer-q836dk" id="how-it-works" data-framer-name="Steps">
         <div className="framer-5ytnd" data-framer-name="Container">
           <div className="framer-bfka67" data-framer-name="Heading">
             <div className="ssr-variant">

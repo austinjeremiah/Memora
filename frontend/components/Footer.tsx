@@ -95,7 +95,7 @@ export default function Footer() {
                       </div>
                       <nav className="framer-18if1yi" data-framer-name="Links" style={{opacity: "1"}}>
                         <div className="framer-1umr714-container" style={{opacity: "1"}}>
-                          <a className="framer-9TFqW framer-n3Cte framer-17mhh3u framer-v-17mhh3u framer-1owfxep" data-framer-name="Desktop" data-highlight="true" href="./" data-framer-page-link-current="true" tabIndex={0} style={{"--prkc48": "center", opacity: "1"}}>
+                          <a className="framer-9TFqW framer-n3Cte framer-17mhh3u framer-v-17mhh3u framer-1owfxep" data-framer-name="Desktop" data-highlight="true" href="/" data-framer-page-link-current="true" tabIndex={0} style={{"--prkc48": "center", opacity: "1"}}>
                             <div className="framer-jjs4gh" data-framer-name="Text" data-framer-component-type="RichTextContainer" style={{"--extracted-r6o4lv": "var(--token-e77749d5-1f11-472b-b926-5090d7e5b50e, rgb(155, 169, 196))", transform: "none", opacity: "1"}}>
                               <p className="framer-text framer-styles-preset-1xv0u9n" data-styles-preset="VsDceC7bv" style={{"--framer-text-color": "var(--extracted-r6o4lv, var(--token-e77749d5-1f11-472b-b926-5090d7e5b50e, rgb(155, 169, 196)))"}}>
                                 Home
@@ -105,7 +105,7 @@ export default function Footer() {
                           </a>
                         </div>
                         <div className="framer-vtqy5n-container" style={{opacity: "1"}}>
-                          <a className="framer-9TFqW framer-n3Cte framer-17mhh3u framer-v-17mhh3u framer-1owfxep" data-framer-name="Desktop" data-highlight="true" href="./about" tabIndex={0} style={{"--prkc48": "center", opacity: "1"}}>
+                          <a className="framer-9TFqW framer-n3Cte framer-17mhh3u framer-v-17mhh3u framer-1owfxep" data-framer-name="Desktop" data-highlight="true" href="#how-it-works" tabIndex={0} style={{"--prkc48": "center", opacity: "1"}}>
                             <div className="framer-jjs4gh" data-framer-name="Text" data-framer-component-type="RichTextContainer" style={{"--extracted-r6o4lv": "var(--token-e77749d5-1f11-472b-b926-5090d7e5b50e, rgb(155, 169, 196))", transform: "none", opacity: "1"}}>
                               <p className="framer-text framer-styles-preset-1xv0u9n" data-styles-preset="VsDceC7bv" style={{"--framer-text-color": "var(--extracted-r6o4lv, var(--token-e77749d5-1f11-472b-b926-5090d7e5b50e, rgb(155, 169, 196)))"}}>
                                 About
@@ -115,7 +115,7 @@ export default function Footer() {
                           </a>
                         </div>
                         <div className="framer-1bd0k4d-container" style={{opacity: "1"}}>
-                          <a className="framer-9TFqW framer-n3Cte framer-17mhh3u framer-v-17mhh3u framer-1owfxep" data-framer-name="Desktop" data-highlight="true" href="./integration" tabIndex={0} style={{"--prkc48": "center", opacity: "1"}}>
+                          <a className="framer-9TFqW framer-n3Cte framer-17mhh3u framer-v-17mhh3u framer-1owfxep" data-framer-name="Desktop" data-highlight="true" href="#platform" tabIndex={0} style={{"--prkc48": "center", opacity: "1"}}>
                             <div className="framer-jjs4gh" data-framer-name="Text" data-framer-component-type="RichTextContainer" style={{"--extracted-r6o4lv": "var(--token-e77749d5-1f11-472b-b926-5090d7e5b50e, rgb(155, 169, 196))", transform: "none", opacity: "1"}}>
                               <p className="framer-text framer-styles-preset-1xv0u9n" data-styles-preset="VsDceC7bv" style={{"--framer-text-color": "var(--extracted-r6o4lv, var(--token-e77749d5-1f11-472b-b926-5090d7e5b50e, rgb(155, 169, 196)))"}}>
                                 Platform
@@ -125,7 +125,7 @@ export default function Footer() {
                           </a>
                         </div>
                         <div className="framer-94ixvp-container" style={{opacity: "1"}}>
-                          <a className="framer-9TFqW framer-n3Cte framer-17mhh3u framer-v-17mhh3u framer-1owfxep" data-framer-name="Desktop" data-highlight="true" href="./contact" tabIndex={0} style={{"--prkc48": "center", opacity: "1"}}>
+                          <a className="framer-9TFqW framer-n3Cte framer-17mhh3u framer-v-17mhh3u framer-1owfxep" data-framer-name="Desktop" data-highlight="true" href="https://github.com/austinjeremiah/Memora" tabIndex={0} style={{"--prkc48": "center", opacity: "1"}}>
                             <div className="framer-jjs4gh" data-framer-name="Text" data-framer-component-type="RichTextContainer" style={{"--extracted-r6o4lv": "var(--token-e77749d5-1f11-472b-b926-5090d7e5b50e, rgb(155, 169, 196))", transform: "none", opacity: "1"}}>
                               <p className="framer-text framer-styles-preset-1xv0u9n" data-styles-preset="VsDceC7bv" style={{"--framer-text-color": "var(--extracted-r6o4lv, var(--token-e77749d5-1f11-472b-b926-5090d7e5b50e, rgb(155, 169, 196)))"}}>
                                 Contact
@@ -144,40 +144,10 @@ export default function Footer() {
                       </div>
                       <nav className="framer-9vrhme" data-framer-name="Links" style={{opacity: "1"}}>
                         <div className="framer-aw055q-container" style={{opacity: "1"}}>
-                          <a className="framer-9TFqW framer-n3Cte framer-17mhh3u framer-v-17mhh3u framer-1owfxep" data-framer-name="Desktop" data-highlight="true" href="./blog" tabIndex={0} style={{"--prkc48": "center", opacity: "1"}}>
+                          <a className="framer-9TFqW framer-n3Cte framer-17mhh3u framer-v-17mhh3u framer-1owfxep" data-framer-name="Desktop" data-highlight="true" href="https://github.com/austinjeremiah/Memora" tabIndex={0} style={{"--prkc48": "center", opacity: "1"}}>
                             <div className="framer-jjs4gh" data-framer-name="Text" data-framer-component-type="RichTextContainer" style={{"--extracted-r6o4lv": "var(--token-e77749d5-1f11-472b-b926-5090d7e5b50e, rgb(155, 169, 196))", transform: "none", opacity: "1"}}>
                               <p className="framer-text framer-styles-preset-1xv0u9n" data-styles-preset="VsDceC7bv" style={{"--framer-text-color": "var(--extracted-r6o4lv, var(--token-e77749d5-1f11-472b-b926-5090d7e5b50e, rgb(155, 169, 196)))"}}>
                                 Build Log
-                              </p>
-                            </div>
-                            <div className="framer-wyrm43" data-framer-name="Line" style={{backgroundColor: "var(--token-2765094e-0f8b-477f-9e2a-092fb0171343, rgba(255, 255, 255, 0.1))", opacity: "1"}} />
-                          </a>
-                        </div>
-                        <div className="framer-1bj2g1z-container" style={{opacity: "1"}}>
-                          <a className="framer-9TFqW framer-n3Cte framer-17mhh3u framer-v-17mhh3u framer-1owfxep" data-framer-name="Desktop" data-highlight="true" href="./changelog" tabIndex={0} style={{"--prkc48": "center", opacity: "1"}}>
-                            <div className="framer-jjs4gh" data-framer-name="Text" data-framer-component-type="RichTextContainer" style={{"--extracted-r6o4lv": "var(--token-e77749d5-1f11-472b-b926-5090d7e5b50e, rgb(155, 169, 196))", transform: "none", opacity: "1"}}>
-                              <p className="framer-text framer-styles-preset-1xv0u9n" data-styles-preset="VsDceC7bv" style={{"--framer-text-color": "var(--extracted-r6o4lv, var(--token-e77749d5-1f11-472b-b926-5090d7e5b50e, rgb(155, 169, 196)))"}}>
-                                Changelog
-                              </p>
-                            </div>
-                            <div className="framer-wyrm43" data-framer-name="Line" style={{backgroundColor: "var(--token-2765094e-0f8b-477f-9e2a-092fb0171343, rgba(255, 255, 255, 0.1))", opacity: "1"}} />
-                          </a>
-                        </div>
-                        <div className="framer-1b11mnv-container" style={{opacity: "1"}}>
-                          <a className="framer-9TFqW framer-n3Cte framer-17mhh3u framer-v-17mhh3u framer-1owfxep" data-framer-name="Desktop" data-highlight="true" href="./privacy-policy/privacy-policy" tabIndex={0} style={{"--prkc48": "center", opacity: "1"}}>
-                            <div className="framer-jjs4gh" data-framer-name="Text" data-framer-component-type="RichTextContainer" style={{"--extracted-r6o4lv": "var(--token-e77749d5-1f11-472b-b926-5090d7e5b50e, rgb(155, 169, 196))", transform: "none", opacity: "1"}}>
-                              <p className="framer-text framer-styles-preset-1xv0u9n" data-styles-preset="VsDceC7bv" style={{"--framer-text-color": "var(--extracted-r6o4lv, var(--token-e77749d5-1f11-472b-b926-5090d7e5b50e, rgb(155, 169, 196)))"}}>
-                                Privacy policy
-                              </p>
-                            </div>
-                            <div className="framer-wyrm43" data-framer-name="Line" style={{backgroundColor: "var(--token-2765094e-0f8b-477f-9e2a-092fb0171343, rgba(255, 255, 255, 0.1))", opacity: "1"}} />
-                          </a>
-                        </div>
-                        <div className="framer-yemwe3-container" style={{opacity: "1"}}>
-                          <a className="framer-9TFqW framer-n3Cte framer-17mhh3u framer-v-17mhh3u framer-1owfxep" data-framer-name="Desktop" data-highlight="true" href="./privacy-policy/terms-and-conditions" tabIndex={0} style={{"--prkc48": "center", opacity: "1"}}>
-                            <div className="framer-jjs4gh" data-framer-name="Text" data-framer-component-type="RichTextContainer" style={{"--extracted-r6o4lv": "var(--token-e77749d5-1f11-472b-b926-5090d7e5b50e, rgb(155, 169, 196))", transform: "none", opacity: "1"}}>
-                              <p className="framer-text framer-styles-preset-1xv0u9n" data-styles-preset="VsDceC7bv" style={{"--framer-text-color": "var(--extracted-r6o4lv, var(--token-e77749d5-1f11-472b-b926-5090d7e5b50e, rgb(155, 169, 196)))"}}>
-                                Terms and Conditions
                               </p>
                             </div>
                             <div className="framer-wyrm43" data-framer-name="Line" style={{backgroundColor: "var(--token-2765094e-0f8b-477f-9e2a-092fb0171343, rgba(255, 255, 255, 0.1))", opacity: "1"}} />
@@ -192,26 +162,6 @@ export default function Footer() {
                         </p>
                       </div>
                       <nav className="framer-ookgei" data-framer-name="Links" style={{opacity: "1"}}>
-                        <div className="framer-190sxyv-container" style={{opacity: "1"}}>
-                          <a className="framer-9TFqW framer-n3Cte framer-17mhh3u framer-v-17mhh3u framer-1owfxep" data-framer-name="Desktop" data-highlight="true" href="./launchin-soon..." tabIndex={0} style={{"--prkc48": "center", opacity: "1"}}>
-                            <div className="framer-jjs4gh" data-framer-name="Text" data-framer-component-type="RichTextContainer" style={{"--extracted-r6o4lv": "var(--token-e77749d5-1f11-472b-b926-5090d7e5b50e, rgb(155, 169, 196))", transform: "none", opacity: "1"}}>
-                              <p className="framer-text framer-styles-preset-1xv0u9n" data-styles-preset="VsDceC7bv" style={{"--framer-text-color": "var(--extracted-r6o4lv, var(--token-e77749d5-1f11-472b-b926-5090d7e5b50e, rgb(155, 169, 196)))"}}>
-                                Launching Soon...
-                              </p>
-                            </div>
-                            <div className="framer-wyrm43" data-framer-name="Line" style={{backgroundColor: "var(--token-2765094e-0f8b-477f-9e2a-092fb0171343, rgba(255, 255, 255, 0.1))", opacity: "1"}} />
-                          </a>
-                        </div>
-                        <div className="framer-1awqw5b-container" style={{opacity: "1"}}>
-                          <a className="framer-9TFqW framer-n3Cte framer-17mhh3u framer-v-17mhh3u framer-1owfxep" data-framer-name="Desktop" data-highlight="true" href="./404" tabIndex={0} style={{"--prkc48": "center", opacity: "1"}}>
-                            <div className="framer-jjs4gh" data-framer-name="Text" data-framer-component-type="RichTextContainer" style={{"--extracted-r6o4lv": "var(--token-e77749d5-1f11-472b-b926-5090d7e5b50e, rgb(155, 169, 196))", transform: "none", opacity: "1"}}>
-                              <p className="framer-text framer-styles-preset-1xv0u9n" data-styles-preset="VsDceC7bv" style={{"--framer-text-color": "var(--extracted-r6o4lv, var(--token-e77749d5-1f11-472b-b926-5090d7e5b50e, rgb(155, 169, 196)))"}}>
-                                404
-                              </p>
-                            </div>
-                            <div className="framer-wyrm43" data-framer-name="Line" style={{backgroundColor: "var(--token-2765094e-0f8b-477f-9e2a-092fb0171343, rgba(255, 255, 255, 0.1))", opacity: "1"}} />
-                          </a>
-                        </div>
                       </nav>
                     </div>
                     <div className="framer-1thy2j1" data-framer-name="Social Connect" style={{opacity: "1"}}>
@@ -221,46 +171,6 @@ export default function Footer() {
                         </p>
                       </div>
                       <nav className="framer-ux8lqz" data-framer-name="Links" style={{opacity: "1"}}>
-                        <div className="framer-ryom3s-container" style={{opacity: "1"}}>
-                          <a className="framer-9TFqW framer-n3Cte framer-17mhh3u framer-v-17mhh3u framer-1owfxep" data-framer-name="Desktop" data-highlight="true" href="https://www.instagram.com/jitu.ux/" target="_blank" tabIndex={0} style={{"--prkc48": "center", opacity: "1"}}>
-                            <div className="framer-jjs4gh" data-framer-name="Text" data-framer-component-type="RichTextContainer" style={{"--extracted-r6o4lv": "var(--token-e77749d5-1f11-472b-b926-5090d7e5b50e, rgb(155, 169, 196))", transform: "none", opacity: "1"}}>
-                              <p className="framer-text framer-styles-preset-1xv0u9n" data-styles-preset="VsDceC7bv" style={{"--framer-text-color": "var(--extracted-r6o4lv, var(--token-e77749d5-1f11-472b-b926-5090d7e5b50e, rgb(155, 169, 196)))"}}>
-                                Instagram
-                              </p>
-                            </div>
-                            <div className="framer-wyrm43" data-framer-name="Line" style={{backgroundColor: "var(--token-2765094e-0f8b-477f-9e2a-092fb0171343, rgba(255, 255, 255, 0.1))", opacity: "1"}} />
-                          </a>
-                        </div>
-                        <div className="framer-zgry00-container" style={{opacity: "1"}}>
-                          <a className="framer-9TFqW framer-n3Cte framer-17mhh3u framer-v-17mhh3u framer-1owfxep" data-framer-name="Desktop" data-highlight="true" href="https://x.com/jituux" target="_blank" tabIndex={0} style={{"--prkc48": "center", opacity: "1"}}>
-                            <div className="framer-jjs4gh" data-framer-name="Text" data-framer-component-type="RichTextContainer" style={{"--extracted-r6o4lv": "var(--token-e77749d5-1f11-472b-b926-5090d7e5b50e, rgb(155, 169, 196))", transform: "none", opacity: "1"}}>
-                              <p className="framer-text framer-styles-preset-1xv0u9n" data-styles-preset="VsDceC7bv" style={{"--framer-text-color": "var(--extracted-r6o4lv, var(--token-e77749d5-1f11-472b-b926-5090d7e5b50e, rgb(155, 169, 196)))"}}>
-                                X/twitter
-                              </p>
-                            </div>
-                            <div className="framer-wyrm43" data-framer-name="Line" style={{backgroundColor: "var(--token-2765094e-0f8b-477f-9e2a-092fb0171343, rgba(255, 255, 255, 0.1))", opacity: "1"}} />
-                          </a>
-                        </div>
-                        <div className="framer-1fv5p5b-container" style={{opacity: "1"}}>
-                          <a className="framer-9TFqW framer-n3Cte framer-17mhh3u framer-v-17mhh3u framer-1owfxep" data-framer-name="Desktop" data-highlight="true" href="https://www.linkedin.com/in/jitendra-raut/" target="_blank" tabIndex={0} style={{"--prkc48": "center", opacity: "1"}}>
-                            <div className="framer-jjs4gh" data-framer-name="Text" data-framer-component-type="RichTextContainer" style={{"--extracted-r6o4lv": "var(--token-e77749d5-1f11-472b-b926-5090d7e5b50e, rgb(155, 169, 196))", transform: "none", opacity: "1"}}>
-                              <p className="framer-text framer-styles-preset-1xv0u9n" data-styles-preset="VsDceC7bv" style={{"--framer-text-color": "var(--extracted-r6o4lv, var(--token-e77749d5-1f11-472b-b926-5090d7e5b50e, rgb(155, 169, 196)))"}}>
-                                Linkedin
-                              </p>
-                            </div>
-                            <div className="framer-wyrm43" data-framer-name="Line" style={{backgroundColor: "var(--token-2765094e-0f8b-477f-9e2a-092fb0171343, rgba(255, 255, 255, 0.1))", opacity: "1"}} />
-                          </a>
-                        </div>
-                        <div className="framer-k8u6je-container" style={{opacity: "1"}}>
-                          <a className="framer-9TFqW framer-n3Cte framer-17mhh3u framer-v-17mhh3u framer-1owfxep" data-framer-name="Desktop" data-highlight="true" href="https://www.reddit.com/" target="_blank" tabIndex={0} style={{"--prkc48": "center", opacity: "1"}}>
-                            <div className="framer-jjs4gh" data-framer-name="Text" data-framer-component-type="RichTextContainer" style={{"--extracted-r6o4lv": "var(--token-e77749d5-1f11-472b-b926-5090d7e5b50e, rgb(155, 169, 196))", transform: "none", opacity: "1"}}>
-                              <p className="framer-text framer-styles-preset-1xv0u9n" data-styles-preset="VsDceC7bv" style={{"--framer-text-color": "var(--extracted-r6o4lv, var(--token-e77749d5-1f11-472b-b926-5090d7e5b50e, rgb(155, 169, 196)))"}}>
-                                Reddit
-                              </p>
-                            </div>
-                            <div className="framer-wyrm43" data-framer-name="Line" style={{backgroundColor: "var(--token-2765094e-0f8b-477f-9e2a-092fb0171343, rgba(255, 255, 255, 0.1))", opacity: "1"}} />
-                          </a>
-                        </div>
                       </nav>
                     </div>
                   </div>

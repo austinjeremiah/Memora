@@ -1,7 +1,6 @@
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import CookieBanner from "@/components/CookieBanner";
-import FramerBadge from "@/components/FramerBadge";
 import SvgTemplates from "@/components/SvgTemplates";
 import Hero from "@/components/sections/Hero";
 import HighlightedText from "@/components/sections/HighlightedText";
@@ -41,7 +40,6 @@ export default function Page() {
         </div>
         <div id="template-overlay" />
       </div>
-      <FramerBadge />
       <SvgTemplates />
     </>
   );

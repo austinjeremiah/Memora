@@ -1,7 +1,7 @@
 export default function Features() {
   return (
     <>
-      <section className="framer-2e2suq" data-framer-name="Features ">
+      <section className="framer-2e2suq" id="platform" data-framer-name="Features ">
         <div className="framer-1ljjz0s" data-framer-name="Container">
           <div className="framer-170n5sr" data-framer-name="Heading">
             <div className="ssr-variant">
@@ -180,7 +180,7 @@ export default function Features() {
                         </div>
                       </div>
                       <div className="framer-1fmhrvm-container" style={{opacity: "1"}}>
-                        <a className="framer-Yf5wR framer-ZHrhX framer-bqds1m framer-v-12xoe0w framer-2xkq2k" data-framer-name="Secondary" data-highlight="true" href="./ai-solutions/ai-for-work" tabIndex={0} style={{width: "100%", borderBottomLeftRadius: "16px", borderBottomRightRadius: "16px", borderTopLeftRadius: "16px", borderTopRightRadius: "16px", opacity: "1"}}>
+                        <a className="framer-Yf5wR framer-ZHrhX framer-bqds1m framer-v-12xoe0w framer-2xkq2k" data-framer-name="Secondary" data-highlight="true" href="/app/compare" tabIndex={0} style={{width: "100%", borderBottomLeftRadius: "16px", borderBottomRightRadius: "16px", borderTopLeftRadius: "16px", borderTopRightRadius: "16px", opacity: "1"}}>
                           <div className="framer-6yhlt6" data-border="true" data-framer-name="Label" style={{"--border-bottom-width": "1px", "--border-color": "var(--token-63f7583a-ac58-4fab-bed6-928aed613254, rgb(47, 57, 80))", "--border-left-width": "1px", "--border-right-width": "1px", "--border-style": "solid", "--border-top-width": "1px", backgroundColor: "var(--token-cef4d4a6-9e30-47e6-bc76-f952a48770af, rgb(12, 15, 22))", filter: "brightness(1)", borderRadius: "15px", boxShadow: "none", opacity: "1"}}>
                             <div className="framer-3nflbn" data-framer-name="Get Started" data-framer-component-type="RichTextContainer" style={{"--extracted-r6o4lv": "var(--token-839225cb-b1fc-470d-a0c2-2eb7fcc590b8, rgb(255, 255, 255))", "--framer-paragraph-spacing": "0px", transform: "none", opacity: "1"}}>
                               <p className="framer-text framer-styles-preset-79ayo0" data-styles-preset="AVSIklFkd" style={{"--framer-text-color": "var(--extracted-r6o4lv, var(--token-839225cb-b1fc-470d-a0c2-2eb7fcc590b8, rgb(255, 255, 255)))"}}>
@@ -302,7 +302,7 @@ export default function Features() {
                         </div>
                       </div>
                       <div className="framer-1fmhrvm-container" style={{opacity: "1"}}>
-                        <a className="framer-Yf5wR framer-ZHrhX framer-bqds1m framer-v-12xoe0w framer-2xkq2k" data-framer-name="Secondary" data-highlight="true" href="./ai-solutions/ai-for-service" tabIndex={0} style={{width: "100%", borderBottomLeftRadius: "16px", borderBottomRightRadius: "16px", borderTopLeftRadius: "16px", borderTopRightRadius: "16px", opacity: "1"}}>
+                        <a className="framer-Yf5wR framer-ZHrhX framer-bqds1m framer-v-12xoe0w framer-2xkq2k" data-framer-name="Secondary" data-highlight="true" href="/app" tabIndex={0} style={{width: "100%", borderBottomLeftRadius: "16px", borderBottomRightRadius: "16px", borderTopLeftRadius: "16px", borderTopRightRadius: "16px", opacity: "1"}}>
                           <div className="framer-6yhlt6" data-border="true" data-framer-name="Label" style={{"--border-bottom-width": "1px", "--border-color": "var(--token-63f7583a-ac58-4fab-bed6-928aed613254, rgb(47, 57, 80))", "--border-left-width": "1px", "--border-right-width": "1px", "--border-style": "solid", "--border-top-width": "1px", backgroundColor: "var(--token-cef4d4a6-9e30-47e6-bc76-f952a48770af, rgb(12, 15, 22))", filter: "brightness(1)", borderRadius: "15px", boxShadow: "none", opacity: "1"}}>
                             <div className="framer-3nflbn" data-framer-name="Get Started" data-framer-component-type="RichTextContainer" style={{"--extracted-r6o4lv": "var(--token-839225cb-b1fc-470d-a0c2-2eb7fcc590b8, rgb(255, 255, 255))", "--framer-paragraph-spacing": "0px", transform: "none", opacity: "1"}}>
                               <p className="framer-text framer-styles-preset-79ayo0" data-styles-preset="AVSIklFkd" style={{"--framer-text-color": "var(--extracted-r6o4lv, var(--token-839225cb-b1fc-470d-a0c2-2eb7fcc590b8, rgb(255, 255, 255)))"}}>
@@ -416,7 +416,7 @@ export default function Features() {
                         </div>
                       </div>
                       <div className="framer-1fmhrvm-container" style={{opacity: "1"}}>
-                        <a className="framer-Yf5wR framer-ZHrhX framer-bqds1m framer-v-12xoe0w framer-2xkq2k" data-framer-name="Secondary" data-highlight="true" href="./integration" tabIndex={0} style={{width: "100%", borderBottomLeftRadius: "16px", borderBottomRightRadius: "16px", borderTopLeftRadius: "16px", borderTopRightRadius: "16px", opacity: "1"}}>
+                        <a className="framer-Yf5wR framer-ZHrhX framer-bqds1m framer-v-12xoe0w framer-2xkq2k" data-framer-name="Secondary" data-highlight="true" href="https://sepolia.basescan.org/address/0xc54122E46DDbF4F88a8D23d32586DC1cB0d8888e" tabIndex={0} style={{width: "100%", borderBottomLeftRadius: "16px", borderBottomRightRadius: "16px", borderTopLeftRadius: "16px", borderTopRightRadius: "16px", opacity: "1"}}>
                           <div className="framer-6yhlt6" data-border="true" data-framer-name="Label" style={{"--border-bottom-width": "1px", "--border-color": "var(--token-63f7583a-ac58-4fab-bed6-928aed613254, rgb(47, 57, 80))", "--border-left-width": "1px", "--border-right-width": "1px", "--border-style": "solid", "--border-top-width": "1px", backgroundColor: "var(--token-cef4d4a6-9e30-47e6-bc76-f952a48770af, rgb(12, 15, 22))", filter: "brightness(1)", borderRadius: "15px", boxShadow: "none", opacity: "1"}}>
                             <div className="framer-3nflbn" data-framer-name="Get Started" data-framer-component-type="RichTextContainer" style={{"--extracted-r6o4lv": "var(--token-839225cb-b1fc-470d-a0c2-2eb7fcc590b8, rgb(255, 255, 255))", "--framer-paragraph-spacing": "0px", transform: "none", opacity: "1"}}>
                               <p className="framer-text framer-styles-preset-79ayo0" data-styles-preset="AVSIklFkd" style={{"--framer-text-color": "var(--extracted-r6o4lv, var(--token-839225cb-b1fc-470d-a0c2-2eb7fcc590b8, rgb(255, 255, 255)))"}}>

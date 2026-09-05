@@ -22,16 +22,7 @@ export default function StatusStrip() {
   );
 
   return (
-    <div
-      className="row"
-      style={{
-        padding: "9px 24px",
-        borderBottom: "0.5px solid var(--border)",
-        fontSize: 13,
-        color: "var(--text-muted)",
-        gap: 20,
-      }}
-    >
+    <div className="status-strip">
       <span className="row" style={{ gap: 7 }}>
         {backendReachable === null ? dot("var(--text-dim)")
           : backendReachable ? dot("var(--allow)") : dot("var(--block)")}

@@ -1,67 +1,79 @@
 /**
- * MEMORA app design tokens.
+ * MEMORA app theme.
  *
- * Extracted from the Framer-exported landing page rather than invented, so
- * the app and the marketing site read as one product. The landing's own CSS
- * is generated class-soup (`framer-13xxj9k` and friends) which cannot be
- * reused for data-dense clinical UI -- so the VALUES are lifted and given
- * names here, and the app builds its own components on top.
+ * This does NOT define its own palette. The landing page is a Framer export
+ * that publishes its real design tokens as CSS custom properties on <body>
+ * (the `--token-<uuid>` names below), and this file aliases them so the app
+ * and the marketing site are literally the same theme rather than two that
+ * happen to look similar. If a token changes on the landing, the app follows.
  *
- * Source of each value is noted where it came from a specific landing rule.
+ * Fallbacks are the token's own default value, so the app still renders
+ * correctly if a page is viewed without framer.css loaded.
  */
 
 :root {
-  /* Surfaces — landing uses rgb(12,15,22) as page ground, rgba(6,7,10,.95) for cards */
-  --bg: rgb(12, 15, 22);
-  --bg-elevated: rgba(6, 7, 10, 0.95);
-  --bg-subtle: rgba(255, 255, 255, 0.04);
-  --bg-hover: rgba(255, 255, 255, 0.07);
-  --bg-active: rgba(255, 255, 255, 0.1);
+  /* Surfaces */
+  --bg:          var(--token-cef4d4a6-9e30-47e6-bc76-f952a48770af, #0c0f16);
+  --bg-elevated: var(--token-f8eb999f-285c-4229-9c3a-c69e8052e994, #06070a);
+  --bg-subtle:   var(--token-5a7f2bca-ee8c-42c5-80e1-f72de38d4fdf, #ffffff12);
+  --bg-hover:    var(--token-2765094e-0f8b-477f-9e2a-092fb0171343, #ffffff1a);
+  --bg-black:    var(--token-74e333f8-fe87-4945-af87-cae5b7e16c10, #000);
 
-  /* Text — the landing's four-step ramp */
-  --text: rgb(255, 255, 255);
-  --text-secondary: rgb(209, 212, 227);
-  --text-muted: rgb(155, 169, 196);
-  --text-dim: rgb(132, 145, 171);
+  /* Text ramp */
+  --text:           var(--token-839225cb-b1fc-470d-a0c2-2eb7fcc590b8, #fff);
+  --text-secondary: var(--token-7ed67f45-7ffc-4523-9689-9d08f6aa2909, #d1d4e3);
+  --text-muted:     var(--token-e77749d5-1f11-472b-b926-5090d7e5b50e, #9ba9c4);
+  --text-dim:       var(--token-118587f4-0ede-44b6-a609-249caf227711, #ccc);
 
-  /* The signature border: blue-tinted, hairline. Used on every landing card. */
-  --border: rgba(125, 164, 255, 0.16);
-  --border-strong: rgba(125, 164, 255, 0.32);
+  /* The signature blue-tinted hairline used on every landing card */
+  --border:        var(--token-f4dc11a3-eab6-45ff-bb5d-90cc77e6a1e2, #7da4ff29);
+  --border-light:  var(--token-0eb0d570-0e27-4070-997d-d65cb58db903, #fff6);
 
   /* Brand */
-  --accent: rgb(1, 117, 255);
-  --accent-soft: rgba(1, 117, 255, 0.12);
-  --accent-text: rgb(125, 164, 255);
+  --accent: var(--token-991642a5-fe69-44f0-a456-0d249f695158, #0175ff);
+  --amber:  var(--token-40eb5c15-2df6-4cc5-9a1c-8a90a74b480c, #ffcd7d);
+  --slate:  var(--token-63f7583a-ac58-4fab-bed6-928aed613254, #2f3950);
+  --accent-soft: rgba(1, 117, 255, 0.14);
 
-  /* Gate verdicts. Semantic, not decorative — these three colours carry the
-     product's core meaning and must stay distinguishable at a glance. */
-  --allow: rgb(74, 222, 128);
-  --allow-soft: rgba(74, 222, 128, 0.12);
-  --review: rgb(255, 205, 125);      /* the landing's amber */
-  --review-soft: rgba(255, 205, 125, 0.12);
-  --block: rgb(255, 107, 107);
-  --block-soft: rgba(255, 107, 107, 0.12);
+  /* Gate verdicts. Amber and red come from the landing's own tokens; green
+     has no landing equivalent, so it is the one added value. */
+  --allow: #4ade80;        --allow-soft: rgba(74, 222, 128, 0.12);
+  --review: var(--amber);  --review-soft: rgba(255, 205, 125, 0.12);
+  --block: var(--token-58a9ee81-15ae-49fa-a929-941011a956e1, #f24);
+  --block-soft: rgba(255, 34, 68, 0.12);
 
-  /* Severity, for clinical events */
-  --critical: rgb(255, 107, 107);
-  --warning: rgb(255, 205, 125);
-  --info: rgb(155, 169, 196);
+  --critical: var(--block);
+  --warning:  var(--amber);
+  --info:     var(--text-muted);
 
-  /* Radii — landing uses 999px pills and 24px cards */
-  --r-pill: 999px;
-  --r-lg: 24px;
-  --r-md: 14px;
-  --r-sm: 8px;
+  /* Radii — 12px is the landing's dominant card radius (48 uses), 999px pills */
+  --r-pill: 999px; --r-lg: 24px; --r-card: 12px; --r-md: 10px; --r-sm: 8px;
 
   --space-1: 4px;  --space-2: 8px;  --space-3: 12px;
   --space-4: 16px; --space-5: 24px; --space-6: 32px; --space-8: 48px;
 
+  /* The landing's wordmark and headings use BentonSansRE, not Edgar Sigma */
   --font: "Inter", "Inter Display", -apple-system, BlinkMacSystemFont, sans-serif;
-  --font-display: "Edgar Sigma", "Inter Display", sans-serif;
+  --font-display: "BentonSansRE", Verdana, "Inter Display", sans-serif;
   --font-mono: ui-monospace, "SF Mono", Menlo, monospace;
+
+  /* The landing's glowing primary button: a five-layer drop shadow plus two
+     inset glows — blue from one corner, amber from the other. Lifted verbatim
+     from the Get Started CTA so app buttons are the same object. */
+  --glow-primary:
+    0px 0.83px 0.83px -0.75px rgba(0, 0, 0, 0.18),
+    0px 2.26px 2.26px -1.5px rgba(0, 0, 0, 0.18),
+    0px 4.96px 4.96px -2.25px rgba(0, 0, 0, 0.17),
+    0px 11.01px 11.01px -3px rgba(0, 0, 0, 0.14),
+    0px 28px 28px -3.75px rgba(0, 0, 0, 0.06),
+    inset -4px 3px 9px 0px var(--accent),
+    inset 3px -2px 8px 0px var(--amber);
+
+  /* The nav pill's inset highlight */
+  --glass-inset: inset -3px -2px 8px 0px var(--bg-subtle);
 }
 
-/* ---------- app shell ---------- */
+/* ---------- shell ---------- */
 
 .app-root {
   min-height: 100vh;
@@ -73,38 +85,59 @@
   -webkit-font-smoothing: antialiased;
 }
 
-.app-main { max-width: 1120px; margin: 0 auto; padding: var(--space-6) var(--space-5) var(--space-8); }
-.app-main--wide { max-width: 1400px; }
+.app-main { max-width: 1140px; margin: 0 auto; padding: var(--space-6) var(--space-5) var(--space-8); }
 
+/* Floating glass bar, matching the landing's nav treatment: blurred,
+   fully-rounded, lifted off the page with an inset highlight. */
 .app-nav {
+  position: sticky; top: 0; z-index: 30;
   display: flex; align-items: center; gap: var(--space-5);
   padding: var(--space-4) var(--space-5);
-  border-bottom: 0.5px solid var(--border);
-  background: var(--bg-elevated);
-  position: sticky; top: 0; z-index: 20;
-  backdrop-filter: blur(12px);
+}
+.app-nav__inner {
+  display: flex; align-items: center; gap: var(--space-2);
+  padding: 8px 10px;
+  border-radius: var(--r-pill);
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  box-shadow: var(--glass-inset);
+  background: rgba(255, 255, 255, 0.02);
 }
 .app-nav__brand {
-  font-family: var(--font-display); font-size: 18px;
-  letter-spacing: 0.02em; margin-right: var(--space-3);
+  font-family: var(--font-display);
+  font-size: 24px; font-weight: 400; letter-spacing: normal;
+  color: var(--text); text-decoration: none; white-space: nowrap;
+  margin-right: var(--space-4);
 }
 .app-nav__link {
-  color: var(--text-muted); text-decoration: none; font-size: 14px;
-  padding: 6px 12px; border-radius: var(--r-pill); transition: 140ms ease;
+  position: relative;
+  color: var(--text); text-decoration: none; font-size: 14px;
+  padding: 7px 16px; border-radius: var(--r-pill);
+  opacity: 0.62; transition: 160ms ease;
 }
-.app-nav__link:hover { color: var(--text); background: var(--bg-hover); }
-.app-nav__link--active { color: var(--text); background: var(--bg-active); font-weight: 600; }
+.app-nav__link:hover { opacity: 1; }
+.app-nav__link--active { opacity: 1; background: var(--bg-hover); font-weight: 500; }
+
+.status-strip {
+  display: flex; align-items: center; flex-wrap: wrap; gap: 20px;
+  padding: 8px 34px 14px;
+  font-size: 13px; color: var(--text-muted);
+}
 
 /* ---------- primitives ---------- */
 
 .card {
-  border: 0.5px solid var(--border);
-  border-radius: var(--r-lg);
+  border: 1px solid var(--border);
+  border-radius: var(--r-card);
   background: var(--bg-elevated);
   padding: var(--space-5);
 }
-.card--tight { padding: var(--space-4); border-radius: var(--r-md); }
-.card--flush { padding: 0; overflow: hidden; }
+.card--tight { padding: var(--space-4); }
+.card--glass {
+  background: rgba(255, 255, 255, 0.02);
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  box-shadow: var(--glass-inset);
+  border-color: transparent;
+}
 
 .stack { display: flex; flex-direction: column; gap: var(--space-4); }
 .stack--tight { gap: var(--space-2); }
@@ -114,72 +147,76 @@
 .grid { display: grid; gap: var(--space-4); }
 .grid--3 { grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); }
 
-h1.page-title { font-family: var(--font-display); font-size: 30px; font-weight: 400; margin: 0; letter-spacing: 0.01em; }
-h2.section-title { font-size: 15px; font-weight: 600; margin: 0; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); }
+h1.page-title { font-family: var(--font-display); font-size: 34px; font-weight: 400; margin: 0; }
+h2.section-title { font-size: 13px; font-weight: 600; margin: 0; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); }
 .subtle { color: var(--text-muted); }
-.dim { color: var(--text-dim); font-size: 13px; }
-.mono { font-family: var(--font-mono); font-size: 12px; letter-spacing: -0.01em; }
+.dim { color: var(--text-muted); opacity: 0.75; font-size: 13px; }
+.mono { font-family: var(--font-mono); font-size: 12px; }
 
+/* Base button: black pill with a light hairline, as on the landing */
 .btn {
   display: inline-flex; align-items: center; gap: var(--space-2);
-  padding: 10px 20px; border-radius: var(--r-pill);
-  border: 0.5px solid var(--border); background: var(--bg-hover);
-  color: var(--text); font-family: var(--font); font-size: 14px; font-weight: 500;
-  cursor: pointer; text-decoration: none; transition: 140ms ease;
+  padding: 11px 22px; border-radius: 15px;
+  border: 1px solid var(--border-light);
+  background: var(--bg-black); color: var(--text);
+  font-family: var(--font); font-size: 14px; font-weight: 500;
+  cursor: pointer; text-decoration: none; transition: 160ms ease;
 }
-.btn:hover:not(:disabled) { background: var(--bg-active); border-color: var(--border-strong); }
+.btn:hover:not(:disabled) { filter: brightness(1.25); }
 .btn:disabled { opacity: 0.4; cursor: not-allowed; }
-.btn--primary { background: var(--text); color: rgb(0, 0, 0); border-color: transparent; font-weight: 600; }
-.btn--primary:hover:not(:disabled) { background: var(--text-secondary); }
-.btn--accent { background: var(--accent); color: #fff; border-color: transparent; font-weight: 600; }
-.btn--ghost { background: transparent; }
-.btn--sm { padding: 6px 14px; font-size: 13px; }
+/* The landing's glowing CTA */
+.btn--primary { box-shadow: var(--glow-primary); }
+.btn--primary:hover:not(:disabled) { filter: brightness(1.1); }
+.btn--ghost { background: transparent; border-color: var(--border); }
+.btn--sm { padding: 6px 14px; font-size: 13px; border-radius: 10px; }
 
 .badge {
   display: inline-flex; align-items: center; gap: 6px;
   padding: 4px 12px; border-radius: var(--r-pill);
   font-size: 12px; font-weight: 600; letter-spacing: 0.03em;
-  border: 0.5px solid transparent; white-space: nowrap;
+  border: 1px solid transparent; white-space: nowrap;
 }
 .badge--allow  { color: var(--allow);  background: var(--allow-soft);  border-color: var(--allow); }
 .badge--review { color: var(--review); background: var(--review-soft); border-color: var(--review); }
 .badge--block  { color: var(--block);  background: var(--block-soft);  border-color: var(--block); }
-.badge--neutral{ color: var(--text-muted); background: var(--bg-hover); border-color: var(--border); }
-.badge--accent { color: var(--accent-text); background: var(--accent-soft); border-color: var(--border-strong); }
+.badge--neutral{ color: var(--text-muted); background: var(--bg-subtle); border-color: var(--border); }
+.badge--accent { color: var(--text); background: var(--accent-soft); border-color: var(--border); }
 
 .field { display: flex; flex-direction: column; gap: 6px; }
 .field__label { font-size: 12px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; }
 .input, .select {
   padding: 11px 14px; border-radius: var(--r-md);
-  border: 0.5px solid var(--border); background: var(--bg-subtle);
+  border: 1px solid var(--border); background: rgba(255, 255, 255, 0.03);
   color: var(--text); font-family: var(--font); font-size: 14px; width: 100%;
 }
 .input:focus, .select:focus { outline: none; border-color: var(--accent); }
-.select option { background: var(--bg); color: var(--text); }
+.select option { background: var(--bg-elevated); color: var(--text); }
 
-.notice { border-radius: var(--r-md); padding: var(--space-4); border: 0.5px solid var(--border); background: var(--bg-subtle); }
+.notice { border-radius: var(--r-card); padding: var(--space-4); border: 1px solid var(--border); background: var(--bg-elevated); }
 .notice--error { border-color: var(--block); background: var(--block-soft); }
 .notice--warn { border-color: var(--review); background: var(--review-soft); }
 .notice__title { font-weight: 600; margin: 0 0 4px 0; }
 
-.meter { height: 4px; border-radius: var(--r-pill); background: var(--bg-active); overflow: hidden; }
+.meter { height: 4px; border-radius: var(--r-pill); background: var(--bg-hover); overflow: hidden; }
 .meter__fill { height: 100%; background: var(--accent); border-radius: var(--r-pill); transition: width 300ms ease; }
-.meter__fill--warn { background: var(--review); }
+.meter__fill--warn { background: var(--amber); }
 .meter__fill--full { background: var(--block); }
 
 .skeleton { border-radius: var(--r-sm); background: var(--bg-hover); animation: pulse 1.4s ease-in-out infinite; }
 @keyframes pulse { 0%,100% { opacity: 0.5 } 50% { opacity: 0.9 } }
 
 .table { width: 100%; border-collapse: collapse; font-size: 13px; }
-.table th { text-align: left; font-weight: 600; color: var(--text-muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; padding: 10px 14px; border-bottom: 0.5px solid var(--border); }
-.table td { padding: 11px 14px; border-bottom: 0.5px solid rgba(125,164,255,0.08); vertical-align: top; }
+.table th { text-align: left; font-weight: 600; color: var(--text-muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; padding: 10px 14px; border-bottom: 1px solid var(--border); }
+.table td { padding: 11px 14px; border-bottom: 1px solid rgba(125,164,255,0.1); vertical-align: top; }
 .table tr:last-child td { border-bottom: none; }
-.table tr:hover td { background: var(--bg-subtle); }
+.table tr:hover td { background: rgba(255,255,255,0.02); }
 
 .scroll-x { overflow-x: auto; }
 
 @media (max-width: 720px) {
-  .app-nav { gap: var(--space-2); padding: var(--space-3); overflow-x: auto; }
+  .app-nav { padding: var(--space-3); overflow-x: auto; }
+  .app-nav__brand { font-size: 20px; margin-right: var(--space-2); }
   .app-main { padding: var(--space-4) var(--space-3) var(--space-6); }
-  h1.page-title { font-size: 24px; }
+  .status-strip { padding: 8px 16px 12px; gap: 12px; }
+  h1.page-title { font-size: 26px; }
 }

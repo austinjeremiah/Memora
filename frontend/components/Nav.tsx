@@ -7,7 +7,7 @@ export default function Nav() {
             <div className="framer-yq3j0r" data-framer-name="Container" style={{opacity: "1"}}>
               <div className="framer-1of73k0" data-framer-name="Content" style={{opacity: "1"}}>
                 <div className="framer-1yvwb09" data-framer-name="Logo" style={{backdropFilter: "none", backgroundColor: "transparent", boxShadow: "none", borderRadius: "0", opacity: "1", width: "210px", minWidth: "210px", overflow: "visible"}}>
-                  <a className="framer-c2linv framer-c0tdwz" data-framer-name="Logo Image " href="./" data-framer-page-link-current="true" style={{opacity: "1", display: "flex", alignItems: "center", justifyContent: "center", overflow: "visible"}}>
+                  <a className="framer-c2linv framer-c0tdwz" data-framer-name="Logo Image " href="/" data-framer-page-link-current="true" style={{opacity: "1", display: "flex", alignItems: "center", justifyContent: "center", overflow: "visible"}}>
                     <span style={{fontFamily: "BentonSansRE, Verdana, sans-serif", fontSize: "34px", fontWeight: 400, fontStyle: "normal", lineHeight: "normal", letterSpacing: "normal", color: "rgb(255, 255, 255)", whiteSpace: "nowrap"}}>
                       MEMORA
                     </span>
@@ -17,7 +17,7 @@ export default function Nav() {
               <div className="framer-199y88y" data-framer-name="Links" style={{backdropFilter: "blur(8px)", borderRadius: "999px", boxShadow: "inset -3px -2px 8px 0px var(--token-5a7f2bca-ee8c-42c5-80e1-f72de38d4fdf, rgba(255, 255, 255, 0.07))", opacity: "1"}}>
                 <nav className="framer-48nfym" data-framer-name="Links" style={{opacity: "1"}}>
                   <div className="framer-ocqhot-container" style={{opacity: "1"}}>
-                    <a className="framer-ttQjC framer-QATJw framer-1vp0xhe framer-v-1vp0xhe framer-j6ho85" data-framer-name="Default" data-highlight="true" href="./ai-solutions" tabIndex={0} style={{opacity: "1"}}>
+                    <a className="framer-ttQjC framer-QATJw framer-1vp0xhe framer-v-1vp0xhe framer-j6ho85" data-framer-name="Default" data-highlight="true" href="#platform" tabIndex={0} style={{opacity: "1"}}>
                       <div className="framer-1gsxzzc" data-framer-name="Label" data-framer-component-type="RichTextContainer" style={{"--extracted-r6o4lv": "var(--token-839225cb-b1fc-470d-a0c2-2eb7fcc590b8, rgb(255, 255, 255))", "--framer-link-text-color": "rgb(0, 153, 255)", "--framer-link-text-decoration": "underline", transform: "none", opacity: "1"}}>
                         <p className="framer-text framer-styles-preset-1p9z0bc" data-styles-preset="lW2kM2SoC" style={{"--framer-text-color": "var(--extracted-r6o4lv, var(--token-839225cb-b1fc-470d-a0c2-2eb7fcc590b8, rgb(255, 255, 255)))"}}>
                           Platform
@@ -29,7 +29,7 @@ export default function Nav() {
                     </a>
                   </div>
                   <div className="framer-1hxdou6-container" style={{opacity: "1"}}>
-                    <a className="framer-ttQjC framer-QATJw framer-1vp0xhe framer-v-1vp0xhe framer-j6ho85" data-framer-name="Default" data-highlight="true" href="./about" tabIndex={0} style={{opacity: "1"}}>
+                    <a className="framer-ttQjC framer-QATJw framer-1vp0xhe framer-v-1vp0xhe framer-j6ho85" data-framer-name="Default" data-highlight="true" href="#how-it-works" tabIndex={0} style={{opacity: "1"}}>
                       <div className="framer-1gsxzzc" data-framer-name="Label" data-framer-component-type="RichTextContainer" style={{"--extracted-r6o4lv": "var(--token-839225cb-b1fc-470d-a0c2-2eb7fcc590b8, rgb(255, 255, 255))", "--framer-link-text-color": "rgb(0, 153, 255)", "--framer-link-text-decoration": "underline", transform: "none", opacity: "1"}}>
                         <p className="framer-text framer-styles-preset-1p9z0bc" data-styles-preset="lW2kM2SoC" style={{"--framer-text-color": "var(--extracted-r6o4lv, var(--token-839225cb-b1fc-470d-a0c2-2eb7fcc590b8, rgb(255, 255, 255)))"}}>
                           About
@@ -41,7 +41,7 @@ export default function Nav() {
                     </a>
                   </div>
                   <div className="framer-9hdncu-container" style={{opacity: "1"}}>
-                    <a className="framer-ttQjC framer-QATJw framer-1vp0xhe framer-v-1vp0xhe framer-j6ho85" data-framer-name="Default" data-highlight="true" href="./pricing" tabIndex={0} style={{opacity: "1"}}>
+                    <a className="framer-ttQjC framer-QATJw framer-1vp0xhe framer-v-1vp0xhe framer-j6ho85" data-framer-name="Default" data-highlight="true" href="#pricing" tabIndex={0} style={{opacity: "1"}}>
                       <div className="framer-1gsxzzc" data-framer-name="Label" data-framer-component-type="RichTextContainer" style={{"--extracted-r6o4lv": "var(--token-839225cb-b1fc-470d-a0c2-2eb7fcc590b8, rgb(255, 255, 255))", "--framer-link-text-color": "rgb(0, 153, 255)", "--framer-link-text-decoration": "underline", transform: "none", opacity: "1"}}>
                         <p className="framer-text framer-styles-preset-1p9z0bc" data-styles-preset="lW2kM2SoC" style={{"--framer-text-color": "var(--extracted-r6o4lv, var(--token-839225cb-b1fc-470d-a0c2-2eb7fcc590b8, rgb(255, 255, 255)))"}}>
                           Pricing
@@ -53,7 +53,7 @@ export default function Nav() {
                     </a>
                   </div>
                   <div className="framer-1aui1a1-container" style={{opacity: "1"}}>
-                    <a className="framer-ttQjC framer-QATJw framer-1vp0xhe framer-v-1vp0xhe framer-j6ho85" data-framer-name="Default" data-highlight="true" href="./contact" tabIndex={0} style={{opacity: "1"}}>
+                    <a className="framer-ttQjC framer-QATJw framer-1vp0xhe framer-v-1vp0xhe framer-j6ho85" data-framer-name="Default" data-highlight="true" href="https://github.com/austinjeremiah/Memora" tabIndex={0} style={{opacity: "1"}}>
                       <div className="framer-1gsxzzc" data-framer-name="Label" data-framer-component-type="RichTextContainer" style={{"--extracted-r6o4lv": "var(--token-839225cb-b1fc-470d-a0c2-2eb7fcc590b8, rgb(255, 255, 255))", "--framer-link-text-color": "rgb(0, 153, 255)", "--framer-link-text-decoration": "underline", transform: "none", opacity: "1"}}>
                         <p className="framer-text framer-styles-preset-1p9z0bc" data-styles-preset="lW2kM2SoC" style={{"--framer-text-color": "var(--extracted-r6o4lv, var(--token-839225cb-b1fc-470d-a0c2-2eb7fcc590b8, rgb(255, 255, 255)))"}}>
                           Contact
