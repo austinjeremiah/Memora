@@ -6,6 +6,7 @@ That matters most for SibylUnavailableError: it must become a clean 503 from
 anywhere, never a 200 carrying an empty brief.
 """
 
+import logging
 import time
 from datetime import UTC, datetime
 from uuid import uuid4
@@ -19,6 +20,7 @@ from memora.api.schemas import (
     AttestationOut,
     AttestationPayloadOut,
     AttestationVerifyOut,
+    AutonomousCheckOut,
     ClaimOut,
     ClinicianOut,
     CommitmentOut,
@@ -57,6 +59,7 @@ from memora.attestation.verify import verify_attestation
 from memora.clinicians.roles import CLINICIANS, get_clinician
 from memora.config import settings
 from memora.context.engine import RetrievedContext, compile_plan, execute_plan
+from memora.context.situations import Situation
 from memora.evidence.resolver import resolve_all, resolve_claim
 from memora.gate.gate import GateResult, evaluate_all, evaluate_claim, summarise
 from memora.integrity.base_client import commit_hash, verify_hash
@@ -81,6 +84,8 @@ from memora.sibyl.client import (
 )
 from memora.sibyl.errors import SibylUnavailableError
 from memora.sibyl.preflight import assert_store_available
+
+log = logging.getLogger("memora.api")
 
 router = APIRouter()
 
@@ -287,11 +292,35 @@ def record_event(patient_id: str, request: RecordEventRequest) -> RecordEventOut
     )
     event_id = memory.log_event(event)
 
+    # THE AGENT ACTS ON ITS OWN. New information entering memory is the
+    # trigger -- nobody asked for this check. Sentinel decides whether what
+    # just arrived contradicts what was already there, and escalates into the
+    # patient's record if it has persisted long enough. Scoped to this one
+    # patient so the write stays fast.
+    check = None
+    try:
+        run = sweep(Situation.ICU_TO_WARD, [patient_id])
+        check = AutonomousCheckOut(
+            ran=True,
+            situation=run.situation,
+            records_checked=run.records_checked,
+            findings=_findings_out(run.findings),
+            actions_taken=run.actions_taken,
+        )
+    except Exception:
+        # The event is already durably recorded. An autonomous check that
+        # fails is a degraded agent, not a lost clinical record, so the write
+        # stands and the caller is told the check did not run.
+        log.exception("autonomous check failed after recording an event")
+        check = AutonomousCheckOut(ran=False, situation=Situation.ICU_TO_WARD.value,
+                                   records_checked=0)
+
     return RecordEventOut(
         patient_id=patient_id,
         event_id=event_id,
         memory_version=memory.memory_version(),
         recorded_at=event.timestamp,
+        autonomous_check=check,
     )
 
 

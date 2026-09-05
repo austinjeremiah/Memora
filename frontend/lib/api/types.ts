@@ -253,11 +253,32 @@ export interface RecordEventRequest {
   source_id?: string | null;
 }
 
+/**
+ * What Sentinel did on its own after new information arrived. Nobody asked
+ * for this check — new information entering memory is the trigger, which is
+ * what makes it the agent acting rather than a feature being invoked.
+ */
+export interface AutonomousCheckOut {
+  ran: boolean;
+  situation: string;
+  records_checked: number;
+  findings: FindingOut[];
+  actions_taken: {
+    action: string;
+    patient_id: string;
+    kind: string;
+    name: string;
+    event_id: string;
+    runs_seen: number;
+  }[];
+}
+
 export interface RecordEventOut {
   patient_id: string;
   event_id: string;
   memory_version: number;
   recorded_at: string;
+  autonomous_check: AutonomousCheckOut | null;
 }
 
 // ---------------------------------------------------------------------------

@@ -324,11 +324,27 @@ class RecordEventRequest(BaseModel):
     source_id: str | None = None
 
 
+class AutonomousCheckOut(BaseModel):
+    """What Sentinel did on its own after new information arrived.
+
+    Nobody asked for this check. New information entering memory is the
+    trigger, which is what makes it the agent acting rather than a feature
+    being invoked.
+    """
+
+    ran: bool
+    situation: str
+    records_checked: int
+    findings: list[FindingOut] = []
+    actions_taken: list[dict] = []
+
+
 class RecordEventOut(BaseModel):
     patient_id: str
     event_id: str
     memory_version: int
     recorded_at: str
+    autonomous_check: AutonomousCheckOut | None = None
 
 
 class AskRequest(BaseModel):

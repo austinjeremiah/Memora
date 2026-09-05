@@ -22,6 +22,7 @@ from datetime import UTC, datetime
 
 from memora.context.situations import SITUATION_FOCUS, Situation
 from memora.gate.gate import GateDecision, GateResult
+from memora.sentinel.actions import escalate
 from memora.sentinel.digest import (
     Finding,
     load_digest,
@@ -47,6 +48,8 @@ class SentinelRun:
     records_checked: int = 0
     findings: list[Finding] = field(default_factory=list)
     digest_commitment: str | None = None
+    # What the agent DID this run, not merely what it noticed.
+    actions_taken: list[dict] = field(default_factory=list)
 
     def announceable(self) -> list[Finding]:
         return [f for f in self.findings
@@ -66,6 +69,7 @@ class SentinelRun:
             "records_checked": self.records_checked,
             "summary": self.by_status(),
             "findings": [f.as_dict() for f in self.findings],
+            "actions_taken": self.actions_taken,
             "digest_commitment": self.digest_commitment,
         }
 
@@ -141,6 +145,21 @@ def sweep(situation: Situation, patient_ids: list[str],
             continue  # clean result on something never flagged -- not a finding
         merged = merge_finding(prior, finding, status)
         findings.append(merged)
+
+        # THE ACTION. Only reachable because the digest remembered how many
+        # times this was already seen -- without that persisted count there is
+        # no escalation threshold to cross.
+        if status is FindingStatus.ESCALATED:
+            event_id = escalate(PatientMemory(merged.patient_id), merged)
+            if event_id:
+                run.actions_taken.append({
+                    "action": "escalated_to_patient_record",
+                    "patient_id": merged.patient_id,
+                    "kind": merged.kind,
+                    "name": merged.name,
+                    "event_id": event_id,
+                    "runs_seen": merged.runs_seen,
+                })
         # A resolved finding is reported this run, then dropped from the digest
         # so it does not resurface forever as stale state.
         if status is not FindingStatus.RESOLVED:

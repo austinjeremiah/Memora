@@ -4,8 +4,8 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { getPatientMemory, listPatients, recordEvent, runSentinel } from "@/lib/api/client";
 import {
-  FindingOut, MemoraApiError, PatientMemoryOut, PatientSummaryOut,
-  SentinelRunOut, Situation,
+  AutonomousCheckOut, FindingOut, MemoraApiError, PatientMemoryOut,
+  PatientSummaryOut, SentinelRunOut, Situation,
 } from "@/lib/api/types";
 import { SITUATIONS } from "@/lib/config/demo-data";
 import DriftGraph from "@/components/app/DriftGraph";
@@ -207,6 +207,7 @@ function NoDrift({ onRecorded }: { onRecorded: () => void }) {
   const [medication, setMedication] = useState("");
   const [busy, setBusy] = useState(false);
   const [done, setDone] = useState<string | null>(null);
+  const [check, setCheck] = useState<AutonomousCheckOut | null>(null);
   const [err, setErr] = useState<string | null>(null);
 
   useEffect(() => {
@@ -226,7 +227,7 @@ function NoDrift({ onRecorded }: { onRecorded: () => void }) {
     if (!patientId || !medication) return;
     setBusy(true); setErr(null);
     try {
-      await recordEvent(patientId, {
+      const res = await recordEvent(patientId, {
         event_type: "adverse_reaction",
         summary: `Documented adverse reaction to ${medication}`,
         related_kind: "medication",
@@ -234,6 +235,7 @@ function NoDrift({ onRecorded }: { onRecorded: () => void }) {
         severity: "critical",
       });
       setDone(medication);
+      setCheck(res.autonomous_check);
       onRecorded();
     } catch (e) {
       setErr((e as MemoraApiError).detail);
@@ -258,9 +260,27 @@ function NoDrift({ onRecorded }: { onRecorded: () => void }) {
 
         {err && <Notice tone="error" title="Could not record">{err}</Notice>}
         {done && (
-          <Notice tone="warn" title="Recorded">
-            An adverse reaction to <strong>{done}</strong> is now in the journal,
-            while the medication is still recorded as active. Sweep again.
+          <Notice tone="warn" title="Recorded — and the agent checked on its own">
+            An adverse reaction to <strong>{done}</strong> is now in the journal
+            while the medication is still recorded as active.
+            {check?.ran && (
+              <div className="stack stack--tight" style={{ marginTop: 10 }}>
+                <span>
+                  Nobody asked for a check. Sentinel swept{" "}
+                  <strong>{check.records_checked} records</strong> the moment the
+                  information arrived and found{" "}
+                  <strong>{check.findings.length}</strong>.
+                </span>
+                {check.actions_taken.map((a) => (
+                  <span key={a.event_id}>
+                    It also <strong>wrote into the patient&apos;s record</strong>:{" "}
+                    {a.kind}/{a.name} has conflicted across {a.runs_seen} checks.
+                    That threshold exists only in the agent&apos;s own memory —
+                    without it there is nothing to escalate.
+                  </span>
+                ))}
+              </div>
+            )}
           </Notice>
         )}
 
