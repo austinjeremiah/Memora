@@ -9,6 +9,7 @@ import {
   ApproveClaimIn, ClaimOut, CommitmentOut, HandoffOut, MemoraApiError, Situation,
 } from "@/lib/api/types";
 import ClaimCard, { GateSummary } from "@/components/app/ClaimCard";
+import AttestPanel from "@/components/app/AttestPanel";
 import {
   Badge, Button, Card, EmptyState, Mono, Notice, Section, SkeletonList, StatTile,
 } from "@/components/app/ui";
@@ -163,6 +164,18 @@ function HandoffResultInner() {
             </Section>
           )}
 
+          {selected.size > 0 && !commitment && (
+            <AttestPanel
+              patientId={patientId}
+              situation={situation}
+              clinicianId={clinicianId}
+              claims={handoff.claims
+                .filter((c) => selected.has(c.text))
+                .map((c) => ({ text: c.text, related_kind: c.source_kind,
+                               related_name: c.source_name }))}
+            />
+          )}
+
           {commitment ? (
             <Section title="Anchored on Base">
               <Card>
@@ -185,7 +198,7 @@ function HandoffResultInner() {
               </Card>
             </Section>
           ) : (
-            <Section title="Approve">
+            <Section title="Approve — anonymous hash (v1 mechanism)">
               <Card>
                 <div className="stack">
                   {approveError && (
@@ -208,7 +221,7 @@ function HandoffResultInner() {
                     <Button variant="primary" onClick={approve}
                             disabled={approving || selected.size === 0 ||
                                       !handoff.clinician.can_approve_handoff}>
-                      {approving ? "Verifying and anchoring…" : "Approve and anchor on Base"}
+                      {approving ? "Verifying and anchoring…" : "Anchor hash only"}
                     </Button>
                   </div>
                 </div>
