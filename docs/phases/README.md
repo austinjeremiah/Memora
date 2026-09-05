@@ -19,13 +19,13 @@ These describe what was actually built.
 | v2 | Sentinel + Attestation | done — see `memora-v2.md` |
 | [B](B-api-additions-for-ui.md) | Backend API additions for the UI | done |
 | [F1](F1-design-system-shell.md) | App design system and shell | done |
-| F2 | Complete the API client layer | next |
-| F3 | Patients list + memory explorer | planned |
-| F4 | Handoff flow | planned |
+| [F2+F3](F2-F3-client-and-memory-explorer.md) | Client layer, patients, memory explorer | done |
+| F4 | Handoff flow + per-claim evidence graph | next |
 | F5 | Compare situations | planned |
-| F6 | Sentinel UI | planned |
-| F7 | Attestation + wallet | planned |
+| F6 | Sentinel UI + drift graph | planned |
+| F7 | Attestation + wallet (RainbowKit) | planned |
 | F8 | Gate-proof page + polish | planned |
+| F9 | Question box — FTS search → propose → gate | planned |
 
 ## Running everything
 

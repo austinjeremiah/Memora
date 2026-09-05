@@ -1,44 +1,15 @@
 /**
- * Static config the backend cannot give the frontend at runtime — except
- * where it now can. Reconciled against the real backend source
- * (2026-09-03), not the FRONTEND.md planning doc alone, which had already
- * drifted from it:
+ * Static config the backend genuinely cannot supply at runtime.
  *
- *  - SITUATIONS below is the real `Situation` enum
- *    (backend/memora/context/situations.py).
- *  - CLINICIANS is NOT hardcoded here, unlike the doc's §3.1 suggests.
- *    `GET /clinicians` exists for real (routes.py:116) and returns all
- *    three personas live, including `dr_priya` / SURGEON — the "no surgeon
- *    persona" gap the doc's §0.3 describes no longer exists. Fetch clinicians
- *    with `getClinicians()` from lib/api/client.ts instead of trusting a
- *    static list here, so this file can't silently drift from the backend
- *    the way a hardcoded clinician list would.
- *  - PATIENTS has NO confirmed real IDs. The backend's own demo-ingest path
- *    (`scripts/ingest_demo.py`) pulls patient IDs from Synthea FHIR bundles
- *    at ingest time — they're UUIDs, generated per run, not fixed literals.
- *    "P-10482" appears throughout the backend's own scripts/tests as a
- *    conventional fixture ID, but nothing guarantees it exists in whatever
- *    Sibyl store the API is actually pointed at right now. The placeholder
- *    below is exactly that — a placeholder — flagged loudly rather than
- *    presented as verified. Confirm real IDs against the running store
- *    (e.g. `POST /sentinel/run` with no `patient_ids` returns every known
- *    ingested ID as a side effect) before relying on this list.
+ * There is deliberately NO patient list here. Real patient ids are Synthea
+ * UUIDs generated per ingestion run — they differ between stores and cannot be
+ * known ahead of time. An earlier version shipped a hardcoded `P-10482`, which
+ * was a fixture id from the backend's own scripts and would 404 against any
+ * real store. Use `listPatients()` from lib/api/client.ts.
+ *
+ * Clinicians are likewise fetched live from `GET /clinicians` rather than
+ * duplicated here, so this file cannot drift from the backend.
  */
-
-// Last reconciled against backend source: 2026-09-03.
-export const DEMO_DATA_LAST_SYNCED = "2026-09-03";
-
-export const PATIENTS_ARE_UNCONFIRMED = true;
-
-export const PATIENTS: { id: string; label: string }[] = [
-  {
-    id: "P-10482",
-    label: "P-10482 (conventional fixture ID used throughout backend scripts — UNCONFIRMED, verify it exists in your running store)",
-  },
-];
-
-export const CLINICIANS_NOTE =
-  "Clinicians: fetched live from GET /clinicians, not hardcoded (see lib/api/client.ts's getClinicians()).";
 
 export const SITUATIONS: {
   value: "icu_to_ward" | "pre_operative" | "discharge";
@@ -47,17 +18,27 @@ export const SITUATIONS: {
 }[] = [
   {
     value: "icu_to_ward",
-    label: "ICU → Ward Handoff",
-    focusHint: "Medications, allergies, labs, diagnoses",
+    label: "ICU → Ward handoff",
+    focusHint: "Medications, allergies, lab trends, diagnoses",
   },
   {
     value: "pre_operative",
-    label: "Pre-Operative Review",
+    label: "Pre-operative review",
     focusHint: "Allergies, procedures, medications",
   },
   {
     value: "discharge",
-    label: "Discharge Planning",
+    label: "Discharge planning",
     focusHint: "Diagnoses, medications, procedures",
   },
 ];
+
+/** Human labels for the ontology's entity kinds. */
+export const KIND_LABELS: Record<string, string> = {
+  medication: "Medications",
+  allergy: "Allergies",
+  diagnosis: "Diagnoses",
+  procedure: "Procedures",
+  lab_trend: "Lab trends",
+  care_phase: "Encounters",
+};

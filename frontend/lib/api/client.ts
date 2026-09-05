@@ -3,14 +3,25 @@
 import { getApiBaseUrl } from "./baseUrl";
 import {
   ApproveRequest,
+  AttestationOut,
+  AttestationPayloadOut,
+  AttestationVerifyOut,
   ClinicianOut,
   CommitmentOut,
+  CommitmentVerifyOut,
+  ContextOut,
   HandoffOut,
   HandoffRequest,
   HealthOut,
   KnownErrorCode,
   MemoraApiError,
+  PatientMemoryOut,
+  PatientSummaryOut,
   ReadyzOut,
+  SentinelRunOut,
+  SentinelRunRequest,
+  Situation,
+  SinceLastReviewOut,
 } from "./types";
 
 /**
@@ -161,27 +172,98 @@ export function approveHandoff(
   });
 }
 
-// --- Stub points for backend capability that doesn't exist yet (§0.2, §10.4
-// of the build doc). Each throws loudly rather than silently faking data, so
-// wiring the real endpoint in later is a one-function change here, not a
-// hunt through the codebase.
+// ---------------------------------------------------------------------------
+// Patients
+// ---------------------------------------------------------------------------
 
-export function listPatients(): Promise<never> {
-  throw new Error(
-    "listPatients() is not implemented — the backend has no GET /patients endpoint."
+/**
+ * Every patient in the store. This is the ONLY way to learn patient ids — they
+ * are Synthea UUIDs generated per ingestion run, so nothing may hardcode them.
+ * (The three stubs that used to throw here are all implemented now; the
+ * backend gained GET /patients and GET /patients/{id}/memory for exactly this.)
+ */
+export function listPatients(): Promise<PatientSummaryOut[]> {
+  return request<PatientSummaryOut[]>("/patients");
+}
+
+/** The raw stored record — unfiltered by situation. */
+export function getPatientMemory(
+  patientId: string,
+  eventLimit = 200
+): Promise<PatientMemoryOut> {
+  return request<PatientMemoryOut>(
+    `/patients/${encodeURIComponent(patientId)}/memory?event_limit=${eventLimit}`
   );
 }
 
-export function getPatientHistory(_patientId: string): Promise<never> {
-  throw new Error(
-    "getPatientHistory() is not implemented — the backend has no patient-history endpoint. " +
-      "GET /patients/{id}/context exists but returns one situation's retrieval plan, not a raw timeline."
+/** One situation's ranked, capped retrieval plan. No model involved. */
+export function getPatientContext(
+  patientId: string,
+  situation: Situation,
+  clinicianId: string
+): Promise<ContextOut> {
+  const q = new URLSearchParams({ situation, clinician_id: clinicianId });
+  return request<ContextOut>(
+    `/patients/${encodeURIComponent(patientId)}/context?${q}`
   );
 }
 
-export function verifyCommitment(_hash: string): Promise<never> {
-  throw new Error(
-    "verifyCommitment() is not implemented in this client yet — the backend DOES have " +
-      "GET /commitment/{commitment_hash}/verify (confirmed in routes.py), it's just not wired here."
+// ---------------------------------------------------------------------------
+// Sentinel
+// ---------------------------------------------------------------------------
+
+export function runSentinel(body: SentinelRunRequest): Promise<SentinelRunOut> {
+  return request<SentinelRunOut>("/sentinel/run", {
+    method: "POST",
+    body: JSON.stringify(body),
+  });
+}
+
+export function sinceLastReview(
+  patientId: string,
+  situation: Situation
+): Promise<SinceLastReviewOut> {
+  const q = new URLSearchParams({ patient_id: patientId, situation });
+  return request<SinceLastReviewOut>(`/sentinel/since-last-review?${q}`);
+}
+
+// ---------------------------------------------------------------------------
+// Attestation
+// ---------------------------------------------------------------------------
+
+/** Step 1: what the wallet should sign. The server derives it from live memory. */
+export function getAttestationPayload(
+  patientId: string,
+  body: ApproveRequest
+): Promise<AttestationPayloadOut> {
+  return request<AttestationPayloadOut>(
+    `/handoff/${encodeURIComponent(patientId)}/attestation-payload`,
+    { method: "POST", body: JSON.stringify(body) }
+  );
+}
+
+/**
+ * Step 2: record it. Include signature/signer/issued_at/expires_at/nonce for
+ * wallet mode; omit them and the server signs with the synthetic demo key.
+ */
+export function attestHandoff(
+  patientId: string,
+  body: ApproveRequest
+): Promise<AttestationOut> {
+  return request<AttestationOut>(
+    `/handoff/${encodeURIComponent(patientId)}/attest`,
+    { method: "POST", body: JSON.stringify(body) }
+  );
+}
+
+export function verifyAttestation(stateHash: string): Promise<AttestationVerifyOut> {
+  return request<AttestationVerifyOut>(
+    `/attestation/${encodeURIComponent(stateHash)}/verify`
+  );
+}
+
+export function verifyCommitment(hash: string): Promise<CommitmentVerifyOut> {
+  return request<CommitmentVerifyOut>(
+    `/commitment/${encodeURIComponent(hash)}/verify`
   );
 }

@@ -79,6 +79,17 @@ export interface ApproveRequest {
   situation: Situation;
   clinician_id: string;
   claims: ApproveClaimIn[];
+
+  /**
+   * Wallet mode (optional). Supply all five and the server verifies this
+   * signature instead of signing itself. The timestamps and nonce must be
+   * exactly what /attestation-payload returned — the signature covers them.
+   */
+  signature?: string;
+  signer?: string;
+  issued_at?: number;
+  expires_at?: number;
+  nonce?: number;
 }
 
 export interface CommitmentOut {
@@ -91,6 +102,218 @@ export interface CommitmentOut {
   tx_hash: string;
   block_number: number;
   gas_used: number;
+  committer: string;
+  basescan_url: string;
+}
+
+// ---------------------------------------------------------------------------
+// Patients — discovery and the raw stored record
+// ---------------------------------------------------------------------------
+
+/**
+ * Real patient ids are Synthea UUIDs generated per ingestion run. They cannot
+ * be hardcoded anywhere; `GET /patients` is the only way to learn them.
+ */
+export interface PatientSummaryOut {
+  patient_id: string;
+  fact_count: number;
+  event_count: number;
+  memory_version: number;
+  kinds: Record<string, number>;
+  has_drug_allergy: boolean;
+  last_updated: string | null;
+}
+
+export interface StoredFactOut {
+  name: string;
+  status: string | null;
+  body: Record<string, unknown> | unknown[] | null;
+  created_at: string;
+  updated_at: string;
+}
+
+/** A lab folded into a trajectory: the series is what a single value cannot say. */
+export interface TrendOut {
+  name: string;
+  test: string | null;
+  loinc: string | null;
+  unit: string | null;
+  direction: string | null;      // rising | falling | stable | single_reading
+  delta: number | null;
+  readings: number | null;
+  latest_value: number | string | null;
+  latest_at: string | null;
+  series: { value: number; at: string }[];
+}
+
+export interface StoredEventOut {
+  timestamp: string;
+  event_type: string;
+  summary: string;
+  severity: string | null;
+  related_kind: string | null;
+  related_name: string | null;
+  source_id: string | null;
+}
+
+/**
+ * The raw record — every WARM fact by kind, every trajectory, the COLD journal.
+ * Distinct from ContextOut, which is one situation's ranked and capped plan.
+ */
+export interface PatientMemoryOut {
+  patient_id: string;
+  memory_version: number;
+  fact_count: number;
+  event_count: number;
+  facts: Record<string, StoredFactOut[]>;
+  trends: TrendOut[];
+  events: StoredEventOut[];
+  active_situation: Record<string, unknown> | null;
+  memory: MemoryStatusOut;
+}
+
+// ---------------------------------------------------------------------------
+// Situational retrieval
+// ---------------------------------------------------------------------------
+
+export interface FactOut {
+  kind: string;
+  name: string;
+  status: string | null;
+  body: Record<string, unknown> | unknown[] | null;
+  updated_at: string;
+}
+
+export interface EventOut {
+  event_type: string;
+  summary: string;
+  timestamp: string;
+  severity: string | null;
+  related_kind: string | null;
+  related_name: string | null;
+}
+
+export interface ContextOut {
+  patient_id: string;
+  situation: string;
+  task: string;
+  clinician: ClinicianOut;
+  facts: FactOut[];
+  history: EventOut[];
+  memory: MemoryStatusOut;
+}
+
+// ---------------------------------------------------------------------------
+// Sentinel — the proactive path. No model is involved in producing any of this.
+// ---------------------------------------------------------------------------
+
+export type FindingStatus = "NEW" | "PERSISTING" | "RESOLVED" | "ESCALATED";
+
+export interface FindingOut {
+  patient_id: string;
+  kind: string;
+  name: string;
+  status: FindingStatus;
+  gate_result: GateResult;
+  reason: string;
+  detector: string;              // "drift" | "delta"
+  first_seen_at: string;
+  last_seen_at: string;
+  runs_seen: number;
+  triggered_rules: string[];
+  evidence_event: string | null;
+}
+
+export interface SentinelRunRequest {
+  situation: Situation;
+  patient_ids?: string[] | null; // null = every ingested patient
+  escalation_threshold?: number;
+}
+
+export interface SentinelRunOut {
+  situation: string;
+  run_at: string;
+  patients_scanned: number;
+  records_checked: number;
+  summary: Record<string, number>;
+  findings: FindingOut[];
+  /** Only NEW / ESCALATED / RESOLVED. PERSISTING is tracked but never re-alerts. */
+  announceable: FindingOut[];
+  digest_commitment: string | null;
+}
+
+export interface SinceLastReviewOut {
+  patient_id: string;
+  situation: string;
+  new: FindingOut[];
+  persisting: FindingOut[];
+  escalated: FindingOut[];
+}
+
+// ---------------------------------------------------------------------------
+// EIP-712 attestation
+// ---------------------------------------------------------------------------
+
+/**
+ * Step 1 of the wallet flow. The SERVER derives the state hash, because doing
+ * so requires re-verifying every claim against live memory — a browser cannot
+ * be trusted to decide what was approved. The wallet only signs what memory
+ * has already justified.
+ */
+export interface AttestationPayloadOut {
+  domain: Record<string, unknown>;
+  types: Record<string, { name: string; type: string }[]>;
+  primary_type: string;
+  message: Record<string, string | number>;
+  state_hash: string;
+  evidence_root: string;
+  context_hash: string;
+  memory_version: number;
+  issued_at: number;
+  expires_at: number;
+  nonce: number;
+  expected_signer: string | null;
+  /** "wallet" when a registered address exists, else "synthetic_demo_key". */
+  signer_mode: "wallet" | "synthetic_demo_key";
+  claim_count: number;
+}
+
+export interface AttestationOut {
+  clinician_id: string;
+  signer: string;
+  /** Says in the response itself whether a real wallet or a demo key signed. */
+  signer_kind: "registered_wallet" | "synthetic_demo_key";
+  signature: string;
+  digest: string;
+  state_hash: string;
+  evidence_root: string;
+  context_hash: string;
+  memory_version: number;
+  issued_at: number;
+  expires_at: number;
+  nonce: number;
+  tx_hash: string;
+  block_number: number;
+  gas_used: number;
+  /** Pays gas; is NOT the signer. That separation is the point. */
+  relayer: string;
+  basescan_url: string;
+}
+
+export interface AttestationVerifyOut {
+  state_hash: string;
+  exists: boolean;
+  signer: string;
+  clinician_id: string | null;
+  timestamp: number;
+  memory_version: number;
+  basescan_url: string;
+}
+
+export interface CommitmentVerifyOut {
+  commitment_hash: string;
+  exists: boolean;
+  timestamp: number;
   committer: string;
   basescan_url: string;
 }

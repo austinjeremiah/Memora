@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { DEFAULT_API_BASE_URL, getApiBaseUrl, setApiBaseUrl } from "@/lib/api/baseUrl";
 import { getHealth } from "@/lib/api/client";
-import { CLINICIANS_NOTE, DEMO_DATA_LAST_SYNCED, PATIENTS, SITUATIONS } from "@/lib/config/demo-data";
+import { SITUATIONS } from "@/lib/config/demo-data";
 import { useAppStatus } from "@/lib/api/AppStatusContext";
 
 type TestState = { status: "idle" | "testing" | "ok" | "error"; message?: string; at?: number };
@@ -101,10 +101,7 @@ export default function SettingsPage() {
           gap: "6px",
         }}
       >
-        <p style={{ margin: 0 }}>Static config, last synced with backend: {DEMO_DATA_LAST_SYNCED}</p>
         <p style={{ margin: 0 }}>Situations: {SITUATIONS.length} (hardcoded — no backend endpoint exists)</p>
-        <p style={{ margin: 0 }}>Patients: {PATIENTS.length} (unconfirmed placeholder — see lib/config/demo-data.ts)</p>
-        <p style={{ margin: 0 }}>{CLINICIANS_NOTE}</p>
       </section>
     </div>
   );

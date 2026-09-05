@@ -10,11 +10,11 @@ import { usePathname } from "next/navigation";
  * two navs read as one product.
  *
  * A link is added here only once its page exists -- shipping a nav entry
- * that 404s is worse than a shorter nav. Patients lands in F3 and Sentinel
- * in F6.
+ * that 404s is worse than a shorter nav. Sentinel lands in F6.
  */
 const LINKS = [
   { href: "/app", label: "Status" },
+  { href: "/app/patients", label: "Patients" },
   { href: "/app/handoff/new", label: "Handoff" },
   { href: "/app/compare", label: "Compare" },
   { href: "/app/settings", label: "Settings" },

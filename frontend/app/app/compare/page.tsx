@@ -4,7 +4,8 @@ import { useEffect, useMemo, useState } from "react";
 import { getClinicians, requestHandoff } from "@/lib/api/client";
 import { useAppStatus } from "@/lib/api/AppStatusContext";
 import { ClinicianOut, HandoffOut, Situation } from "@/lib/api/types";
-import { PATIENTS, PATIENTS_ARE_UNCONFIRMED, SITUATIONS } from "@/lib/config/demo-data";
+import { SITUATIONS } from "@/lib/config/demo-data";
+import PatientPicker from "@/components/app/PatientPicker";
 import {
   ClaimsList,
   ClaimsSummaryBadges,
@@ -143,18 +144,8 @@ export default function ComparePage() {
             <label htmlFor="cmp-patient" style={{ fontSize: "13px", opacity: 0.7 }}>
               Patient
             </label>
-            <select id="cmp-patient" value={patientId} onChange={(e) => setPatientId(e.target.value)} style={selectStyle}>
-              <option value="">Select a patient...</option>
-              {PATIENTS.map((p) => (
-                <option key={p.id} value={p.id}>
-                  {p.label}
-                </option>
-              ))}
-            </select>
-            {PATIENTS_ARE_UNCONFIRMED && (
-              <p style={{ margin: 0, fontSize: "12px", color: "#ffb020" }}>Unconfirmed placeholder ID — see Settings.</p>
-            )}
-          </div>
+            <PatientPicker value={patientId} onChange={setPatientId} />
+                      </div>
 
           <div style={{ display: "flex", flexDirection: "column", gap: "6px", flex: 1, minWidth: "220px" }}>
             <label htmlFor="cmp-clinician" style={{ fontSize: "13px", opacity: 0.7 }}>

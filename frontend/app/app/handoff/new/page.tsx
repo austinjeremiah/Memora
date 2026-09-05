@@ -4,7 +4,8 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { getClinicians } from "@/lib/api/client";
 import { ClinicianOut, Situation } from "@/lib/api/types";
-import { PATIENTS, PATIENTS_ARE_UNCONFIRMED, SITUATIONS } from "@/lib/config/demo-data";
+import { SITUATIONS } from "@/lib/config/demo-data";
+import PatientPicker from "@/components/app/PatientPicker";
 import SibylWarningBanner from "@/app/app/_components/SibylWarningBanner";
 
 export default function StartHandoffPage() {
@@ -62,27 +63,8 @@ export default function StartHandoffPage() {
         <label htmlFor="patient" style={{ fontSize: "13px", opacity: 0.7 }}>
           Patient
         </label>
-        <select
-          id="patient"
-          value={patientId}
-          onChange={(e) => setPatientId(e.target.value)}
-          style={selectStyle}
-        >
-          <option value="">Select a patient...</option>
-          {PATIENTS.map((p) => (
-            <option key={p.id} value={p.id}>
-              {p.label}
-            </option>
-          ))}
-        </select>
-        {PATIENTS_ARE_UNCONFIRMED && (
-          <p style={{ margin: 0, fontSize: "12px", color: "#ffb020" }}>
-            This patient ID is an unconfirmed placeholder — the backend has no way to
-            list real ingested patient IDs. Verify it exists in your running Sibyl
-            store before relying on it. See lib/config/demo-data.ts.
-          </p>
-        )}
-      </section>
+        <PatientPicker value={patientId} onChange={setPatientId} />
+              </section>
 
       <section style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
         <label htmlFor="situation" style={{ fontSize: "13px", opacity: 0.7 }}>
