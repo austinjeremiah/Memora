@@ -11,11 +11,15 @@ export default function AppSectionLayout({ children }: { children: React.ReactNo
     <AppStatusProvider>
       <div className="app-root">
         <AppBackgroundVideo />
-        <AppNav />
-        <StatusStrip />
-        <main className="app-main">
-          <BackendGate>{children}</BackendGate>
-        </main>
+        <div className="app-shell">
+          <AppNav />
+          <div className="app-shell__content">
+            <StatusStrip />
+            <main className="app-main">
+              <BackendGate>{children}</BackendGate>
+            </main>
+          </div>
+        </div>
       </div>
     </AppStatusProvider>
     </WalletProvider>

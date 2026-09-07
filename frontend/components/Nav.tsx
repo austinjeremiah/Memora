@@ -3,7 +3,8 @@
 import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import NavLink from "@/components/NavLink";
-import AngularGlowButton from "@/components/AngularGlowButton";
+import SpecularButton from "@/components/SpecularButton";
+import LoopingLogoDraw from "@/components/LoopingLogoDraw";
 
 export default function Nav() {
   const logoRef = useRef<HTMLDivElement>(null);
@@ -27,9 +28,7 @@ export default function Nav() {
               <div className="framer-1of73k0" data-framer-name="Content" style={{opacity: "1", justifySelf: "start"}}>
                 <div ref={logoRef} className="framer-1yvwb09" data-framer-name="Logo" style={{backdropFilter: "none", backgroundColor: "transparent", boxShadow: "none", borderRadius: "0", opacity: "1", width: "210px", minWidth: "210px", overflow: "visible"}}>
                   <a className="framer-c2linv framer-c0tdwz" data-framer-name="Logo Image " href="/" data-framer-page-link-current="true" style={{opacity: "1", display: "flex", alignItems: "center", justifyContent: "center", overflow: "visible"}}>
-                    <span style={{fontFamily: "BentonSansRE, Verdana, sans-serif", fontSize: "34px", fontWeight: 400, fontStyle: "normal", lineHeight: "normal", letterSpacing: "normal", color: "rgb(255, 255, 255)", whiteSpace: "nowrap"}}>
-                      MEMORA
-                    </span>
+                    <LoopingLogoDraw className="h-9">MEMORA</LoopingLogoDraw>
                   </a>
                 </div>
               </div>
@@ -54,7 +53,7 @@ export default function Nav() {
               </div>
               <div ref={ctaRef} className="framer-1yzb3cd" data-framer-name="Other" style={{opacity: "1", justifySelf: "end"}}>
                 <div className="framer-3a23p6-container" style={{opacity: "1"}}>
-                  <AngularGlowButton href="/app">Get Started</AngularGlowButton>
+                  <SpecularButton href="/app" size="sm">Get Started</SpecularButton>
                 </div>
               </div>
             </div>

@@ -63,7 +63,9 @@ function StartHandoffInner() {
       <Card>
         <div className="stack">
           <PatientPicker value={patientId} onChange={setPatientId} />
+        </div>
 
+        <div className="grid grid--2" style={{ marginTop: "var(--space-4)" }}>
           <Field
             label="Clinical situation"
             hint={focus ? `Recalls: ${focus.focusHint}` : undefined}
@@ -96,19 +98,24 @@ function StartHandoffInner() {
               ))}
             </select>
           </Field>
+        </div>
 
-          {clinician && !clinician.can_approve_handoff && (
+        {clinician && !clinician.can_approve_handoff && (
+          <div style={{ marginTop: "var(--space-4)" }}>
             <Notice tone="warn">
               {clinician.name} can review this handover but cannot approve it. That
               restriction comes from the same authority table the gate uses.
             </Notice>
-          )}
-
-          <div>
-            <Button variant="primary" onClick={submit} disabled={!ready}>
-              Run handoff
-            </Button>
           </div>
+        )}
+
+        <div className="card__footer row row--between">
+          <span className="dim">
+            {ready ? "Ready to run." : "Pick a patient, situation, and clinician to continue."}
+          </span>
+          <Button variant="primary" onClick={submit} disabled={!ready}>
+            Run handoff
+          </Button>
         </div>
       </Card>
     </div>

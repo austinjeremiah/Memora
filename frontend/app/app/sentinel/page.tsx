@@ -95,11 +95,11 @@ export default function SentinelPage() {
       {run && (
         <>
           <div className="grid grid--3">
-            <StatTile label="Records checked" value={run.records_checked}
+            <StatTile icon="database" label="Records checked" value={run.records_checked}
                       hint={`${run.patients_scanned} patients`} />
-            <StatTile label="Findings" value={run.findings.length}
+            <StatTile icon="shield" tone="amber" label="Findings" value={run.findings.length}
                       hint="tracked in Sentinel's own digest" />
-            <StatTile label="Announceable" value={run.announceable.length}
+            <StatTile icon="seal" label="Announceable" value={run.announceable.length}
                       hint="PERSISTING is tracked but never re-alerts" />
           </div>
 

@@ -17,15 +17,18 @@ export default function StatusStrip() {
     lastKnownDbSizeBytes, lastKnownCapBytes, refresh,
   } = useAppStatus();
 
-  const dot = (colour: string) => (
-    <span style={{ width: 7, height: 7, borderRadius: 999, background: colour, display: "inline-block" }} />
+  const dot = (colour: string, live = false) => (
+    <span
+      className={live ? "live-dot" : undefined}
+      style={{ width: 7, height: 7, borderRadius: 999, background: colour, color: colour, display: "inline-block" }}
+    />
   );
 
   return (
     <div className="status-strip">
       <span className="row" style={{ gap: 7 }}>
         {backendReachable === null ? dot("var(--text-dim)")
-          : backendReachable ? dot("var(--allow)") : dot("var(--block)")}
+          : backendReachable ? dot("var(--allow)", true) : dot("var(--block)")}
         {backendReachable === null ? "Checking backend…"
           : backendReachable ? "Backend reachable" : "Backend unreachable"}
       </span>
@@ -33,7 +36,7 @@ export default function StatusStrip() {
       {backendReachable === true && (
         <span className="row" style={{ gap: 7 }}>
           {sibylReady === null ? dot("var(--text-dim)")
-            : sibylReady ? dot("var(--allow)") : dot("var(--review)")}
+            : sibylReady ? dot("var(--allow)", true) : dot("var(--review)")}
           {sibylReady === null ? "Sibyl…" : sibylReady ? "Sibyl memory ready" : "Sibyl unavailable"}
         </span>
       )}

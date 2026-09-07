@@ -75,11 +75,11 @@ export default function PatientMemoryPage({ params }: {
       {data && (
         <>
           <div className="match-grid">
-            <StatTile label="Facts" value={data.fact_count}
+            <StatTile icon="database" label="Facts" value={data.fact_count}
                       hint="current state — one row per record" />
-            <StatTile label="Journal events" value={data.event_count}
+            <StatTile icon="activity" tone="amber" label="Journal events" value={data.event_count}
                       hint="append-only history" />
-            <StatTile label="Memory version" value={data.memory_version}
+            <StatTile icon="seal" label="Memory version" value={data.memory_version}
                       hint="increments on every write" />
             <Card tight>
               <div className="stack stack--tight">

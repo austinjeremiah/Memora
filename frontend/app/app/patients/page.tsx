@@ -6,7 +6,7 @@ import { listPatients } from "@/lib/api/client";
 import { MemoraApiError, PatientSummaryOut } from "@/lib/api/types";
 import { KIND_LABELS } from "@/lib/config/demo-data";
 import {
-  Badge, Button, Card, EmptyState, Notice, Section, SkeletonList,
+  Badge, Button, Card, EmptyState, IconBadge, Notice, Section, SkeletonList,
 } from "@/components/app/ui";
 
 /**
@@ -71,6 +71,7 @@ export default function PatientsPage() {
             {patients.map((p) => (
               <Card key={p.patient_id}>
                 <div className="stack">
+                  <IconBadge icon="user" tone="accent" />
                   <div className="stack stack--tight">
                     <span className="mono" style={{ fontSize: 13, color: "var(--text)" }}>
                       {p.patient_id.slice(0, 18)}…

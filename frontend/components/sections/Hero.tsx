@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
-import AngularGlowButton from "@/components/AngularGlowButton";
+import SpecularButton from "@/components/SpecularButton";
 
 export default function Hero() {
   const headingRef = useRef<HTMLDivElement>(null);
@@ -469,7 +469,7 @@ export default function Hero() {
               </div>
             </div>
             <div ref={ctaButtonRef} className="framer-1x5d5vf" data-framer-name="Button">
-              <AngularGlowButton href="/app">Get Started</AngularGlowButton>
+              <SpecularButton href="/app">Get Started</SpecularButton>
             </div>
           </div>
           <section className="framer-2w2qm9" data-framer-appear-id="2w2qm9" data-framer-name="Dashboard" style={{opacity: "1", transform: "none", willChange: "transform"}}>

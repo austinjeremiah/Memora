@@ -6,7 +6,7 @@ import "@/styles/fonts.css";
 import "@/styles/app.css";
 import "@/styles/scrollHighlight.css";
 import "@/styles/logoMarquee.css";
-import "@/styles/angularGlowButton.css";
+import "./globals.css";
 
 const FAVICON =
   "https://framerusercontent.com/images/1VtXtUrlVK0Y1WHlW4GIfnhxFho.png";

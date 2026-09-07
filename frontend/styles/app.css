@@ -34,6 +34,11 @@
   --amber:  var(--token-40eb5c15-2df6-4cc5-9a1c-8a90a74b480c, #ffcd7d);
   --slate:  var(--token-63f7583a-ac58-4fab-bed6-928aed613254, #2f3950);
   --accent-soft: rgba(1, 117, 255, 0.14);
+  --amber-soft:  rgba(255, 205, 125, 0.16);
+  /* Referenced by page-level links (e.g. Settings link in the Status
+     footnote) that were never given a definition -- aliased here so those
+     reads resolve instead of silently falling through to inherited text. */
+  --accent-text: var(--accent);
 
   /* Gate verdicts. Amber and red come from the landing's own tokens; green
      has no landing equivalent, so it is the one added value. */
@@ -71,6 +76,43 @@
 
   /* The nav pill's inset highlight */
   --glass-inset: inset -3px -2px 8px 0px var(--bg-subtle);
+
+  /* ---------------------------------------------------------------------
+     Glass system — three elevation tiers instead of one recipe copy-pasted
+     onto every selector. Tier 1 is the ambient shell (sidebar), tier 2 is
+     the resting state of a card/panel, tier 3 is what a surface promotes to
+     on hover/focus. Read surfaces (inputs, selects) get their own stronger
+     tint, because a form control re-read several times while a clinician
+     makes a choice needs more contrast than a panel glanced at once.
+     --------------------------------------------------------------------- */
+  --glass-bg-1: rgba(255, 255, 255, 0.05);
+  --glass-bg-2: rgba(255, 255, 255, 0.08);
+  --glass-bg-3: rgba(255, 255, 255, 0.13);
+  --glass-bg-read: rgba(18, 22, 32, 0.62);
+  --glass-blur-1: 14px;
+  --glass-blur-2: 18px;
+  --glass-border: rgba(255, 255, 255, 0.16);
+  --glass-border-strong: rgba(255, 255, 255, 0.32);
+  --glass-shadow:
+    0 12px 40px rgba(0, 0, 0, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.06);
+  --glass-shadow-hover:
+    0 20px 52px rgba(0, 0, 0, 0.34),
+    inset 0 1px 0 rgba(255, 255, 255, 0.55),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.08);
+  /* One line color for every hairline that sits on glass -- cards, tables,
+     dividers, provenance rails. Replaces the old --border (blue-tinted,
+     tuned for the landing's solid background) wherever it was leaking onto
+     a glass surface and reading as a second, slightly-off line language. */
+  --hairline: rgba(255, 255, 255, 0.14);
+
+  /* A very light grain, applied as a background-image so flat glass doesn't
+     read as a plain CSS gradient -- the texture real frosted glass has. A
+     filter replaces an element's own fill entirely, so the low opacity has
+     to be baked in via feColorMatrix (scaling the alpha channel down to
+     ~5%) rather than the rect's fill-opacity, which a filter ignores. */
+  --noise: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='140' height='140'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch' result='t'/><feColorMatrix in='t' type='matrix' values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.05 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
 }
 
 /* ---------- shell ---------- */
@@ -100,7 +142,12 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  filter: blur(30px) brightness(0.7) saturate(1.1);
+  /* NN/g's glassmorphism guidance calls for substantial blur specifically
+     when what sits behind the glass is intricate -- video, photography,
+     animation -- so the detail doesn't fight the translucent cards for
+     attention or drop text contrast below WCAG. Re-added after an earlier
+     pass removed it for a punchier look; legibility wins here. */
+  filter: blur(28px) brightness(0.7) saturate(1.1);
   transform: scale(1.15);
 }
 
@@ -111,62 +158,141 @@
   opacity: 0.3;
 }
 
-.app-nav,
-.status-strip,
-.app-main {
+.app-shell {
   position: relative;
   z-index: 1;
+  display: flex;
+  align-items: stretch;
+  min-height: 100vh;
 }
+
+.app-shell__content { flex: 1; min-width: 0; }
 
 .app-main { max-width: 1140px; margin: 0 auto; padding: var(--space-6) var(--space-5) var(--space-8); }
 
-/* Floating glass bar, matching the landing's nav treatment: blurred,
-   fully-rounded, lifted off the page with an inset highlight. */
-.app-nav {
-  position: sticky; top: 0; z-index: 30;
-  display: flex; align-items: center; gap: var(--space-5);
-  padding: var(--space-4) var(--space-5);
+/* The fixed glass sidebar: blurred over the same background video as the
+   rest of the shell, lifted off the page with an inset highlight rather
+   than a hard border. */
+.app-sidebar {
+  position: sticky; top: 0;
+  align-self: flex-start;
+  height: 100vh; width: 240px; flex-shrink: 0;
+  display: flex; flex-direction: column; gap: var(--space-6);
+  padding: var(--space-5) var(--space-4);
+  overflow-y: auto;
+  border-right: 1px solid var(--glass-border);
+  backdrop-filter: blur(var(--glass-blur-1)); -webkit-backdrop-filter: blur(var(--glass-blur-1));
+  box-shadow: var(--glass-shadow);
+  background: var(--glass-bg-1);
 }
-.app-nav__inner {
-  display: flex; align-items: center; gap: var(--space-2);
-  padding: 8px 10px;
-  border-radius: var(--r-pill);
-  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
-  box-shadow: var(--glass-inset);
-  background: rgba(255, 255, 255, 0.02);
-}
-.app-nav__brand {
+.app-sidebar__brand {
   font-family: var(--font-display);
-  font-size: 24px; font-weight: 400; letter-spacing: normal;
+  font-size: 24px; font-weight: 400;
   color: var(--text); text-decoration: none; white-space: nowrap;
-  margin-right: var(--space-4);
 }
-.app-nav__link {
-  position: relative;
+.app-sidebar__links { display: flex; flex-direction: column; gap: 2px; }
+.app-sidebar__link {
+  display: flex; align-items: center; gap: 12px;
   color: var(--text); text-decoration: none; font-size: 14px;
-  padding: 7px 16px; border-radius: var(--r-pill);
+  padding: 10px 12px; border-radius: var(--r-md);
   opacity: 0.62; transition: 160ms ease;
 }
-.app-nav__link:hover { opacity: 1; }
-.app-nav__link--active { opacity: 1; background: var(--bg-hover); font-weight: 500; }
+.app-sidebar__link:hover { opacity: 1; background: var(--bg-hover); }
+.app-sidebar__link--active { opacity: 1; background: var(--accent-soft); color: var(--accent); font-weight: 500; }
 
 .status-strip {
   display: flex; align-items: center; flex-wrap: wrap; gap: 20px;
-  padding: 8px 34px 14px;
+  padding: var(--space-4) var(--space-5) var(--space-3);
   font-size: 13px; color: var(--text-muted);
 }
 
 /* ---------- primitives ---------- */
 
 .card {
-  border: 1px solid var(--border);
-  border-radius: var(--r-card);
-  background: rgba(255, 255, 255, 0.03);
-  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-  box-shadow: var(--glass-inset);
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  background-image: var(--noise);
+  background-color: var(--glass-bg-2);
+  background-blend-mode: overlay;
+  backdrop-filter: blur(var(--glass-blur-2)); -webkit-backdrop-filter: blur(var(--glass-blur-2));
+  box-shadow: var(--glass-shadow);
   padding: var(--space-5);
+  transition: box-shadow 220ms ease, border-color 220ms ease, transform 220ms ease, background-color 220ms ease;
 }
 .card--tight { padding: var(--space-4); }
+
+/* Opt-in: cards that act as one clickable unit (a whole patient card, a
+   whole "Run a handoff" tile) lift and brighten on hover so the entire card
+   reads as pressable, not just the button inside it. Plain informational
+   cards stay static -- lifting a card nobody can click is a false promise. */
+.card--clickable { cursor: pointer; }
+.card--clickable:hover {
+  transform: translateY(-3px);
+  border-color: var(--glass-border-strong);
+  background-color: var(--glass-bg-3);
+  box-shadow: var(--glass-shadow-hover);
+}
+
+.card::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.8), transparent);
+}
+.card::after {
+  content: "";
+  position: absolute;
+  top: 0; left: 0;
+  width: 1px; height: 100%;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.8), transparent, rgba(255, 255, 255, 0.3));
+}
+
+/* Icon badge: the one decorative color accent on an otherwise monochrome
+   card, so it carries real visual weight instead of competing with a dozen
+   other colored elements. */
+.icon-badge {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 36px; height: 36px; flex-shrink: 0;
+  border-radius: var(--r-md);
+  border: 1px solid transparent;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.16);
+}
+.icon-badge--accent {
+  background: radial-gradient(circle at 30% 20%, rgba(1, 117, 255, 0.32), var(--accent-soft) 70%);
+  border-color: rgba(1, 117, 255, 0.35);
+  color: var(--accent);
+}
+.icon-badge--amber {
+  background: radial-gradient(circle at 30% 20%, rgba(255, 205, 125, 0.38), var(--amber-soft) 70%);
+  border-color: rgba(255, 205, 125, 0.4);
+  color: var(--amber);
+}
+
+/* A living indicator instead of a flat dot -- the outer ring breathes so a
+   "ready" state reads as actively monitored, not a static icon. */
+.live-dot { position: relative; display: inline-flex; }
+.live-dot::after {
+  content: "";
+  position: absolute; inset: -5px;
+  border-radius: 999px;
+  border: 1px solid currentColor;
+  opacity: 0;
+  animation: live-pulse 2.4s ease-out infinite;
+}
+@keyframes live-pulse {
+  0%   { opacity: 0.55; transform: scale(0.6); }
+  70%  { opacity: 0; transform: scale(1.8); }
+  100% { opacity: 0; transform: scale(1.8); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .live-dot::after { animation: none; }
+}
+
+.stat__value { font-size: 26px; font-family: var(--font-display); font-weight: 400; font-variant-numeric: tabular-nums; }
+.stat__label { font-size: 13px; color: var(--text-secondary); font-weight: 500; }
 
 .stack { display: flex; flex-direction: column; gap: var(--space-4); }
 .stack--tight { gap: var(--space-2); }
@@ -174,12 +300,28 @@
 .row { display: flex; align-items: center; gap: var(--space-3); flex-wrap: wrap; }
 .row--between { justify-content: space-between; }
 .grid { display: grid; gap: var(--space-4); }
+.grid--2 { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
 .grid--3 { grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); }
+/* Asymmetric hero row: a wide primary panel beside a narrower secondary
+   one, the way a dashboard pairs its main data with a supporting panel
+   instead of stacking everything as equal-weight cards. */
+.grid--hero { grid-template-columns: 1.7fr 1fr; align-items: start; }
+
+.card__footer {
+  margin-top: var(--space-1);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--hairline);
+}
+
+.card__divider {
+  margin: var(--space-1) 0;
+  border-top: 1px solid var(--hairline);
+}
 
 h1.page-title { font-family: var(--font-display); font-size: 34px; font-weight: 400; margin: 0; }
 h2.section-title { font-size: 13px; font-weight: 600; margin: 0; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); }
 .subtle { color: var(--text-muted); }
-.dim { color: var(--text-muted); opacity: 0.75; font-size: 13px; }
+.dim { color: var(--text-muted); opacity: 0.88; font-size: 13px; }
 .mono { font-family: var(--font-mono); font-size: 12px; }
 
 /* Base button: black pill with a light hairline, as on the landing */
@@ -213,15 +355,30 @@ h2.section-title { font-size: 13px; font-weight: 600; margin: 0; text-transform:
 
 .field { display: flex; flex-direction: column; gap: 6px; }
 .field__label { font-size: 12px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; }
+/* The "read" glass tier: still translucent and blurred like everything
+   else, but tinted dark rather than light so text stays legible over a
+   video that swings from near-black to bright orange -- a control that
+   gets read and re-read while picking a patient earns the extra contrast. */
 .input, .select {
   padding: 11px 14px; border-radius: var(--r-md);
-  border: 1px solid var(--border); background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--glass-border); background: var(--glass-bg-read);
+  backdrop-filter: blur(var(--glass-blur-2)); -webkit-backdrop-filter: blur(var(--glass-blur-2));
   color: var(--text); font-family: var(--font); font-size: 14px; width: 100%;
+  transition: border-color 160ms ease, background-color 160ms ease;
 }
-.input:focus, .select:focus { outline: none; border-color: var(--accent); }
+.input:hover, .select:hover { border-color: var(--glass-border-strong); }
+.input:focus, .select:focus {
+  outline: none; border-color: var(--accent);
+  background-color: rgba(18, 22, 32, 0.78);
+}
 .select option { background: var(--bg-elevated); color: var(--text); }
 
-.notice { border-radius: var(--r-card); padding: var(--space-4); border: 1px solid var(--border); background: var(--bg-elevated); }
+.notice {
+  border-radius: var(--r-card); padding: var(--space-4);
+  border: 1px solid var(--glass-border); background-image: var(--noise);
+  background-color: var(--glass-bg-2); background-blend-mode: overlay;
+  backdrop-filter: blur(var(--glass-blur-2)); -webkit-backdrop-filter: blur(var(--glass-blur-2));
+}
 .notice--error { border-color: var(--block); background: var(--block-soft); }
 .notice--warn { border-color: var(--review); background: var(--review-soft); }
 .notice__title { font-weight: 600; margin: 0 0 4px 0; }
@@ -235,19 +392,33 @@ h2.section-title { font-size: 13px; font-weight: 600; margin: 0; text-transform:
 @keyframes pulse { 0%,100% { opacity: 0.5 } 50% { opacity: 0.9 } }
 
 .table { width: 100%; border-collapse: collapse; font-size: 13px; }
-.table th { text-align: left; font-weight: 600; color: var(--text-muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; padding: 10px 14px; border-bottom: 1px solid var(--border); }
-.table td { padding: 11px 14px; border-bottom: 1px solid rgba(125,164,255,0.1); vertical-align: top; }
+.table th { text-align: left; font-weight: 600; color: var(--text-muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; padding: 10px 14px; border-bottom: 1px solid var(--hairline); }
+.table td { padding: 11px 14px; border-bottom: 1px solid var(--hairline); vertical-align: top; }
 .table tr:last-child td { border-bottom: none; }
 .table tr:hover td { background: rgba(255,255,255,0.02); }
 
 .scroll-x { overflow-x: auto; }
 
-@media (max-width: 720px) {
-  .app-nav { padding: var(--space-3); overflow-x: auto; }
-  .app-nav__brand { font-size: 20px; margin-right: var(--space-2); }
+@media (max-width: 900px) {
+  /* The sidebar collapses into a horizontal scrollable bar rather than
+     staying full-height and eating half the viewport on a narrow screen. */
+  .app-shell { flex-direction: column; }
+  .app-sidebar {
+    position: sticky; top: 0; z-index: 30;
+    height: auto; width: 100%;
+    flex-direction: row; align-items: center; gap: var(--space-4);
+    padding: var(--space-3) var(--space-4);
+    overflow-x: auto; overflow-y: visible;
+    border-right: none;
+    border-bottom: 1px solid var(--glass-border);
+  }
+  .app-sidebar__brand { font-size: 20px; }
+  .app-sidebar__links { flex-direction: row; gap: 2px; }
+  .app-sidebar__link span { display: none; }
   .app-main { padding: var(--space-4) var(--space-3) var(--space-6); }
   .status-strip { padding: 8px 16px 12px; gap: 12px; }
   h1.page-title { font-size: 26px; }
+  .grid--hero { grid-template-columns: 1fr; }
 }
 
 /* ---------------------------------------------------------------------------
@@ -314,9 +485,10 @@ h2.section-title { font-size: 13px; font-weight: 600; margin: 0; text-transform:
 
 .trend__plot {
   position: relative;
-  border: 1px solid var(--border);
+  border: 1px solid var(--glass-border);
   border-radius: 8px;
-  background: var(--bg-elevated);
+  background: var(--glass-bg-1);
+  backdrop-filter: blur(var(--glass-blur-1)); -webkit-backdrop-filter: blur(var(--glass-blur-1));
   overflow: hidden;
 }
 
@@ -373,7 +545,7 @@ h2.section-title { font-size: 13px; font-weight: 600; margin: 0; text-transform:
   display: flex;
   flex-direction: column;
   gap: 0;
-  border-left: 1px solid var(--border);
+  border-left: 1px solid var(--hairline);
   margin-left: 5px;
   padding-left: 16px;
 }
@@ -394,7 +566,7 @@ h2.section-title { font-size: 13px; font-weight: 600; margin: 0; text-transform:
   top: 11px;
   width: 9px;
   height: 1px;
-  background: var(--border);
+  background: var(--hairline);
 }
 
 .prov__node::after {
@@ -468,9 +640,10 @@ h2.section-title { font-size: 13px; font-weight: 600; margin: 0; text-transform:
   flex-direction: column;
   gap: 10px;
   padding: 12px;
-  border: 1px solid var(--border);
+  border: 1px solid var(--glass-border);
   border-radius: 10px;
-  background: var(--bg-elevated);
+  background: var(--glass-bg-1);
+  backdrop-filter: blur(var(--glass-blur-1)); -webkit-backdrop-filter: blur(var(--glass-blur-1));
 }
 
 .match__head {
@@ -544,7 +717,7 @@ h2.section-title { font-size: 13px; font-weight: 600; margin: 0; text-transform:
   font-size: 12.5px;
   line-height: 1.5;
   color: var(--text-secondary);
-  border-left: 2px solid var(--border);
+  border-left: 2px solid var(--hairline);
   padding-left: 10px;
 }
 
@@ -602,7 +775,7 @@ h2.section-title { font-size: 13px; font-weight: 600; margin: 0; text-transform:
   gap: 12px;
   align-items: baseline;
   padding: 5px 0;
-  border-top: 1px solid var(--border);
+  border-top: 1px solid var(--hairline);
   flex-wrap: wrap;
 }
 

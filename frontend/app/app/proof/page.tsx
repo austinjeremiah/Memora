@@ -133,11 +133,11 @@ export default function ProofPage() {
 
           {done && (
             <div className="grid grid--3">
-              <StatTile label="Clinical endpoints" value={clinical.length}
+              <StatTile icon="database" label="Clinical endpoints" value={clinical.length}
                         hint="these require the memory layer" />
-              <StatTile label="Answered" value={answered}
+              <StatTile icon="seal" label="Answered" value={answered}
                         hint={answered === clinical.length ? "memory is present" : ""} />
-              <StatTile label="Refused" value={refused}
+              <StatTile icon="shield" tone="amber" label="Refused" value={refused}
                         hint={refused === clinical.length ? "memory is gone — correct" : ""} />
             </div>
           )}

@@ -134,12 +134,12 @@ function HandoffResultInner() {
       {handoff && (
         <>
           <div className="grid grid--3">
-            <StatTile label="Proposed" value={handoff.proposed_count}
+            <StatTile icon="database" label="Proposed" value={handoff.proposed_count}
                       hint={handoff.model} />
-            <StatTile label="Survived the gate"
+            <StatTile icon="shield" tone="amber" label="Survived the gate"
                       value={`${presentable.length}/${handoff.claims.length}`}
                       hint="the rest cited nothing that exists" />
-            <StatTile label="Task" value={handoff.task.replace(/_/g, " ")}
+            <StatTile icon="user" label="Task" value={handoff.task.replace(/_/g, " ")}
                       hint={`role: ${handoff.clinician.role.replace(/_/g, " ")}`} />
           </div>
 

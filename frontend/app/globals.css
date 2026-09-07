@@ -1,0 +1,10 @@
+/*
+ * Tailwind, scoped to utilities only -- no preflight/base reset. The rest of
+ * this site is plain CSS built against normal browser defaults (the Framer
+ * marketing scrape and the /app design system both depend on that), so a
+ * global Tailwind reset would silently break their spacing everywhere.
+ * Tailwind exists here solely so shadcn registry components (like the
+ * SvgTextDraw logo animation) have their utility classes available.
+ */
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/utilities.css" layer(utilities);

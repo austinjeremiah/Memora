@@ -2,6 +2,8 @@
 
 import { ReactNode } from "react";
 import type { GateResult } from "@/lib/api/types";
+import { Icon, type IconName } from "./Icon";
+import AnimatedNumber from "./AnimatedNumber";
 
 /**
  * The app's shared primitives. Styling lives in styles/app.css as tokens
@@ -50,6 +52,18 @@ export function Badge({ children, tone = "neutral" }: {
   children: ReactNode; tone?: "neutral" | "accent" | "allow" | "review" | "block";
 }) {
   return <span className={`badge badge--${tone}`}>{children}</span>;
+}
+
+/** The one decorative color per card. Keep it to accent/amber -- the
+ * product's own two brand colors -- rather than a rainbow per tile. */
+export function IconBadge({ icon, tone = "accent" }: {
+  icon: IconName; tone?: "accent" | "amber";
+}) {
+  return (
+    <span className={`icon-badge icon-badge--${tone}`}>
+      <Icon name={icon} />
+    </span>
+  );
 }
 
 export function Button({ children, onClick, href, variant = "default", size, disabled, type = "button" }: {
@@ -148,14 +162,18 @@ export function EmptyState({ title, children }: { title: string; children?: Reac
   );
 }
 
-export function StatTile({ label, value, hint }: {
+export function StatTile({ label, value, hint, icon, tone = "accent" }: {
   label: string; value: ReactNode; hint?: string;
+  icon?: IconName; tone?: "accent" | "amber";
 }) {
   return (
     <Card tight>
       <div className="stack stack--tight">
-        <span className="field__label">{label}</span>
-        <span style={{ fontSize: 22, fontFamily: "var(--font-display)" }}>{value}</span>
+        {icon && <IconBadge icon={icon} tone={tone} />}
+        <span className="stat__value">
+          {typeof value === "number" ? <AnimatedNumber value={value} /> : value}
+        </span>
+        <span className="stat__label">{label}</span>
         {hint && <span className="dim">{hint}</span>}
       </div>
     </Card>
