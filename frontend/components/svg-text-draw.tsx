@@ -8,6 +8,8 @@ export interface SvgTextDrawProps extends Omit<SVGMotionProps<SVGSVGElement>, "c
     delay?: number;
     speed?: number;
     className?: string;
+    /** Draws a trailing EKG trace right after the last letter, in the same stroke and the same reveal animation. */
+    showEcg?: boolean;
 }
 
 // Simple letter path definitions (lowercase letters)
@@ -53,17 +55,27 @@ const letterAdvance: Record<string, number> = {
     u: 30, v: 30, w: 35, x: 30, y: 30, z: 30, " ": 20,
 };
 
+// A heartbeat trace on a y=38 baseline -- level with the foot of "a"'s own
+// trailing stroke (its "M 40 10 L 40 40" segment ends at y=40), so the line
+// picks up right where the word's last letter leaves off instead of sitting
+// on its own independent baseline. Every vertex is a straight line (no Q
+// curves) so the whole trace reads as sharp zig-zag, not a rounded blip.
+const ECG_PATH = "M 0 38 L 12 38 L 16 31 L 20 38 L 26 38 L 31 44 L 36 8 L 41 56 L 46 38 L 52 38 L 58 29 L 64 38 L 82 38";
+const ECG_WIDTH = 82;
+
 export function SvgTextDraw({
     children,
     className,
     delay = 0,
     speed = 1,
+    showEcg = false,
     ...props
 }: SvgTextDrawProps) {
     // Convert children to string and lowercase
     const text = String(children).toLowerCase();
     const advances = text.split("").map((c) => (letterAdvance[c] ?? 40) + GAP);
-    const totalWidth = advances.reduce((sum, w) => sum + w, 0);
+    const textWidth = advances.reduce((sum, w) => sum + w, 0);
+    const totalWidth = showEcg ? textWidth + ECG_WIDTH + GAP : textWidth;
 
     // Higher speed = faster animation (divide duration by speed)
     const calc = (x: number) => x / speed;
@@ -72,7 +84,7 @@ export function SvgTextDraw({
         <motion.svg
             className={cn("h-12", className)}
             xmlns="http://www.w3.org/2000/svg"
-            viewBox={`0 0 ${totalWidth} 60`}
+            viewBox={`0 0 ${totalWidth} ${showEcg ? 62 : 60}`}
             fill="none"
             stroke="currentColor"
             strokeWidth="3"
@@ -111,6 +123,27 @@ export function SvgTextDraw({
                     />
                 );
             })}
+            {showEcg && (() => {
+                // Treated as one more character in the sequence: it starts
+                // right where the letters' own per-character delay would
+                // have put the next glyph, so the line reads as a
+                // continuation of the word drawing itself out, not a
+                // separately-timed decoration.
+                const ecgDelay = delay + (text.length * 0.15) / speed;
+                return (
+                    <motion.path
+                        key="ecg"
+                        d={ECG_PATH}
+                        transform={`translate(${textWidth}, 0)`}
+                        initial={{ pathLength: 0, opacity: 0 }}
+                        animate={{ pathLength: 1, opacity: 1 }}
+                        transition={{
+                            pathLength: { duration: calc(0.7), ease: "easeInOut", delay: calc(ecgDelay) },
+                            opacity: { duration: calc(0.3), delay: calc(ecgDelay) },
+                        }}
+                    />
+                );
+            })()}
         </motion.svg>
     );
 }

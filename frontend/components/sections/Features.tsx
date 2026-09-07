@@ -1,6 +1,12 @@
 "use client";
 
 import { useEffect } from "react";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger);
+}
 
 /**
  * The three tab "Highlight" bars (Reactive/Sentinel/Attestation) were frozen
@@ -55,8 +61,38 @@ function useFeatureScrollFill() {
   }, []);
 }
 
+/**
+ * The three panels sit far apart down a tall "Screens" column, so each one
+ * gets its own ScrollTrigger keyed to itself rather than a single shared
+ * one -- each card slides in from the right exactly when it individually
+ * scrolls into view, not all three firing together when the first appears.
+ */
+function useFeatureSlideIn() {
+  useEffect(() => {
+    const ids = ["feature-01", "feature-02", "feature-03"];
+    const ctx = gsap.context(() => {
+      for (const id of ids) {
+        const el = document.getElementById(id);
+        if (!el) continue;
+        gsap.from(el, {
+          x: 120,
+          duration: 0.8,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: el,
+            start: "top 85%",
+            toggleActions: "play none none reverse",
+          },
+        });
+      }
+    });
+    return () => ctx.revert();
+  }, []);
+}
+
 export default function Features() {
   useFeatureScrollFill();
+  useFeatureSlideIn();
   return (
     <>
       <section className="framer-2e2suq" id="platform" data-framer-name="Features ">
@@ -158,7 +194,7 @@ export default function Features() {
             </div>
             <div className="framer-u1hq7q" data-framer-name="Screens">
               <div className="ssr-variant hidden-zmbq2w">
-                <div className="framer-1v1hlbf-container" id="feature-01" style={{willChange: "transform", opacity: "1", transform: "translateX(80px)"}}>
+                <div className="framer-1v1hlbf-container" id="feature-01" style={{willChange: "transform", opacity: "1"}}>
                   <div className="framer-JNpes framer-DPpRZ framer-BfsAO framer-kysuju framer-v-kysuju" data-border="true" data-framer-name="AI Solution" style={{"--border-bottom-width": "1px", "--border-color": "var(--token-f4dc11a3-eab6-45ff-bb5d-90cc77e6a1e2, rgba(125, 164, 255, 0.16))", "--border-left-width": "1px", "--border-right-width": "1px", "--border-style": "solid", "--border-top-width": "1px", backgroundColor: "var(--token-f8eb999f-285c-4229-9c3a-c69e8052e994, rgb(6, 7, 10))", width: "100%", borderRadius: "24px", opacity: "1"}}>
                     <div className="framer-1yz5w5a" data-framer-name="Content" style={{opacity: "1"}}>
                       <div className="framer-1cv3wx1" data-framer-name="Main" style={{opacity: "1"}}>
@@ -280,7 +316,7 @@ export default function Features() {
                 </div>
               </div>
               <div className="ssr-variant hidden-zmbq2w">
-                <div className="framer-1g9kued-container" id="feature-02" style={{willChange: "transform", opacity: "1", transform: "translateX(80px)"}}>
+                <div className="framer-1g9kued-container" id="feature-02" style={{willChange: "transform", opacity: "1"}}>
                   <div className="framer-JNpes framer-DPpRZ framer-BfsAO framer-kysuju framer-v-xlmerp" data-border="true" data-framer-name="Alpha Technology" style={{"--border-bottom-width": "1px", "--border-color": "var(--token-f4dc11a3-eab6-45ff-bb5d-90cc77e6a1e2, rgba(125, 164, 255, 0.16))", "--border-left-width": "1px", "--border-right-width": "1px", "--border-style": "solid", "--border-top-width": "1px", backgroundColor: "var(--token-f8eb999f-285c-4229-9c3a-c69e8052e994, rgb(6, 7, 10))", width: "100%", borderRadius: "24px", opacity: "1"}}>
                     <div className="framer-1yz5w5a" data-framer-name="Content" style={{opacity: "1"}}>
                       <div className="framer-1cv3wx1" data-framer-name="Main" style={{opacity: "1"}}>
@@ -394,7 +430,7 @@ export default function Features() {
                 </div>
               </div>
               <div className="ssr-variant hidden-zmbq2w">
-                <div className="framer-14g941y-container" id="feature-03" style={{willChange: "transform", opacity: "1", transform: "translateX(80px)"}}>
+                <div className="framer-14g941y-container" id="feature-03" style={{willChange: "transform", opacity: "1"}}>
                   <div className="framer-JNpes framer-DPpRZ framer-BfsAO framer-kysuju framer-v-1wcrtfp" data-border="true" data-framer-name="Enterprise" style={{"--border-bottom-width": "1px", "--border-color": "var(--token-f4dc11a3-eab6-45ff-bb5d-90cc77e6a1e2, rgba(125, 164, 255, 0.16))", "--border-left-width": "1px", "--border-right-width": "1px", "--border-style": "solid", "--border-top-width": "1px", backgroundColor: "rgb(6, 7, 10)", width: "100%", borderRadius: "24px", opacity: "1"}}>
                     <div className="framer-1yz5w5a" data-framer-name="Content" style={{opacity: "1"}}>
                       <div className="framer-1cv3wx1" data-framer-name="Main" style={{opacity: "1"}}>

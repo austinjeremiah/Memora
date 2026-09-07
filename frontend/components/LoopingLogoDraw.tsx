@@ -26,7 +26,7 @@ export default function LoopingLogoDraw({
   }, [intervalMs]);
 
   return (
-    <SvgTextDraw key={cycle} className={className} stroke="#fff">
+    <SvgTextDraw key={cycle} className={className} stroke="#fff" showEcg>
       {children}
     </SvgTextDraw>
   );

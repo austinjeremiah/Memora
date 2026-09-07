@@ -1,4 +1,37 @@
+"use client";
+
+import { useEffect, useRef } from "react";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger);
+}
+
 export default function Integration() {
+  const itemRefs = useRef<Array<HTMLDivElement | null>>([]);
+
+  useEffect(() => {
+    const items = itemRefs.current.filter(
+      (el): el is HTMLDivElement => el !== null
+    );
+    if (!items.length) return;
+    const ctx = gsap.context(() => {
+      gsap.from(items, {
+        opacity: 0,
+        duration: 0.7,
+        ease: "power2.out",
+        stagger: 0.08,
+        scrollTrigger: {
+          trigger: items[0],
+          start: "top 88%",
+          toggleActions: "play none none none",
+        },
+      });
+    });
+    return () => ctx.revert();
+  }, []);
+
   return (
     <>
       <section className="framer-1kdajem" data-framer-name="Integration">
@@ -42,7 +75,7 @@ export default function Integration() {
               </div>
             </div>
             <div className="ssr-variant hidden-zmbq2w">
-              <div className="framer-1a2awm6-container">
+              <div ref={(el) => { itemRefs.current[0] = el; }} className="framer-1a2awm6-container">
                 <a className="framer-Yf5wR framer-ZHrhX framer-bqds1m framer-v-bqds1m framer-2xkq2k" data-framer-name="Primary" data-highlight="true" href="/app" tabIndex={0} style={{borderBottomLeftRadius: "16px", borderBottomRightRadius: "16px", borderTopLeftRadius: "16px", borderTopRightRadius: "16px", opacity: "1"}}>
                   <div className="framer-6yhlt6" data-border="true" data-framer-name="Label" style={{"--border-bottom-width": "1px", "--border-color": "var(--token-0eb0d570-0e27-4070-997d-d65cb58db903, rgba(255, 255, 255, 0.4))", "--border-left-width": "1px", "--border-right-width": "1px", "--border-style": "solid", "--border-top-width": "1px", backgroundColor: "var(--token-74e333f8-fe87-4945-af87-cae5b7e16c10, rgb(0, 0, 0))", filter: "brightness(1)", borderRadius: "15px", boxShadow: "0px 0.829890004863264px 0.829890004863264px -0.75px rgba(0, 0, 0, 0.18), 0px 2.260010866989614px 2.260010866989614px -1.5px rgba(0, 0, 0, 0.18), 0px 4.96216589306132px 4.96216589306132px -2.25px rgba(0, 0, 0, 0.17), 0px 11.014875294190135px 11.014875294190135px -3px rgba(0, 0, 0, 0.14), 0px 28px 28px -3.75px rgba(0, 0, 0, 0.06), inset -4px 3px 9px 0px var(--token-991642a5-fe69-44f0-a456-0d249f695158, rgb(1, 117, 255)), inset 3px -2px 8px 0px var(--token-40eb5c15-2df6-4cc5-9a1c-8a90a74b480c, rgb(255, 205, 125))", opacity: "1"}}>
                     <div className="framer-3nflbn" data-framer-name="Get Started" data-framer-component-type="RichTextContainer" style={{"--extracted-r6o4lv": "var(--token-839225cb-b1fc-470d-a0c2-2eb7fcc590b8, rgb(255, 255, 255))", "--framer-paragraph-spacing": "0px", transform: "none", opacity: "1"}}>
@@ -58,7 +91,7 @@ export default function Integration() {
           <div className="framer-pkd0ps" data-framer-name="Content">
             <div className="framer-bbqxkx">
               <div className="ssr-variant">
-                <div className="framer-1x32d6g-container" style={{willChange: "transform", opacity: "1", transform: "none"}}>
+                <div ref={(el) => { itemRefs.current[1] = el; }} className="framer-1x32d6g-container" style={{willChange: "transform", opacity: "1", transform: "none"}}>
                   <div className="framer-Oyows framer-mo5azh framer-v-mo5azh" data-framer-name="Dark" style={{background: "linear-gradient(40deg, var(--token-40eb5c15-2df6-4cc5-9a1c-8a90a74b480c, rgb(255, 205, 125)) 0%, var(--token-cef4d4a6-9e30-47e6-bc76-f952a48770af, rgb(12, 15, 22)) 45%, var(--token-991642a5-fe69-44f0-a456-0d249f695158, rgb(1, 117, 255)) 100%)", width: "100%", borderRadius: "24px", boxShadow: "rgba(255, 179, 73, 0.25) 0px 6px 24px 0px", opacity: "1"}}>
                     <div className="framer-wj2xpx" data-framer-name="Container" style={{backdropFilter: "none", backgroundColor: "var(--token-cef4d4a6-9e30-47e6-bc76-f952a48770af, rgb(12, 15, 22))", borderRadius: "24px", opacity: "1"}}>
                       <figure className="framer-1153min" style={{opacity: "1"}}>
@@ -71,7 +104,7 @@ export default function Integration() {
                 </div>
               </div>
               <div className="ssr-variant">
-                <div className="framer-9illbg-container" style={{willChange: "transform", opacity: "1", transform: "none"}}>
+                <div ref={(el) => { itemRefs.current[2] = el; }} className="framer-9illbg-container" style={{willChange: "transform", opacity: "1", transform: "none"}}>
                   <div className="framer-Oyows framer-mo5azh framer-v-mo5azh" data-framer-name="Dark" style={{background: "linear-gradient(40deg, var(--token-40eb5c15-2df6-4cc5-9a1c-8a90a74b480c, rgb(255, 205, 125)) 0%, var(--token-cef4d4a6-9e30-47e6-bc76-f952a48770af, rgb(12, 15, 22)) 45%, var(--token-991642a5-fe69-44f0-a456-0d249f695158, rgb(1, 117, 255)) 100%)", width: "100%", borderRadius: "24px", boxShadow: "rgba(255, 179, 73, 0.25) 0px 6px 24px 0px", opacity: "1"}}>
                     <div className="framer-wj2xpx" data-framer-name="Container" style={{backdropFilter: "none", backgroundColor: "var(--token-cef4d4a6-9e30-47e6-bc76-f952a48770af, rgb(12, 15, 22))", borderRadius: "24px", opacity: "1"}}>
                       <figure className="framer-1153min" style={{opacity: "1"}}>
@@ -84,7 +117,7 @@ export default function Integration() {
                 </div>
               </div>
               <div className="ssr-variant">
-                <div className="framer-1avihm-container" style={{willChange: "transform", opacity: "1", transform: "none"}}>
+                <div ref={(el) => { itemRefs.current[3] = el; }} className="framer-1avihm-container" style={{willChange: "transform", opacity: "1", transform: "none"}}>
                   <div className="framer-Oyows framer-mo5azh framer-v-mo5azh" data-framer-name="Dark" style={{background: "linear-gradient(40deg, var(--token-40eb5c15-2df6-4cc5-9a1c-8a90a74b480c, rgb(255, 205, 125)) 0%, var(--token-cef4d4a6-9e30-47e6-bc76-f952a48770af, rgb(12, 15, 22)) 45%, var(--token-991642a5-fe69-44f0-a456-0d249f695158, rgb(1, 117, 255)) 100%)", width: "100%", borderRadius: "24px", boxShadow: "rgba(255, 179, 73, 0.25) 0px 6px 24px 0px", opacity: "1"}}>
                     <div className="framer-wj2xpx" data-framer-name="Container" style={{backdropFilter: "none", backgroundColor: "var(--token-cef4d4a6-9e30-47e6-bc76-f952a48770af, rgb(12, 15, 22))", borderRadius: "24px", opacity: "1"}}>
                       <figure className="framer-1153min" style={{opacity: "1"}}>
@@ -97,7 +130,7 @@ export default function Integration() {
                 </div>
               </div>
               <div className="ssr-variant">
-                <div className="framer-w0et8o-container" style={{willChange: "transform", opacity: "1", transform: "none"}}>
+                <div ref={(el) => { itemRefs.current[4] = el; }} className="framer-w0et8o-container" style={{willChange: "transform", opacity: "1", transform: "none"}}>
                   <div className="framer-Oyows framer-mo5azh framer-v-mo5azh" data-framer-name="Dark" style={{background: "linear-gradient(40deg, var(--token-40eb5c15-2df6-4cc5-9a1c-8a90a74b480c, rgb(255, 205, 125)) 0%, var(--token-cef4d4a6-9e30-47e6-bc76-f952a48770af, rgb(12, 15, 22)) 45%, var(--token-991642a5-fe69-44f0-a456-0d249f695158, rgb(1, 117, 255)) 100%)", width: "100%", borderRadius: "24px", boxShadow: "rgba(255, 179, 73, 0.25) 0px 6px 24px 0px", opacity: "1"}}>
                     <div className="framer-wj2xpx" data-framer-name="Container" style={{backdropFilter: "none", backgroundColor: "var(--token-cef4d4a6-9e30-47e6-bc76-f952a48770af, rgb(12, 15, 22))", borderRadius: "24px", opacity: "1"}}>
                       <figure className="framer-1153min" style={{opacity: "1"}}>
@@ -110,7 +143,7 @@ export default function Integration() {
                 </div>
               </div>
               <div className="ssr-variant">
-                <div className="framer-11towmn-container" style={{willChange: "transform", opacity: "1", transform: "none"}}>
+                <div ref={(el) => { itemRefs.current[5] = el; }} className="framer-11towmn-container" style={{willChange: "transform", opacity: "1", transform: "none"}}>
                   <div className="framer-Oyows framer-mo5azh framer-v-mo5azh" data-framer-name="Dark" style={{background: "linear-gradient(40deg, var(--token-40eb5c15-2df6-4cc5-9a1c-8a90a74b480c, rgb(255, 205, 125)) 0%, var(--token-cef4d4a6-9e30-47e6-bc76-f952a48770af, rgb(12, 15, 22)) 45%, var(--token-991642a5-fe69-44f0-a456-0d249f695158, rgb(1, 117, 255)) 100%)", width: "100%", borderRadius: "24px", boxShadow: "rgba(255, 179, 73, 0.25) 0px 6px 24px 0px", opacity: "1"}}>
                     <div className="framer-wj2xpx" data-framer-name="Container" style={{backdropFilter: "none", backgroundColor: "var(--token-cef4d4a6-9e30-47e6-bc76-f952a48770af, rgb(12, 15, 22))", borderRadius: "24px", opacity: "1"}}>
                       <figure className="framer-1153min" style={{opacity: "1"}}>
@@ -123,7 +156,7 @@ export default function Integration() {
                 </div>
               </div>
               <div className="ssr-variant">
-                <div className="framer-1fudr4o-container" style={{willChange: "transform", opacity: "1", transform: "none"}}>
+                <div ref={(el) => { itemRefs.current[6] = el; }} className="framer-1fudr4o-container" style={{willChange: "transform", opacity: "1", transform: "none"}}>
                   <div className="framer-Oyows framer-mo5azh framer-v-mo5azh" data-framer-name="Dark" style={{background: "linear-gradient(40deg, var(--token-40eb5c15-2df6-4cc5-9a1c-8a90a74b480c, rgb(255, 205, 125)) 0%, var(--token-cef4d4a6-9e30-47e6-bc76-f952a48770af, rgb(12, 15, 22)) 45%, var(--token-991642a5-fe69-44f0-a456-0d249f695158, rgb(1, 117, 255)) 100%)", width: "100%", borderRadius: "24px", boxShadow: "rgba(255, 179, 73, 0.25) 0px 6px 24px 0px", opacity: "1"}}>
                     <div className="framer-wj2xpx" data-framer-name="Container" style={{backdropFilter: "none", backgroundColor: "var(--token-cef4d4a6-9e30-47e6-bc76-f952a48770af, rgb(12, 15, 22))", borderRadius: "24px", opacity: "1"}}>
                       <figure className="framer-1153min" style={{opacity: "1"}}>

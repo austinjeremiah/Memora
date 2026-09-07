@@ -145,9 +145,11 @@
   /* NN/g's glassmorphism guidance calls for substantial blur specifically
      when what sits behind the glass is intricate -- video, photography,
      animation -- so the detail doesn't fight the translucent cards for
-     attention or drop text contrast below WCAG. Re-added after an earlier
-     pass removed it for a punchier look; legibility wins here. */
-  filter: blur(28px) brightness(0.7) saturate(1.1);
+     attention or drop text contrast below WCAG. Kept moderate rather than
+     heavy: the sidebar stacks its own backdrop-filter blur on top of this,
+     so a lighter base here is what makes the two panels read as visibly
+     different softness instead of both maxing out to the same blur. */
+  filter: blur(20px) brightness(0.7) saturate(1.1);
   transform: scale(1.15);
 }
 
@@ -181,8 +183,13 @@
   padding: var(--space-5) var(--space-4);
   overflow-y: auto;
   border-right: 1px solid var(--glass-border);
-  backdrop-filter: blur(var(--glass-blur-1)); -webkit-backdrop-filter: blur(var(--glass-blur-1));
-  box-shadow: var(--glass-shadow);
+  /* Its own backdrop-filter blur stacks on top of the video's own base blur
+     (below), so the sidebar reads as a visibly softer, more frosted pane
+     than the open dashboard area next to it -- differentiation through
+     actual optical blur, the same material as everywhere else on this
+     page, rather than an opaque panel that breaks the glass-over-video look. */
+  backdrop-filter: blur(var(--glass-blur-2)); -webkit-backdrop-filter: blur(var(--glass-blur-2));
+  box-shadow: 8px 0 32px rgba(0, 0, 0, 0.35);
   background: var(--glass-bg-1);
 }
 .app-sidebar__brand {
@@ -411,6 +418,7 @@ h2.section-title { font-size: 13px; font-weight: 600; margin: 0; text-transform:
     overflow-x: auto; overflow-y: visible;
     border-right: none;
     border-bottom: 1px solid var(--glass-border);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
   }
   .app-sidebar__brand { font-size: 20px; }
   .app-sidebar__links { flex-direction: row; gap: 2px; }

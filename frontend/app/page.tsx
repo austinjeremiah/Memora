@@ -5,7 +5,6 @@ import CookieBanner from "@/components/CookieBanner";
 import SvgTemplates from "@/components/SvgTemplates";
 import Hero from "@/components/sections/Hero";
 import HighlightedText from "@/components/sections/HighlightedText";
-import Exceptionalities from "@/components/sections/Exceptionalities";
 import Features from "@/components/sections/Features";
 import Products from "@/components/sections/Products";
 import Steps from "@/components/sections/Steps";
@@ -24,7 +23,6 @@ export default function Page() {
           <div data-framer-root="" className="framer-P0PnG framer-QATJw framer-k2isH framer-6lzSR framer-pbxdP framer-n3Cte framer-GeYI4 framer-ogaiyu" style={{minHeight: "100vh", width: "auto", display: "contents"}}>
           <Hero />
           <HighlightedText />
-          <Exceptionalities />
           <Features />
           <Products />
           <Steps />

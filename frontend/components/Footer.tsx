@@ -10,6 +10,8 @@ if (typeof window !== "undefined") {
 
 export default function Footer() {
   const textRefs = useRef<Array<HTMLDivElement | null>>([]);
+  const headingRef = useRef<HTMLDivElement>(null);
+  const subtextRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const texts = textRefs.current.filter(
@@ -32,6 +34,26 @@ export default function Footer() {
     return () => ctx.revert();
   }, []);
 
+  useEffect(() => {
+    if (!headingRef.current || !subtextRef.current) return;
+    const ctx = gsap.context(() => {
+      gsap.from([headingRef.current, subtextRef.current], {
+        opacity: 0,
+        filter: "blur(20px)",
+        y: 20,
+        duration: 1,
+        ease: "power2.out",
+        stagger: 0.15,
+        scrollTrigger: {
+          trigger: headingRef.current,
+          start: "top 85%",
+          toggleActions: "play none none none",
+        },
+      });
+    });
+    return () => ctx.revert();
+  }, []);
+
   return (
     <>
       <div className="framer-n7nl4n-container">
@@ -41,7 +63,7 @@ export default function Footer() {
               <div className="framer-kl79kt" data-framer-name="Top" style={{opacity: "1"}}>
                 <div className="framer-144sqa8" data-framer-name="Top" style={{opacity: "1"}}>
                   <div className="framer-x39a61" data-framer-name="Text" style={{opacity: "1"}}>
-                    <div className="framer-ew7w2m" data-framer-name="Title" data-framer-component-type="RichTextContainer" style={{"--framer-paragraph-spacing": "0px", transform: "none", opacity: "1"}}>
+                    <div ref={headingRef} className="framer-ew7w2m" data-framer-name="Title" data-framer-component-type="RichTextContainer" style={{"--framer-paragraph-spacing": "0px", transform: "none", opacity: "1"}}>
                       <h2 className="framer-text framer-styles-preset-mnfyzd" data-styles-preset="muXEgmE57" style={{"--framer-text-alignment": "center"}}>
                         <span style={{display: "inline-block", opacity: "1", filter: "none", transform: "none"}}>
                           Step
@@ -76,7 +98,7 @@ export default function Footer() {
                         </span>
                       </h2>
                     </div>
-                    <div className="framer-1nieqnd" data-framer-name="Subtext" data-framer-component-type="RichTextContainer" style={{"--extracted-r6o4lv": "var(--token-e77749d5-1f11-472b-b926-5090d7e5b50e, rgb(155, 169, 196))", "--framer-paragraph-spacing": "0px", transform: "none", opacity: "1"}}>
+                    <div ref={subtextRef} className="framer-1nieqnd" data-framer-name="Subtext" data-framer-component-type="RichTextContainer" style={{"--extracted-r6o4lv": "var(--token-e77749d5-1f11-472b-b926-5090d7e5b50e, rgb(155, 169, 196))", "--framer-paragraph-spacing": "0px", transform: "none", opacity: "1"}}>
                       <p className="framer-text framer-styles-preset-1xv0u9n" data-styles-preset="VsDceC7bv" style={{"--framer-text-alignment": "center", "--framer-text-color": "var(--extracted-r6o4lv, var(--token-e77749d5-1f11-472b-b926-5090d7e5b50e, rgb(155, 169, 196)))"}}>
                         Persistent memory, a deterministic gate, and proof on Base — for every handoff.
                       </p>

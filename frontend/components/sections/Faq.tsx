@@ -1,4 +1,37 @@
+"use client";
+
+import { useEffect, useRef } from "react";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger);
+}
+
 export default function Faq() {
+  const itemRefs = useRef<Array<HTMLDivElement | null>>([]);
+
+  useEffect(() => {
+    const items = itemRefs.current.filter(
+      (el): el is HTMLDivElement => el !== null
+    );
+    if (!items.length) return;
+    const ctx = gsap.context(() => {
+      gsap.from(items, {
+        opacity: 0,
+        duration: 0.6,
+        ease: "power2.out",
+        stagger: 0.07,
+        scrollTrigger: {
+          trigger: items[0],
+          start: "top 88%",
+          toggleActions: "play none none none",
+        },
+      });
+    });
+    return () => ctx.revert();
+  }, []);
+
   return (
     <>
       <section className="framer-1ocarzi" data-framer-name="FAQ">
@@ -44,7 +77,7 @@ export default function Faq() {
             <div className="ssr-variant">
               <div className="framer-bpzkmr-container">
                 <div className="framer-Rfgae framer-yt7rpj framer-v-yt7rpj" data-framer-name="Part 01" style={{width: "100%", opacity: "1"}}>
-                  <div className="framer-145wp75-container" style={{willChange: "transform", opacity: "1", transform: "none"}}>
+                  <div ref={(el) => { itemRefs.current[0] = el; }} className="framer-145wp75-container" style={{willChange: "transform", opacity: "1", transform: "none"}}>
                     <div className="framer-JpnZ2 framer-6lzSR framer-n3Cte framer-1sy7ez0 framer-v-1sy7ez0" data-border="true" data-framer-name="Closed (Default)" style={{"--border-bottom-width": "1px", "--border-color": "var(--token-f4dc11a3-eab6-45ff-bb5d-90cc77e6a1e2, rgba(125, 164, 255, 0.16))", "--border-left-width": "1px", "--border-right-width": "1px", "--border-style": "solid", "--border-top-width": "1px", backgroundColor: "var(--token-cef4d4a6-9e30-47e6-bc76-f952a48770af, rgb(12, 15, 22))", width: "100%", willChange: "transform", borderRadius: "24px", opacity: "1", transform: "none"}}>
                       <div className="framer-144r8qr" data-border="true" data-framer-name="Question" data-highlight="true" tabIndex={0} style={{"--border-bottom-width": "0px", "--border-color": "var(--token-63f7583a-ac58-4fab-bed6-928aed613254, rgb(47, 57, 80))", "--border-left-width": "0px", "--border-right-width": "0px", "--border-style": "solid", "--border-top-width": "0px", opacity: "1"}}>
                         <div className="framer-d7agds" data-framer-name="What industries does Vertica Studio work with?" data-framer-component-type="RichTextContainer" style={{"--framer-paragraph-spacing": "0px", transform: "none", opacity: "1"}}>
@@ -64,7 +97,7 @@ export default function Faq() {
                       </div>
                     </div>
                   </div>
-                  <div className="framer-pkhzaf-container" style={{willChange: "transform", opacity: "1", transform: "none"}}>
+                  <div ref={(el) => { itemRefs.current[1] = el; }} className="framer-pkhzaf-container" style={{willChange: "transform", opacity: "1", transform: "none"}}>
                     <div className="framer-JpnZ2 framer-6lzSR framer-n3Cte framer-1sy7ez0 framer-v-1sy7ez0" data-border="true" data-framer-name="Closed (Default)" style={{"--border-bottom-width": "1px", "--border-color": "var(--token-f4dc11a3-eab6-45ff-bb5d-90cc77e6a1e2, rgba(125, 164, 255, 0.16))", "--border-left-width": "1px", "--border-right-width": "1px", "--border-style": "solid", "--border-top-width": "1px", backgroundColor: "var(--token-cef4d4a6-9e30-47e6-bc76-f952a48770af, rgb(12, 15, 22))", width: "100%", willChange: "transform", borderRadius: "24px", opacity: "1", transform: "none"}}>
                       <div className="framer-144r8qr" data-border="true" data-framer-name="Question" data-highlight="true" tabIndex={0} style={{"--border-bottom-width": "0px", "--border-color": "var(--token-63f7583a-ac58-4fab-bed6-928aed613254, rgb(47, 57, 80))", "--border-left-width": "0px", "--border-right-width": "0px", "--border-style": "solid", "--border-top-width": "0px", opacity: "1"}}>
                         <div className="framer-d7agds" data-framer-name="What industries does Vertica Studio work with?" data-framer-component-type="RichTextContainer" style={{"--framer-paragraph-spacing": "0px", transform: "none", opacity: "1"}}>
@@ -84,7 +117,7 @@ export default function Faq() {
                       </div>
                     </div>
                   </div>
-                  <div className="framer-1761juk-container" style={{willChange: "transform", opacity: "1", transform: "none"}}>
+                  <div ref={(el) => { itemRefs.current[2] = el; }} className="framer-1761juk-container" style={{willChange: "transform", opacity: "1", transform: "none"}}>
                     <div className="framer-JpnZ2 framer-6lzSR framer-n3Cte framer-1sy7ez0 framer-v-1sy7ez0" data-border="true" data-framer-name="Closed (Default)" style={{"--border-bottom-width": "1px", "--border-color": "var(--token-f4dc11a3-eab6-45ff-bb5d-90cc77e6a1e2, rgba(125, 164, 255, 0.16))", "--border-left-width": "1px", "--border-right-width": "1px", "--border-style": "solid", "--border-top-width": "1px", backgroundColor: "var(--token-cef4d4a6-9e30-47e6-bc76-f952a48770af, rgb(12, 15, 22))", width: "100%", willChange: "transform", borderRadius: "24px", opacity: "1", transform: "none"}}>
                       <div className="framer-144r8qr" data-border="true" data-framer-name="Question" data-highlight="true" tabIndex={0} style={{"--border-bottom-width": "0px", "--border-color": "var(--token-63f7583a-ac58-4fab-bed6-928aed613254, rgb(47, 57, 80))", "--border-left-width": "0px", "--border-right-width": "0px", "--border-style": "solid", "--border-top-width": "0px", opacity: "1"}}>
                         <div className="framer-d7agds" data-framer-name="What industries does Vertica Studio work with?" data-framer-component-type="RichTextContainer" style={{"--framer-paragraph-spacing": "0px", transform: "none", opacity: "1"}}>
@@ -104,7 +137,7 @@ export default function Faq() {
                       </div>
                     </div>
                   </div>
-                  <div className="framer-1akw2vs-container" style={{willChange: "transform", opacity: "1", transform: "none"}}>
+                  <div ref={(el) => { itemRefs.current[3] = el; }} className="framer-1akw2vs-container" style={{willChange: "transform", opacity: "1", transform: "none"}}>
                     <div className="framer-JpnZ2 framer-6lzSR framer-n3Cte framer-1sy7ez0 framer-v-1sy7ez0" data-border="true" data-framer-name="Closed (Default)" style={{"--border-bottom-width": "1px", "--border-color": "var(--token-f4dc11a3-eab6-45ff-bb5d-90cc77e6a1e2, rgba(125, 164, 255, 0.16))", "--border-left-width": "1px", "--border-right-width": "1px", "--border-style": "solid", "--border-top-width": "1px", backgroundColor: "var(--token-cef4d4a6-9e30-47e6-bc76-f952a48770af, rgb(12, 15, 22))", width: "100%", willChange: "transform", borderRadius: "24px", opacity: "1", transform: "none"}}>
                       <div className="framer-144r8qr" data-border="true" data-framer-name="Question" data-highlight="true" tabIndex={0} style={{"--border-bottom-width": "0px", "--border-color": "var(--token-63f7583a-ac58-4fab-bed6-928aed613254, rgb(47, 57, 80))", "--border-left-width": "0px", "--border-right-width": "0px", "--border-style": "solid", "--border-top-width": "0px", opacity: "1"}}>
                         <div className="framer-d7agds" data-framer-name="What industries does Vertica Studio work with?" data-framer-component-type="RichTextContainer" style={{"--framer-paragraph-spacing": "0px", transform: "none", opacity: "1"}}>
@@ -130,7 +163,7 @@ export default function Faq() {
             <div className="ssr-variant">
               <div className="framer-kii9ie-container">
                 <div className="framer-Rfgae framer-yt7rpj framer-v-o8w65k" data-framer-name="Part 02 " style={{width: "100%", opacity: "1"}}>
-                  <div className="framer-145wp75-container" style={{willChange: "transform", opacity: "1", transform: "none"}}>
+                  <div ref={(el) => { itemRefs.current[4] = el; }} className="framer-145wp75-container" style={{willChange: "transform", opacity: "1", transform: "none"}}>
                     <div className="framer-JpnZ2 framer-6lzSR framer-n3Cte framer-1sy7ez0 framer-v-1sy7ez0" data-border="true" data-framer-name="Closed (Default)" style={{"--border-bottom-width": "1px", "--border-color": "var(--token-f4dc11a3-eab6-45ff-bb5d-90cc77e6a1e2, rgba(125, 164, 255, 0.16))", "--border-left-width": "1px", "--border-right-width": "1px", "--border-style": "solid", "--border-top-width": "1px", backgroundColor: "var(--token-cef4d4a6-9e30-47e6-bc76-f952a48770af, rgb(12, 15, 22))", width: "100%", willChange: "transform", borderRadius: "24px", opacity: "1", transform: "none"}}>
                       <div className="framer-144r8qr" data-border="true" data-framer-name="Question" data-highlight="true" tabIndex={0} style={{"--border-bottom-width": "0px", "--border-color": "var(--token-63f7583a-ac58-4fab-bed6-928aed613254, rgb(47, 57, 80))", "--border-left-width": "0px", "--border-right-width": "0px", "--border-style": "solid", "--border-top-width": "0px", opacity: "1"}}>
                         <div className="framer-d7agds" data-framer-name="What industries does Vertica Studio work with?" data-framer-component-type="RichTextContainer" style={{"--framer-paragraph-spacing": "0px", transform: "none", opacity: "1"}}>
@@ -150,7 +183,7 @@ export default function Faq() {
                       </div>
                     </div>
                   </div>
-                  <div className="framer-pkhzaf-container" style={{willChange: "transform", opacity: "1", transform: "none"}}>
+                  <div ref={(el) => { itemRefs.current[5] = el; }} className="framer-pkhzaf-container" style={{willChange: "transform", opacity: "1", transform: "none"}}>
                     <div className="framer-JpnZ2 framer-6lzSR framer-n3Cte framer-1sy7ez0 framer-v-1sy7ez0" data-border="true" data-framer-name="Closed (Default)" style={{"--border-bottom-width": "1px", "--border-color": "var(--token-f4dc11a3-eab6-45ff-bb5d-90cc77e6a1e2, rgba(125, 164, 255, 0.16))", "--border-left-width": "1px", "--border-right-width": "1px", "--border-style": "solid", "--border-top-width": "1px", backgroundColor: "var(--token-cef4d4a6-9e30-47e6-bc76-f952a48770af, rgb(12, 15, 22))", width: "100%", willChange: "transform", borderRadius: "24px", opacity: "1", transform: "none"}}>
                       <div className="framer-144r8qr" data-border="true" data-framer-name="Question" data-highlight="true" tabIndex={0} style={{"--border-bottom-width": "0px", "--border-color": "var(--token-63f7583a-ac58-4fab-bed6-928aed613254, rgb(47, 57, 80))", "--border-left-width": "0px", "--border-right-width": "0px", "--border-style": "solid", "--border-top-width": "0px", opacity: "1"}}>
                         <div className="framer-d7agds" data-framer-name="What industries does Vertica Studio work with?" data-framer-component-type="RichTextContainer" style={{"--framer-paragraph-spacing": "0px", transform: "none", opacity: "1"}}>
@@ -170,7 +203,7 @@ export default function Faq() {
                       </div>
                     </div>
                   </div>
-                  <div className="framer-1761juk-container" style={{willChange: "transform", opacity: "1", transform: "none"}}>
+                  <div ref={(el) => { itemRefs.current[6] = el; }} className="framer-1761juk-container" style={{willChange: "transform", opacity: "1", transform: "none"}}>
                     <div className="framer-JpnZ2 framer-6lzSR framer-n3Cte framer-1sy7ez0 framer-v-1sy7ez0" data-border="true" data-framer-name="Closed (Default)" style={{"--border-bottom-width": "1px", "--border-color": "var(--token-f4dc11a3-eab6-45ff-bb5d-90cc77e6a1e2, rgba(125, 164, 255, 0.16))", "--border-left-width": "1px", "--border-right-width": "1px", "--border-style": "solid", "--border-top-width": "1px", backgroundColor: "var(--token-cef4d4a6-9e30-47e6-bc76-f952a48770af, rgb(12, 15, 22))", width: "100%", willChange: "transform", borderRadius: "24px", opacity: "1", transform: "none"}}>
                       <div className="framer-144r8qr" data-border="true" data-framer-name="Question" data-highlight="true" tabIndex={0} style={{"--border-bottom-width": "0px", "--border-color": "var(--token-63f7583a-ac58-4fab-bed6-928aed613254, rgb(47, 57, 80))", "--border-left-width": "0px", "--border-right-width": "0px", "--border-style": "solid", "--border-top-width": "0px", opacity: "1"}}>
                         <div className="framer-d7agds" data-framer-name="What industries does Vertica Studio work with?" data-framer-component-type="RichTextContainer" style={{"--framer-paragraph-spacing": "0px", transform: "none", opacity: "1"}}>
@@ -190,7 +223,7 @@ export default function Faq() {
                       </div>
                     </div>
                   </div>
-                  <div className="framer-1akw2vs-container" style={{willChange: "transform", opacity: "1", transform: "none"}}>
+                  <div ref={(el) => { itemRefs.current[7] = el; }} className="framer-1akw2vs-container" style={{willChange: "transform", opacity: "1", transform: "none"}}>
                     <div className="framer-JpnZ2 framer-6lzSR framer-n3Cte framer-1sy7ez0 framer-v-1sy7ez0" data-border="true" data-framer-name="Closed (Default)" style={{"--border-bottom-width": "1px", "--border-color": "var(--token-f4dc11a3-eab6-45ff-bb5d-90cc77e6a1e2, rgba(125, 164, 255, 0.16))", "--border-left-width": "1px", "--border-right-width": "1px", "--border-style": "solid", "--border-top-width": "1px", backgroundColor: "var(--token-cef4d4a6-9e30-47e6-bc76-f952a48770af, rgb(12, 15, 22))", width: "100%", willChange: "transform", borderRadius: "24px", opacity: "1", transform: "none"}}>
                       <div className="framer-144r8qr" data-border="true" data-framer-name="Question" data-highlight="true" tabIndex={0} style={{"--border-bottom-width": "0px", "--border-color": "var(--token-63f7583a-ac58-4fab-bed6-928aed613254, rgb(47, 57, 80))", "--border-left-width": "0px", "--border-right-width": "0px", "--border-style": "solid", "--border-top-width": "0px", opacity: "1"}}>
                         <div className="framer-d7agds" data-framer-name="What industries does Vertica Studio work with?" data-framer-component-type="RichTextContainer" style={{"--framer-paragraph-spacing": "0px", transform: "none", opacity: "1"}}>
