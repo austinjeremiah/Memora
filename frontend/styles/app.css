@@ -149,7 +149,7 @@
      heavy: the sidebar stacks its own backdrop-filter blur on top of this,
      so a lighter base here is what makes the two panels read as visibly
      different softness instead of both maxing out to the same blur. */
-  filter: blur(20px) brightness(0.7) saturate(1.1);
+  filter: blur(20px) brightness(0.56) saturate(1.0);
   transform: scale(1.15);
 }
 
@@ -157,7 +157,7 @@
   position: absolute;
   inset: 0;
   background: var(--bg);
-  opacity: 0.3;
+  opacity: 0.48;
 }
 
 .app-shell {
@@ -240,6 +240,32 @@
   border-color: var(--glass-border-strong);
   background-color: var(--glass-bg-3);
   box-shadow: var(--glass-shadow-hover);
+}
+
+/* Cards that respond to the pointer without claiming to BE the button.
+   A patient card carries its own actions, so the whole surface must not take
+   `cursor: pointer` -- that promises a click the card does not handle. It
+   still needs to acknowledge the pointer, though: a grid of glass panels that
+   does nothing on hover reads as a screenshot rather than an interface. */
+.card--hoverable:hover {
+  transform: translateY(-2px);
+  border-color: rgba(1, 117, 255, 0.45);
+  background-color: var(--glass-bg-3);
+  box-shadow: var(--glass-shadow-hover),
+              0 0 0 1px rgba(1, 117, 255, 0.18),
+              0 8px 32px -8px rgba(1, 117, 255, 0.35);
+}
+
+/* The top hairline is what reads as "lit". Brightening it on hover makes the
+   whole panel look like it caught the light, which is cheaper and calmer than
+   animating a full border. */
+.card--hoverable:hover::before {
+  background: linear-gradient(90deg, transparent,
+              rgba(120, 180, 255, 0.95) 35%, rgba(160, 200, 255, 0.95) 65%, transparent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card--hoverable:hover { transform: none; }
 }
 
 .card::before {
@@ -841,4 +867,62 @@ h2.section-title { font-size: 13px; font-weight: 600; margin: 0; text-transform:
   color: var(--text-secondary);
   border-left: 2px solid var(--allow);
   padding-left: 10px;
+}
+
+/* ---------------------------------------------------------------------------
+   Disclosure
+   --------------------------------------------------------------------------- */
+
+.disclosure {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  cursor: pointer;
+  text-align: left;
+}
+.disclosure:focus-visible {
+  outline: 1px solid var(--accent);
+  outline-offset: 4px;
+  border-radius: 6px;
+}
+.disclosure:hover .disclosure__chev { color: var(--accent); }
+
+.disclosure__chev {
+  display: inline-flex;
+  color: var(--text-muted);
+  transition: transform 260ms cubic-bezier(0.4, 0, 0.2, 1), color 160ms ease;
+}
+.disclosure__chev--open { transform: rotate(90deg); }
+
+/* The whole trick: a grid with one row that animates between 0fr and 1fr.
+   Height stays fully content-driven, so a table of 9 rows and one of 38 both
+   animate correctly with no measured pixel value to go stale. */
+.disclosure__panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 300ms cubic-bezier(0.4, 0, 0.2, 1),
+              opacity 220ms ease;
+  opacity: 0;
+}
+.disclosure__panel--open {
+  grid-template-rows: 1fr;
+  opacity: 1;
+}
+
+/* min-height:0 is load-bearing: without it the grid item refuses to shrink
+   below its content height and the panel never collapses. */
+.disclosure__inner {
+  overflow: hidden;
+  min-height: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .disclosure__panel { transition: opacity 120ms ease; }
+  .disclosure__chev { transition: color 160ms ease; }
 }
