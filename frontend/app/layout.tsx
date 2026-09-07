@@ -4,6 +4,9 @@ import "@/styles/framer.css";
 import "@/styles/breakpoints.css";
 import "@/styles/fonts.css";
 import "@/styles/app.css";
+import "@/styles/scrollHighlight.css";
+import "@/styles/logoMarquee.css";
+import "@/styles/angularGlowButton.css";
 
 const FAVICON =
   "https://framerusercontent.com/images/1VtXtUrlVK0Y1WHlW4GIfnhxFho.png";

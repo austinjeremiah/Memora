@@ -1,4 +1,61 @@
+"use client";
+
+import { useEffect } from "react";
+
+/**
+ * Same technique as Features.tsx's tab-fill lines, applied to the single
+ * beam spanning all three step numbers (01/02/03) instead of three separate
+ * bars. The beam's own width already equals the track's full width, so a
+ * frozen `translateX(-1270px)` from the scrape was just "fully hidden at
+ * whatever pixel width happened to be on screen at scrape time" — replaced
+ * with a resolution-independent `scaleX(progress)`, where progress covers
+ * the whole step-01-to-step-03 scroll span rather than one panel at a time.
+ */
+function useStepsBeamFill() {
+  useEffect(() => {
+    const beam = document.getElementById("steps-beam-fill");
+    const first = document.getElementById("step-01");
+    const last = document.getElementById("step-03");
+    if (!beam || !first || !last) return;
+
+    let rafId: number | null = null;
+
+    const update = () => {
+      rafId = null;
+      const vh = window.innerHeight || document.documentElement.clientHeight;
+      const triggerY = vh * 0.6;
+
+      const firstRect = first.getBoundingClientRect();
+      const lastRect = last.getBoundingClientRect();
+      // Ends at step-03's TOP, not its bottom — so the beam finishes filling
+      // as soon as card 3 comes into view, rather than only after it has
+      // fully scrolled past. That's what "complete by the third card" means.
+      const totalSpan = lastRect.top - firstRect.top;
+      if (totalSpan <= 0) return;
+
+      const raw = (triggerY - firstRect.top) / totalSpan;
+      const progress = Math.min(1, Math.max(0, raw));
+      beam.style.transform = `scaleX(${progress})`;
+    };
+
+    const onScroll = () => {
+      if (rafId !== null) return;
+      rafId = requestAnimationFrame(update);
+    };
+
+    update();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+      if (rafId !== null) cancelAnimationFrame(rafId);
+    };
+  }, []);
+}
+
 export default function Steps() {
+  useStepsBeamFill();
   return (
     <>
       <section className="framer-q836dk" id="how-it-works" data-framer-name="Steps">
@@ -44,7 +101,7 @@ export default function Steps() {
             <div className="framer-zx8cpx hidden-1pkxm8v hidden-zmbq2w" data-framer-name="Numbers">
               <div className="framer-ym0cs7" data-framer-name="Container">
                 <div className="framer-12vbwb0" data-framer-name="Beam">
-                  <div className="framer-1r0lx73" data-framer-name="Line" style={{willChange: "transform", opacity: "1", transform: "translateX(-1270px)"}} />
+                  <div id="steps-beam-fill" className="framer-1r0lx73" data-framer-name="Line" style={{willChange: "transform", opacity: "1", transform: "scaleX(0)", transformOrigin: "left"}} />
                 </div>
                 <div className="framer-47huoa" data-framer-name="01">
                   <div className="framer-8k1kxu" data-framer-name="01." data-framer-component-type="RichTextContainer" style={{transform: "none"}}>

@@ -1,0 +1,25 @@
+/* Scroll-linked per-word text highlight, used by HighlightedText.tsx.
+ * One JS-driven variable (--stw-progress, written on scroll) drives every
+ * word's opacity via its own --stw-i offset, so only one style write happens
+ * per scroll frame regardless of word count. */
+
+.stw-word {
+  color: rgb(255, 255, 255);
+  opacity: clamp(
+    0.35,
+    calc((var(--stw-progress, 0) * var(--stw-total, 1) - var(--stw-i, 0)) + 0.35),
+    1
+  );
+}
+
+/* Continuous slow spin for the gradient orb next to this text — replaces
+ * the original static `transform: rotate(268.425deg)` (a frozen mid-spin
+ * frame from the source scrape) with an actual loop. */
+@keyframes stw-orb-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.stw-orb-spin {
+  animation: stw-orb-spin 22s linear infinite;
+}

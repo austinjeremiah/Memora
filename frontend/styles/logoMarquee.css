@@ -1,0 +1,11 @@
+/* Infinite horizontal scroll for the Hero logo strip. Content is already
+ * duplicated 4x in the markup (24 <li> for 6 logos), so a -50% shift loops
+ * seamlessly back to an identical frame. */
+@keyframes memora-logo-marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+.memora-logo-marquee {
+  animation: memora-logo-marquee 25s linear infinite;
+}

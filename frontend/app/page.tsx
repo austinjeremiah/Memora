@@ -1,5 +1,6 @@
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
+import SmoothScroll from "@/components/SmoothScroll";
 import CookieBanner from "@/components/CookieBanner";
 import SvgTemplates from "@/components/SvgTemplates";
 import Hero from "@/components/sections/Hero";
@@ -9,7 +10,6 @@ import Features from "@/components/sections/Features";
 import Products from "@/components/sections/Products";
 import Steps from "@/components/sections/Steps";
 import DataAndPrivacy from "@/components/sections/DataAndPrivacy";
-import Pricing from "@/components/sections/Pricing";
 import Faq from "@/components/sections/Faq";
 import Decor from "@/components/sections/Decor";
 import Integration from "@/components/sections/Integration";
@@ -17,6 +17,7 @@ import Integration from "@/components/sections/Integration";
 export default function Page() {
   return (
     <>
+      <SmoothScroll />
       <div id="main">
         <div className="framer-Y1h2E framer-13xxj9k" data-layout-template="true" style={{minHeight: "100vh", width: "auto"}}>
           <Nav />
@@ -28,7 +29,6 @@ export default function Page() {
           <Products />
           <Steps />
           <DataAndPrivacy />
-          <Pricing />
           <Faq />
           <Decor />
           <Integration />

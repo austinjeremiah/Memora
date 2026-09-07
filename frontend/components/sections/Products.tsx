@@ -1,4 +1,38 @@
+"use client";
+
+import { useEffect, useRef } from "react";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger);
+}
+
 export default function Products() {
+  const cardRefs = useRef<Array<HTMLDivElement | null>>([]);
+
+  useEffect(() => {
+    const cards = cardRefs.current.filter(
+      (el): el is HTMLDivElement => el !== null
+    );
+    if (!cards.length) return;
+    const ctx = gsap.context(() => {
+      gsap.from(cards, {
+        x: 100,
+        opacity: 0,
+        duration: 0.8,
+        ease: "power3.out",
+        stagger: 0.15,
+        scrollTrigger: {
+          trigger: cards[0],
+          start: "top 85%",
+          toggleActions: "play none none none",
+        },
+      });
+    });
+    return () => ctx.revert();
+  }, []);
+
   return (
     <>
       <section className="framer-1c7dtba" data-framer-name="Products">
@@ -87,7 +121,7 @@ export default function Products() {
                       </div>
                     </div>
                     <div className="framer-178ty0" data-framer-name="Points" style={{opacity: "1"}}>
-                      <div className="framer-gn86jh-container" style={{opacity: "1"}}>
+                      <div ref={(el) => { cardRefs.current[0] = el; }} className="framer-gn86jh-container" style={{opacity: "1"}}>
                         <div className="framer-oNbXA framer-n3Cte framer-jmdv9y framer-v-9wsqfm" data-framer-name="Big" style={{width: "100%", borderRadius: "12px", opacity: "1"}}>
                           <div className="framer-o1thv5" data-framer-name="Content" style={{opacity: "1"}}>
                             <div className="framer-v3ildb" data-framer-name="Healthcare" data-framer-component-type="RichTextContainer" style={{"--extracted-r6o4lv": "var(--token-7ed67f45-7ffc-4523-9689-9d08f6aa2909, rgb(209, 212, 227))", "--framer-paragraph-spacing": "0px", transform: "none", opacity: "1"}}>
@@ -108,7 +142,7 @@ export default function Products() {
                           <div className="framer-35r8qv" data-border="true" data-framer-name="Border" style={{"--border-bottom-width": "1px", "--border-color": "var(--token-f4dc11a3-eab6-45ff-bb5d-90cc77e6a1e2, rgba(125, 164, 255, 0.16))", "--border-left-width": "1px", "--border-right-width": "1px", "--border-style": "solid", "--border-top-width": "1px", backgroundColor: "var(--token-365216f8-7ee6-4f9f-94e0-ca7d584e4354, rgba(255, 254, 250, 0))", borderRadius: "12px", opacity: "1"}} />
                         </div>
                       </div>
-                      <div className="framer-o489ge-container" style={{opacity: "1"}}>
+                      <div ref={(el) => { cardRefs.current[1] = el; }} className="framer-o489ge-container" style={{opacity: "1"}}>
                         <div className="framer-oNbXA framer-n3Cte framer-jmdv9y framer-v-9wsqfm" data-framer-name="Big" style={{width: "100%", borderRadius: "12px", opacity: "1"}}>
                           <div className="framer-o1thv5" data-framer-name="Content" style={{opacity: "1"}}>
                             <div className="framer-v3ildb" data-framer-name="Healthcare" data-framer-component-type="RichTextContainer" style={{"--extracted-r6o4lv": "var(--token-7ed67f45-7ffc-4523-9689-9d08f6aa2909, rgb(209, 212, 227))", "--framer-paragraph-spacing": "0px", transform: "none", opacity: "1"}}>
@@ -129,7 +163,7 @@ export default function Products() {
                           <div className="framer-35r8qv" data-border="true" data-framer-name="Border" style={{"--border-bottom-width": "1px", "--border-color": "var(--token-f4dc11a3-eab6-45ff-bb5d-90cc77e6a1e2, rgba(125, 164, 255, 0.16))", "--border-left-width": "1px", "--border-right-width": "1px", "--border-style": "solid", "--border-top-width": "1px", backgroundColor: "var(--token-365216f8-7ee6-4f9f-94e0-ca7d584e4354, rgba(255, 254, 250, 0))", borderRadius: "12px", opacity: "1"}} />
                         </div>
                       </div>
-                      <div className="framer-1osbugn-container" style={{opacity: "1"}}>
+                      <div ref={(el) => { cardRefs.current[2] = el; }} className="framer-1osbugn-container" style={{opacity: "1"}}>
                         <div className="framer-oNbXA framer-n3Cte framer-jmdv9y framer-v-9wsqfm" data-framer-name="Big" style={{width: "100%", borderRadius: "12px", opacity: "1"}}>
                           <div className="framer-o1thv5" data-framer-name="Content" style={{opacity: "1"}}>
                             <div className="framer-v3ildb" data-framer-name="Healthcare" data-framer-component-type="RichTextContainer" style={{"--extracted-r6o4lv": "var(--token-7ed67f45-7ffc-4523-9689-9d08f6aa2909, rgb(209, 212, 227))", "--framer-paragraph-spacing": "0px", transform: "none", opacity: "1"}}>

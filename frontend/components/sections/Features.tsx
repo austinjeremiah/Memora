@@ -1,4 +1,62 @@
+"use client";
+
+import { useEffect } from "react";
+
+/**
+ * The three tab "Highlight" bars (Reactive/Sentinel/Attestation) were frozen
+ * mid-animation in the scrape — `transform: translateX(-288px)` on all
+ * three, a snapshot of whatever position the original site's JS happened to
+ * be at, not a meaningful 0%/100% value. Rather than guess at that math,
+ * this drives each bar's fill with `scaleX`, computed from how far its
+ * matching content panel (feature-01/02/03) has scrolled past a fixed
+ * trigger line — panel 1 fills first, then 2, then 3, as you scroll down
+ * the stacked "Screens" column.
+ */
+function useFeatureScrollFill() {
+  useEffect(() => {
+    const pairs = [
+      { panel: "feature-01", fill: "feature-fill-01" },
+      { panel: "feature-02", fill: "feature-fill-02" },
+      { panel: "feature-03", fill: "feature-fill-03" },
+    ];
+
+    let rafId: number | null = null;
+
+    const update = () => {
+      rafId = null;
+      const vh = window.innerHeight || document.documentElement.clientHeight;
+      const triggerY = vh * 0.6;
+
+      for (const { panel, fill } of pairs) {
+        const panelEl = document.getElementById(panel);
+        const fillEl = document.getElementById(fill);
+        if (!panelEl || !fillEl) continue;
+
+        const rect = panelEl.getBoundingClientRect();
+        const raw = (triggerY - rect.top) / rect.height;
+        const progress = Math.min(1, Math.max(0, raw));
+        fillEl.style.transform = `scaleX(${progress})`;
+      }
+    };
+
+    const onScroll = () => {
+      if (rafId !== null) return;
+      rafId = requestAnimationFrame(update);
+    };
+
+    update();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+      if (rafId !== null) cancelAnimationFrame(rafId);
+    };
+  }, []);
+}
+
 export default function Features() {
+  useFeatureScrollFill();
   return (
     <>
       <section className="framer-2e2suq" id="platform" data-framer-name="Features ">
@@ -45,14 +103,14 @@ export default function Features() {
               <div className="framer-1209mbl-container hidden-zmbq2w">
                 <div className="framer-7VcwY framer-pfzf1n framer-v-pfzf1n" data-framer-name="Hero" style={{width: "100%", opacity: "1"}}>
                   <div className="framer-1hhlblm-container" style={{opacity: "1"}}>
-                    <div className="framer-j2hBN framer-n3Cte framer-1v0p8ok framer-v-1v0p8ok" data-framer-name="Feature Tag" style={{width: "100%", willChange: "transform", borderRadius: "1px", opacity: "0.5", transform: "none"}}>
+                    <div className="framer-j2hBN framer-n3Cte framer-1v0p8ok framer-v-1v0p8ok" data-framer-name="Feature Tag" style={{width: "100%", willChange: "transform", borderRadius: "1px", opacity: "1", transform: "none"}}>
                       <figure className="framer-1mq16n3" data-framer-name="Image" style={{opacity: "1"}}>
                         <div style={{position: "absolute", borderRadius: "inherit", cornerShape: "inherit", top: "0", right: "0", bottom: "0", left: "0"}} data-framer-background-image-wrapper="true">
                           <img decoding="auto" loading="lazy" width="24" height="24" src="/images/01d6xos4x3sbu293tmkafduyfac.svg" alt="" style={{display: "block", width: "100%", height: "100%", borderRadius: "inherit", cornerShape: "inherit", objectPosition: "center", objectFit: "cover"}} />
                         </div>
                       </figure>
                       <div className="framer-1kxdxzp" data-framer-name="Line" style={{backgroundColor: "var(--token-63f7583a-ac58-4fab-bed6-928aed613254, rgb(47, 57, 80))", opacity: "1"}}>
-                        <div className="framer-dv0q2q" data-framer-name="Highlight" style={{background: "linear-gradient(90deg, var(--token-40eb5c15-2df6-4cc5-9a1c-8a90a74b480c, rgb(255, 205, 125)) 0%, var(--token-991642a5-fe69-44f0-a456-0d249f695158, rgb(1, 117, 255)) 100%)", willChange: "transform", opacity: "1", transform: "translateX(-288px)"}} />
+                        <div id="feature-fill-01" className="framer-dv0q2q" data-framer-name="Highlight" style={{background: "linear-gradient(90deg, var(--token-40eb5c15-2df6-4cc5-9a1c-8a90a74b480c, rgb(255, 205, 125)) 0%, var(--token-991642a5-fe69-44f0-a456-0d249f695158, rgb(1, 117, 255)) 100%)", willChange: "transform", opacity: "1", transform: "scaleX(0)", transformOrigin: "left"}} />
                       </div>
                       <div className="framer-pdoe2b" data-framer-name="FEATURES" data-framer-component-type="RichTextContainer" style={{"--extracted-r6o4lv": "var(--token-839225cb-b1fc-470d-a0c2-2eb7fcc590b8, rgb(255, 255, 255))", "--framer-paragraph-spacing": "0px", transform: "none", opacity: "1"}}>
                         <p className="framer-text framer-styles-preset-1xv0u9n" data-styles-preset="VsDceC7bv" style={{"--framer-text-color": "var(--extracted-r6o4lv, var(--token-839225cb-b1fc-470d-a0c2-2eb7fcc590b8, rgb(255, 255, 255)))"}}>
@@ -62,14 +120,14 @@ export default function Features() {
                     </div>
                   </div>
                   <div className="framer-rpx35j-container" style={{opacity: "1"}}>
-                    <div className="framer-j2hBN framer-n3Cte framer-1v0p8ok framer-v-1v0p8ok" data-framer-name="Feature Tag" style={{width: "100%", willChange: "transform", borderRadius: "1px", opacity: "0.5", transform: "none"}}>
+                    <div className="framer-j2hBN framer-n3Cte framer-1v0p8ok framer-v-1v0p8ok" data-framer-name="Feature Tag" style={{width: "100%", willChange: "transform", borderRadius: "1px", opacity: "1", transform: "none"}}>
                       <figure className="framer-1mq16n3" data-framer-name="Image" style={{opacity: "1"}}>
                         <div style={{position: "absolute", borderRadius: "inherit", cornerShape: "inherit", top: "0", right: "0", bottom: "0", left: "0"}} data-framer-background-image-wrapper="true">
                           <img decoding="auto" loading="lazy" width="24" height="24" src="/images/dzdw9qxlwt1r7v7dl7f89ipjfk.svg" alt="" style={{display: "block", width: "100%", height: "100%", borderRadius: "inherit", cornerShape: "inherit", objectPosition: "center", objectFit: "cover"}} />
                         </div>
                       </figure>
                       <div className="framer-1kxdxzp" data-framer-name="Line" style={{backgroundColor: "var(--token-63f7583a-ac58-4fab-bed6-928aed613254, rgb(47, 57, 80))", opacity: "1"}}>
-                        <div className="framer-dv0q2q" data-framer-name="Highlight" style={{background: "linear-gradient(90deg, var(--token-40eb5c15-2df6-4cc5-9a1c-8a90a74b480c, rgb(255, 205, 125)) 0%, var(--token-991642a5-fe69-44f0-a456-0d249f695158, rgb(1, 117, 255)) 100%)", willChange: "transform", opacity: "1", transform: "translateX(-288px)"}} />
+                        <div id="feature-fill-02" className="framer-dv0q2q" data-framer-name="Highlight" style={{background: "linear-gradient(90deg, var(--token-40eb5c15-2df6-4cc5-9a1c-8a90a74b480c, rgb(255, 205, 125)) 0%, var(--token-991642a5-fe69-44f0-a456-0d249f695158, rgb(1, 117, 255)) 100%)", willChange: "transform", opacity: "1", transform: "scaleX(0)", transformOrigin: "left"}} />
                       </div>
                       <div className="framer-pdoe2b" data-framer-name="FEATURES" data-framer-component-type="RichTextContainer" style={{"--extracted-r6o4lv": "var(--token-839225cb-b1fc-470d-a0c2-2eb7fcc590b8, rgb(255, 255, 255))", "--framer-paragraph-spacing": "0px", transform: "none", opacity: "1"}}>
                         <p className="framer-text framer-styles-preset-1xv0u9n" data-styles-preset="VsDceC7bv" style={{"--framer-text-color": "var(--extracted-r6o4lv, var(--token-839225cb-b1fc-470d-a0c2-2eb7fcc590b8, rgb(255, 255, 255)))"}}>
@@ -79,14 +137,14 @@ export default function Features() {
                     </div>
                   </div>
                   <div className="framer-17572l4-container" style={{opacity: "1"}}>
-                    <div className="framer-j2hBN framer-n3Cte framer-1v0p8ok framer-v-1v0p8ok" data-framer-name="Feature Tag" style={{width: "100%", willChange: "transform", borderRadius: "1px", opacity: "0.5", transform: "none"}}>
+                    <div className="framer-j2hBN framer-n3Cte framer-1v0p8ok framer-v-1v0p8ok" data-framer-name="Feature Tag" style={{width: "100%", willChange: "transform", borderRadius: "1px", opacity: "1", transform: "none"}}>
                       <figure className="framer-1mq16n3" data-framer-name="Image" style={{opacity: "1"}}>
                         <div style={{position: "absolute", borderRadius: "inherit", cornerShape: "inherit", top: "0", right: "0", bottom: "0", left: "0"}} data-framer-background-image-wrapper="true">
                           <img decoding="auto" loading="lazy" width="24" height="24" src="/images/akgvq4roltzdkv9bmr9wltsd5c.svg" alt="" style={{display: "block", width: "100%", height: "100%", borderRadius: "inherit", cornerShape: "inherit", objectPosition: "center", objectFit: "cover"}} />
                         </div>
                       </figure>
                       <div className="framer-1kxdxzp" data-framer-name="Line" style={{backgroundColor: "var(--token-63f7583a-ac58-4fab-bed6-928aed613254, rgb(47, 57, 80))", opacity: "1"}}>
-                        <div className="framer-dv0q2q" data-framer-name="Highlight" style={{background: "linear-gradient(90deg, var(--token-40eb5c15-2df6-4cc5-9a1c-8a90a74b480c, rgb(255, 205, 125)) 0%, var(--token-991642a5-fe69-44f0-a456-0d249f695158, rgb(1, 117, 255)) 100%)", willChange: "transform", opacity: "1", transform: "translateX(-288px)"}} />
+                        <div id="feature-fill-03" className="framer-dv0q2q" data-framer-name="Highlight" style={{background: "linear-gradient(90deg, var(--token-40eb5c15-2df6-4cc5-9a1c-8a90a74b480c, rgb(255, 205, 125)) 0%, var(--token-991642a5-fe69-44f0-a456-0d249f695158, rgb(1, 117, 255)) 100%)", willChange: "transform", opacity: "1", transform: "scaleX(0)", transformOrigin: "left"}} />
                       </div>
                       <div className="framer-pdoe2b" data-framer-name="FEATURES" data-framer-component-type="RichTextContainer" style={{"--extracted-r6o4lv": "var(--token-839225cb-b1fc-470d-a0c2-2eb7fcc590b8, rgb(255, 255, 255))", "--framer-paragraph-spacing": "0px", transform: "none", opacity: "1"}}>
                         <p className="framer-text framer-styles-preset-1xv0u9n" data-styles-preset="VsDceC7bv" style={{"--framer-text-color": "var(--extracted-r6o4lv, var(--token-839225cb-b1fc-470d-a0c2-2eb7fcc590b8, rgb(255, 255, 255)))"}}>

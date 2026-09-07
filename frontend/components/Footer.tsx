@@ -1,4 +1,37 @@
+"use client";
+
+import { useEffect, useRef } from "react";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger);
+}
+
 export default function Footer() {
+  const textRefs = useRef<Array<HTMLDivElement | null>>([]);
+
+  useEffect(() => {
+    const texts = textRefs.current.filter(
+      (el): el is HTMLDivElement => el !== null
+    );
+    if (!texts.length) return;
+    const ctx = gsap.context(() => {
+      gsap.from(texts, {
+        opacity: 0,
+        scale: 0.7,
+        duration: 1,
+        ease: "power3.out",
+        scrollTrigger: {
+          trigger: texts[0],
+          start: "top 85%",
+          toggleActions: "play none none none",
+        },
+      });
+    });
+    return () => ctx.revert();
+  }, []);
+
   return (
     <>
       <div className="framer-n7nl4n-container">
@@ -68,17 +101,17 @@ export default function Footer() {
                     <img decoding="auto" width="2334" height="1082" sizes="(min-width: 1200px) calc(max(100vw, 1px) * 1.1), (min-width: 810px) and (max-width: 1199.98px) max(100vw, 1px), (max-width: 809.98px) 100vw" srcSet="/images/3ez5goty6kdezujpwdvyu8um6ns.webp 512w, /images/3ez5goty6kdezujpwdvyu8um6ns.webp 1024w, /images/3ez5goty6kdezujpwdvyu8um6ns.webp 2048w, /images/3ez5goty6kdezujpwdvyu8um6ns.webp 2334w" src="/images/3ez5goty6kdezujpwdvyu8um6ns.webp" alt="" style={{display: "block", width: "100%", height: "100%", borderRadius: "inherit", cornerShape: "inherit", objectPosition: "center", objectFit: "cover"}} />
                   </div>
                 </figure>
-                <div className="framer-1b6we3a" style={{opacity: "0.2", display: "flex", alignItems: "center", justifyContent: "center"}}>
+                <div ref={(el) => { textRefs.current[0] = el; }} className="framer-1b6we3a" style={{opacity: "0.2", display: "flex", alignItems: "center", justifyContent: "center"}}>
                   <span style={{fontFamily: "BentonSansRE, Verdana, sans-serif", fontSize: "clamp(48px, 16vw, 180px)", fontWeight: 400, fontStyle: "normal", lineHeight: "normal", letterSpacing: "normal", color: "rgb(255, 255, 255)", whiteSpace: "nowrap"}}>
                     MEMORA
                   </span>
                 </div>
-                <div className="framer-1ll8am5" style={{willChange: "transform", opacity: "1", transform: "none", display: "flex", alignItems: "center", justifyContent: "center"}}>
+                <div ref={(el) => { textRefs.current[1] = el; }} className="framer-1ll8am5" style={{willChange: "transform", opacity: "1", transform: "none", display: "flex", alignItems: "center", justifyContent: "center"}}>
                   <span style={{fontFamily: "BentonSansRE, Verdana, sans-serif", fontSize: "clamp(48px, 16vw, 180px)", fontWeight: 400, fontStyle: "normal", lineHeight: "normal", letterSpacing: "normal", color: "rgb(255, 255, 255)", whiteSpace: "nowrap"}}>
                     MEMORA
                   </span>
                 </div>
-                <div className="framer-1rcsswf" style={{opacity: "0.2", display: "flex", alignItems: "center", justifyContent: "center"}}>
+                <div ref={(el) => { textRefs.current[2] = el; }} className="framer-1rcsswf" style={{opacity: "0.2", display: "flex", alignItems: "center", justifyContent: "center"}}>
                   <span style={{fontFamily: "BentonSansRE, Verdana, sans-serif", fontSize: "clamp(48px, 16vw, 180px)", fontWeight: 400, fontStyle: "normal", lineHeight: "normal", letterSpacing: "normal", color: "rgb(255, 255, 255)", whiteSpace: "nowrap"}}>
                     MEMORA
                   </span>

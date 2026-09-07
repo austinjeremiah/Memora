@@ -1,11 +1,57 @@
+"use client";
+
+import { useEffect, useRef } from "react";
+import { gsap } from "gsap";
+import AngularGlowButton from "@/components/AngularGlowButton";
+
 export default function Hero() {
+  const headingRef = useRef<HTMLDivElement>(null);
+  const subtextRef = useRef<HTMLDivElement>(null);
+  const videoRef = useRef<HTMLDivElement>(null);
+  const badgeRef = useRef<HTMLDivElement>(null);
+  const ctaButtonRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (
+      !headingRef.current ||
+      !subtextRef.current ||
+      !videoRef.current ||
+      !badgeRef.current ||
+      !ctaButtonRef.current
+    )
+      return;
+    const tl = gsap.timeline({ delay: 1 });
+    tl.from(videoRef.current, {
+      opacity: 0,
+      y: 60,
+      scale: 1.3,
+      duration: 1.8,
+      ease: "power3.out",
+    }).from(badgeRef.current, {
+      opacity: 0,
+      duration: 0.8,
+      ease: "power2.out",
+    }).from([headingRef.current, subtextRef.current], {
+      opacity: 0,
+      filter: "blur(20px)",
+      y: 20,
+      duration: 1,
+      ease: "power2.out",
+      stagger: 0.15,
+    }).from(ctaButtonRef.current, {
+      opacity: 0,
+      duration: 0.8,
+      ease: "power2.out",
+    });
+  }, []);
+
   return (
     <>
-      <header className="framer-jdt6mz" data-framer-name="Hero">
+      <header className="framer-jdt6mz" data-framer-name="Hero" style={{backgroundColor: "#000"}}>
         <div className="framer-1ya6ioj" data-framer-name="Container">
           <div className="framer-p4ssb7" data-framer-name="Content">
             <div className="framer-1k957es" data-framer-name="Container">
-              <div className="framer-1kktr3t" data-framer-appear-id="1kktr3t" data-framer-name="Label" style={{opacity: "1", transform: "none", willChange: "transform"}}>
+              <div ref={badgeRef} className="framer-1kktr3t" data-framer-appear-id="1kktr3t" data-framer-name="Label" style={{opacity: "1", transform: "none", willChange: "transform"}}>
                 <div className="framer-9sobwf" data-framer-name="Login" data-framer-component-type="RichTextContainer" style={{transform: "none"}}>
                   <p className="framer-text framer-styles-preset-1p9z0bc" data-styles-preset="lW2kM2SoC" style={{"--framer-text-color": "var(--token-839225cb-b1fc-470d-a0c2-2eb7fcc590b8, rgb(255, 255, 255))"}}>
                     Built for the Sibyl Labs Hackathon — synthetic patients only
@@ -14,7 +60,7 @@ export default function Hero() {
               </div>
               <div className="framer-6yg7un" data-framer-name="Heading">
                 <div className="framer-1xcsk4d" data-framer-appear-id="1xcsk4d" data-framer-name="Title" style={{opacity: "1", transform: "none", willChange: "transform"}}>
-                  <div className="framer-pyj73d" data-framer-name="Simplify Your Workflow, Amplify Your Team" data-framer-component-type="RichTextContainer" style={{transform: "none"}}>
+                  <div ref={headingRef} className="framer-pyj73d" data-framer-name="Simplify Your Workflow, Amplify Your Team" data-framer-component-type="RichTextContainer" style={{transform: "none"}}>
                     <h1 className="framer-text framer-styles-preset-1ucu1n1" data-styles-preset="D2FyQ7kfS">
                       <span style={{whiteSpace: "nowrap"}}>
                         <span style={{display: "inline-block", opacity: "1", filter: "blur(0px)", transform: "none", willChange: "transform"}}>
@@ -132,7 +178,7 @@ export default function Hero() {
                     </h1>
                   </div>
                 </div>
-                <div className="framer-oy54su" data-framer-name="Subtext" data-framer-component-type="RichTextContainer" style={{transform: "none"}}>
+                <div ref={subtextRef} className="framer-oy54su" data-framer-name="Subtext" data-framer-component-type="RichTextContainer" style={{transform: "none"}}>
                   <p className="framer-text framer-styles-preset-kng7jv" data-styles-preset="cDiAQHEyE" style={{"--framer-text-color": "var(--token-839225cb-b1fc-470d-a0c2-2eb7fcc590b8, rgb(255, 255, 255))"}}>
                     <span style={{whiteSpace: "nowrap"}}>
                       <span style={{display: "inline-block", opacity: "1", filter: "blur(0px)", transform: "none", willChange: "transform"}}>
@@ -422,28 +468,16 @@ export default function Hero() {
                 </div>
               </div>
             </div>
-            <div className="framer-1x5d5vf" data-framer-name="Button">
-              <div className="ssr-variant hidden-zmbq2w">
-                <div className="framer-1m07lfk-container" data-framer-appear-id="1m07lfk" style={{opacity: "1", transform: "none", willChange: "transform"}}>
-                  <a className="framer-Yf5wR framer-ZHrhX framer-bqds1m framer-v-bqds1m framer-2xkq2k" data-framer-name="Primary" data-highlight="true" href="/app" tabIndex={0} style={{borderBottomLeftRadius: "16px", borderBottomRightRadius: "16px", borderTopLeftRadius: "16px", borderTopRightRadius: "16px", opacity: "1"}}>
-                    <div className="framer-6yhlt6" data-border="true" data-framer-name="Label" style={{"--border-bottom-width": "1px", "--border-color": "var(--token-0eb0d570-0e27-4070-997d-d65cb58db903, rgba(255, 255, 255, 0.4))", "--border-left-width": "1px", "--border-right-width": "1px", "--border-style": "solid", "--border-top-width": "1px", backgroundColor: "var(--token-74e333f8-fe87-4945-af87-cae5b7e16c10, rgb(0, 0, 0))", filter: "brightness(1)", borderRadius: "15px", boxShadow: "0px 0.829890004863264px 0.829890004863264px -0.75px rgba(0, 0, 0, 0.18), 0px 2.260010866989614px 2.260010866989614px -1.5px rgba(0, 0, 0, 0.18), 0px 4.96216589306132px 4.96216589306132px -2.25px rgba(0, 0, 0, 0.17), 0px 11.014875294190135px 11.014875294190135px -3px rgba(0, 0, 0, 0.14), 0px 28px 28px -3.75px rgba(0, 0, 0, 0.06), inset -4px 3px 9px 0px var(--token-991642a5-fe69-44f0-a456-0d249f695158, rgb(1, 117, 255)), inset 3px -2px 8px 0px var(--token-40eb5c15-2df6-4cc5-9a1c-8a90a74b480c, rgb(255, 205, 125))", opacity: "1"}}>
-                      <div className="framer-3nflbn" data-framer-name="Get Started" data-framer-component-type="RichTextContainer" style={{"--extracted-r6o4lv": "var(--token-839225cb-b1fc-470d-a0c2-2eb7fcc590b8, rgb(255, 255, 255))", "--framer-paragraph-spacing": "0px", transform: "none", opacity: "1"}}>
-                        <p className="framer-text framer-styles-preset-79ayo0" data-styles-preset="AVSIklFkd" style={{"--framer-text-color": "var(--extracted-r6o4lv, var(--token-839225cb-b1fc-470d-a0c2-2eb7fcc590b8, rgb(255, 255, 255)))"}}>
-                          Get Started
-                        </p>
-                      </div>
-                    </div>
-                  </a>
-                </div>
-              </div>
+            <div ref={ctaButtonRef} className="framer-1x5d5vf" data-framer-name="Button">
+              <AngularGlowButton href="/app">Get Started</AngularGlowButton>
             </div>
           </div>
           <section className="framer-2w2qm9" data-framer-appear-id="2w2qm9" data-framer-name="Dashboard" style={{opacity: "1", transform: "none", willChange: "transform"}}>
             <div className="framer-1jge3xz" data-framer-name="Container">
               <div className="ssr-variant">
-                <figure className="framer-tqk5kz" style={{height: "auto", aspectRatio: "1.6035665294924555"}}>
+                <figure className="framer-tqk5kz" style={{height: "auto", aspectRatio: "1.6053921568627451", borderRadius: "32px"}}>
                   <div style={{position: "absolute", borderRadius: "inherit", cornerShape: "inherit", top: "0", right: "0", bottom: "0", left: "0"}} data-framer-background-image-wrapper="true">
-                    <img decoding="auto" width="2338" height="1458" sizes="(min-width: 1200px) min(min(100vw - 80px, 1200px) - 80px, 1200px), (min-width: 810px) and (max-width: 1199.98px) min(min(100vw - 80px, 1200px) - 80px, 1200px), (max-width: 809.98px) min(100vw - 40px, 1200px)" srcSet="/images/a6n9gdn1t1hjbhybb15vfr9os.png 512w, /images/a6n9gdn1t1hjbhybb15vfr9os.png 1024w, /images/a6n9gdn1t1hjbhybb15vfr9os.png 2048w, /images/a6n9gdn1t1hjbhybb15vfr9os.png 2338w" src="/images/a6n9gdn1t1hjbhybb15vfr9os.png" alt="" style={{display: "block", width: "100%", height: "100%", borderRadius: "inherit", cornerShape: "inherit", objectPosition: "center", objectFit: "contain"}} />
+                    <img decoding="auto" width="2620" height="1632" sizes="(min-width: 1200px) min(min(100vw - 80px, 1200px) - 80px, 1200px), (min-width: 810px) and (max-width: 1199.98px) min(min(100vw - 80px, 1200px) - 80px, 1200px), (max-width: 809.98px) min(100vw - 40px, 1200px)" src="/images/Landing_page_dashboard.png" alt="MEMORA dashboard" style={{display: "block", width: "100%", height: "100%", borderRadius: "inherit", cornerShape: "inherit", objectPosition: "center", objectFit: "contain"}} />
                   </div>
                 </figure>
               </div>
@@ -451,7 +485,7 @@ export default function Hero() {
             <div className="framer-vt938x" data-framer-name="Logos">
               <div className="framer-no0usn-container" data-framer-appear-id="no0usn" style={{opacity: "1", transform: "none", willChange: "transform"}}>
                 <section style={{display: "flex", width: "100%", height: "100%", maxWidth: "100%", maxHeight: "100%", placeItems: "center", margin: "0px", padding: "10px", listStyleType: "none", opacity: "1", maskImage: "linear-gradient(to right, rgba(0, 0, 0, 0) 0%, rgb(0, 0, 0) 20%, rgb(0, 0, 0) 80%, rgba(0, 0, 0, 0) 100%)", overflow: "hidden"}}>
-                  <ul style={{display: "flex", width: "100%", height: "100%", maxWidth: "100%", maxHeight: "100%", placeItems: "center", margin: "0px", padding: "0px", listStyleType: "none", gap: "32px", position: "relative", flexDirection: "row", willChange: "auto", transform: "translateX(0px)"}}>
+                  <ul className="memora-logo-marquee" style={{display: "flex", width: "100%", height: "100%", maxWidth: "100%", maxHeight: "100%", placeItems: "center", margin: "0px", padding: "0px", listStyleType: "none", gap: "32px", position: "relative", flexDirection: "row", willChange: "auto"}}>
                     <li aria-hidden="true">
                       <div className="framer-1lps5z1" data-framer-name="Logo 01" style={{flexShrink: "0"}}>
                         <div className="framer-1tkxqbj" data-framer-name="Image">
@@ -674,7 +708,7 @@ export default function Hero() {
             </div>
           </section>
         </div>
-        <div className="framer-p2gjaz" data-framer-name="Video Container">
+        <div ref={videoRef} className="framer-p2gjaz" data-framer-name="Video Container">
           <div className="framer-1gy3bcn-container" data-framer-appear-id="1gy3bcn" style={{opacity: "1", transform: "none", willChange: "transform"}}>
             <video src="https://framerusercontent.com/assets/XyQKBChh8CZBaaXrJoxPbwvI.mp4" loop preload="auto" muted playsInline style={{cursor: "auto", width: "100%", height: "100%", borderRadius: "0px", display: "block", objectFit: "cover", backgroundColor: "var(--token-755749ce-b09f-4a2c-96af-d48ea1c19cb9, rgba(0, 0, 0, 0))", objectPosition: "50% 50%"}} autoPlay />
           </div>

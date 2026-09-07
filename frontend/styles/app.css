@@ -76,6 +76,7 @@
 /* ---------- shell ---------- */
 
 .app-root {
+  position: relative;
   min-height: 100vh;
   background: var(--bg);
   color: var(--text);
@@ -83,6 +84,38 @@
   font-size: 14px;
   line-height: 1.55;
   -webkit-font-smoothing: antialiased;
+}
+
+.app-bg-video-wrap {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.app-bg-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: blur(30px) brightness(0.7) saturate(1.1);
+  transform: scale(1.15);
+}
+
+.app-bg-video-overlay {
+  position: absolute;
+  inset: 0;
+  background: var(--bg);
+  opacity: 0.3;
+}
+
+.app-nav,
+.status-strip,
+.app-main {
+  position: relative;
+  z-index: 1;
 }
 
 .app-main { max-width: 1140px; margin: 0 auto; padding: var(--space-6) var(--space-5) var(--space-8); }
@@ -128,16 +161,12 @@
 .card {
   border: 1px solid var(--border);
   border-radius: var(--r-card);
-  background: var(--bg-elevated);
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  box-shadow: var(--glass-inset);
   padding: var(--space-5);
 }
 .card--tight { padding: var(--space-4); }
-.card--glass {
-  background: rgba(255, 255, 255, 0.02);
-  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
-  box-shadow: var(--glass-inset);
-  border-color: transparent;
-}
 
 .stack { display: flex; flex-direction: column; gap: var(--space-4); }
 .stack--tight { gap: var(--space-2); }
