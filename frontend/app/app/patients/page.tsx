@@ -69,7 +69,7 @@ export default function PatientsPage() {
         <Section title={`${patients.length} in memory`}>
           <div className="grid grid--3">
             {patients.map((p) => (
-              <Card key={p.patient_id}>
+              <Card key={p.patient_id} className="card--hoverable">
                 <div className="stack">
                   <IconBadge icon="user" tone="accent" />
                   <div className="stack stack--tight">

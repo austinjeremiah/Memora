@@ -229,35 +229,63 @@ function Facts({ facts }: { facts: Record<string, StoredFactOut[]> }) {
     <Section title="Current facts">
       <div className="stack">
         {kinds.map((kind) => (
-          <Card key={kind} tight>
-            <details>
-              <summary style={{ cursor: "pointer", listStyle: "none" }}>
-                <span className="row row--between">
-                  <strong>{KIND_LABELS[kind] ?? kind}</strong>
-                  <Badge>{facts[kind].length}</Badge>
-                </span>
-              </summary>
-              <div className="scroll-x" style={{ marginTop: 12 }}>
-                <table className="table">
-                  <thead>
-                    <tr><th>Name</th><th>Status</th><th>Detail</th></tr>
-                  </thead>
-                  <tbody>
-                    {facts[kind].map((f) => (
-                      <tr key={f.name}>
-                        <td><Mono truncate={44}>{f.name}</Mono></td>
-                        <td>{f.status && <Badge>{f.status}</Badge>}</td>
-                        <td className="subtle">{summarise(f.body)}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </details>
-          </Card>
+          <FactGroup key={kind} kind={kind} rows={facts[kind]} />
         ))}
       </div>
     </Section>
+  );
+}
+
+/**
+ * One expandable kind.
+ *
+ * Deliberately NOT `<details>`. That element toggles `display`, so the panel
+ * has no intermediate height to animate and snaps open -- and no CSS can fix
+ * it from the outside. A controlled disclosure wrapping the body in a grid
+ * whose single row animates `0fr -> 1fr` gives the browser two real heights to
+ * interpolate between, which is a smooth open AND a smooth close with no
+ * animation library and no measured pixel heights to go stale.
+ */
+function FactGroup({ kind, rows }: { kind: string; rows: StoredFactOut[] }) {
+  const [open, setOpen] = useState(false);
+  const panelId = `facts-${kind}`;
+
+  return (
+    <Card tight>
+      <button type="button" className="disclosure" aria-expanded={open}
+              aria-controls={panelId} onClick={() => setOpen(!open)}>
+        <span className={`disclosure__chev${open ? " disclosure__chev--open" : ""}`}
+              aria-hidden="true">
+          <svg width="10" height="10" viewBox="0 0 10 10">
+            <path d="M3 1.5 L7 5 L3 8.5" fill="none" stroke="currentColor"
+                  strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </span>
+        <strong style={{ flex: 1, textAlign: "left" }}>{KIND_LABELS[kind] ?? kind}</strong>
+        <Badge>{rows.length}</Badge>
+      </button>
+
+      <div id={panelId} className={`disclosure__panel${open ? " disclosure__panel--open" : ""}`}>
+        <div className="disclosure__inner">
+          <div className="scroll-x" style={{ paddingTop: 12 }}>
+            <table className="table">
+              <thead>
+                <tr><th>Name</th><th>Status</th><th>Detail</th></tr>
+              </thead>
+              <tbody>
+                {rows.map((f) => (
+                  <tr key={f.name}>
+                    <td><Mono truncate={44}>{f.name}</Mono></td>
+                    <td>{f.status && <Badge>{f.status}</Badge>}</td>
+                    <td className="subtle">{summarise(f.body)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </Card>
   );
 }
 
