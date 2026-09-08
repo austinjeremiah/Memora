@@ -10,6 +10,7 @@ if (typeof window !== "undefined") {
 
 export default function Integration() {
   const itemRefs = useRef<Array<HTMLDivElement | null>>([]);
+  const bgRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     const items = itemRefs.current.filter(
@@ -25,6 +26,23 @@ export default function Integration() {
         scrollTrigger: {
           trigger: items[0],
           start: "top 88%",
+          toggleActions: "play none none none",
+        },
+      });
+    });
+    return () => ctx.revert();
+  }, []);
+
+  useEffect(() => {
+    if (!bgRef.current) return;
+    const ctx = gsap.context(() => {
+      gsap.from(bgRef.current, {
+        y: 120,
+        duration: 1,
+        ease: "power2.out",
+        scrollTrigger: {
+          trigger: bgRef.current,
+          start: "top 90%",
           toggleActions: "play none none none",
         },
       });
@@ -173,7 +191,7 @@ export default function Integration() {
         </div>
         <div className="framer-15v5zl8" data-framer-name="Masking">
           <div className="ssr-variant">
-            <figure className="framer-i2przz" data-framer-name="Gradient" style={{willChange: "transform", opacity: "1", transform: "none"}}>
+            <figure ref={bgRef} className="framer-i2przz" data-framer-name="Gradient" style={{willChange: "transform", opacity: "1", transform: "none"}}>
               <div style={{position: "absolute", borderRadius: "inherit", cornerShape: "inherit", top: "0", right: "0", bottom: "0", left: "0"}} data-framer-background-image-wrapper="true">
                 <img decoding="auto" loading="lazy" width="1920" height="1007" sizes="(min-width: 1200px) min(100vw, 2057px), (min-width: 810px) and (max-width: 1199.98px) min(min(100vw, 2057px) * 1.0012, 2057px), (max-width: 809.98px) min(min(100vw, 2057px) * 1.0513, 2057px)" srcSet="/images/fmpjmmyntqrd8ogyputazs8cso.webp 512w, /images/fmpjmmyntqrd8ogyputazs8cso.webp 1024w, /images/fmpjmmyntqrd8ogyputazs8cso.webp 1920w" src="/images/fmpjmmyntqrd8ogyputazs8cso.webp" alt="" style={{display: "block", width: "100%", height: "100%", borderRadius: "inherit", cornerShape: "inherit", objectPosition: "center", objectFit: "cover"}} />
               </div>

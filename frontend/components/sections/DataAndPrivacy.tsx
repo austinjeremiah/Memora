@@ -104,28 +104,28 @@ export default function DataAndPrivacy() {
                   <div className="framer-IoDlI framer-19vufya framer-v-19vufya" data-framer-name="Gradient 01" data-highlight="true" style={{width: "100%", opacity: "1"}}>
                     <div className="framer-sg2tfk" data-framer-name="Container" style={{opacity: "1"}}>
                       <div className="framer-j5qjaj" data-framer-name="Image 01" style={{opacity: "1"}}>
-                        <figure className="framer-1m7323l" style={{filter: "brightness(1)", mask: "linear-gradient(0deg, rgba(0, 0, 0, 0.37) 6%, rgb(0, 0, 0) 17%, rgb(0, 0, 0) 100%)", opacity: "1"}}>
+                        <figure className="framer-1m7323l" style={{filter: "brightness(1) drop-shadow(0 0 30px rgba(255, 205, 125, 0.45))", mask: "linear-gradient(0deg, rgba(0, 0, 0, 0.37) 6%, rgb(0, 0, 0) 17%, rgb(0, 0, 0) 100%)", opacity: "1"}}>
                           <div style={{position: "absolute", borderRadius: "inherit", cornerShape: "inherit", top: "0", right: "0", bottom: "0", left: "0"}} data-framer-background-image-wrapper="true">
                             <img decoding="auto" loading="lazy" width="294" height="485" src="/images/boo9ykjwplvaxjachcxhqapubw.png" alt="" style={{display: "block", width: "100%", height: "100%", borderRadius: "inherit", cornerShape: "inherit", objectPosition: "center", objectFit: "contain"}} />
                           </div>
                         </figure>
                       </div>
                       <div className="framer-4zf4j8" data-framer-name="Image 02" style={{opacity: "1"}}>
-                        <figure className="framer-1marqhs" style={{filter: "brightness(1)", mask: "linear-gradient(0deg, rgba(0, 0, 0, 0.37) 6%, rgb(0, 0, 0) 17%, rgba(0,0,0,1) 100%) add", "WebkitFilter": "brightness(1)", "WebkitMask": "linear-gradient(0deg, rgba(0, 0, 0, 0.37) 6%, rgb(0, 0, 0) 17%, rgba(0,0,0,1) 100%) add", opacity: "0.5"}}>
+                        <figure className="framer-1marqhs" style={{filter: "brightness(1) drop-shadow(0 0 34px rgba(255, 205, 125, 0.3))", mask: "linear-gradient(0deg, rgba(0, 0, 0, 0.37) 6%, rgb(0, 0, 0) 17%, rgba(0,0,0,1) 100%) add", "WebkitFilter": "brightness(1) drop-shadow(0 0 34px rgba(255, 205, 125, 0.3))", "WebkitMask": "linear-gradient(0deg, rgba(0, 0, 0, 0.37) 6%, rgb(0, 0, 0) 17%, rgba(0,0,0,1) 100%) add", opacity: "0.5"}}>
                           <div style={{position: "absolute", borderRadius: "inherit", cornerShape: "inherit", top: "0", right: "0", bottom: "0", left: "0"}} data-framer-background-image-wrapper="true">
                             <img decoding="auto" loading="lazy" width="294" height="473" src="/images/ffx9tcfoevpxrcvxsamftct8.png" alt="" style={{display: "block", width: "100%", height: "100%", borderRadius: "inherit", cornerShape: "inherit", objectPosition: "center", objectFit: "cover"}} />
                           </div>
                         </figure>
                       </div>
                       <figure className="framer-4392c2" data-framer-name="Image 03" style={{opacity: "1"}}>
-                        <figure className="framer-1cjt60o" style={{filter: "brightness(1)", mask: "linear-gradient(0deg, rgba(0, 0, 0, 0.37) 6%, rgb(0, 0, 0) 17%, rgba(0,0,0,1) 100%) add", "WebkitFilter": "brightness(1)", "WebkitMask": "linear-gradient(0deg, rgba(0, 0, 0, 0.37) 6%, rgb(0, 0, 0) 17%, rgba(0,0,0,1) 100%) add", opacity: "0.5"}}>
+                        <figure className="framer-1cjt60o" style={{filter: "brightness(1) drop-shadow(0 0 38px rgba(120, 170, 255, 0.3))", mask: "linear-gradient(0deg, rgba(0, 0, 0, 0.37) 6%, rgb(0, 0, 0) 17%, rgba(0,0,0,1) 100%) add", "WebkitFilter": "brightness(1) drop-shadow(0 0 38px rgba(120, 170, 255, 0.3))", "WebkitMask": "linear-gradient(0deg, rgba(0, 0, 0, 0.37) 6%, rgb(0, 0, 0) 17%, rgba(0,0,0,1) 100%) add", opacity: "0.5"}}>
                           <div style={{position: "absolute", borderRadius: "inherit", cornerShape: "inherit", top: "0", right: "0", bottom: "0", left: "0"}} data-framer-background-image-wrapper="true">
                             <img decoding="auto" loading="lazy" width="294" height="492" src="/images/rugs4hrgm7cf9iusk51bzhuf4h8.png" alt="" style={{display: "block", width: "100%", height: "100%", borderRadius: "inherit", cornerShape: "inherit", objectPosition: "center", objectFit: "cover"}} />
                           </div>
                         </figure>
                       </figure>
                       <div className="framer-rhk0c4" data-framer-name="Image 04" style={{opacity: "1"}}>
-                        <figure className="framer-1qodld0" style={{filter: "brightness(1)", mask: "linear-gradient(0deg, rgba(0, 0, 0, 0.37) 6%, rgb(0, 0, 0) 17%, rgba(0,0,0,1) 100%) add", "WebkitFilter": "brightness(1)", "WebkitMask": "linear-gradient(0deg, rgba(0, 0, 0, 0.37) 6%, rgb(0, 0, 0) 17%, rgba(0,0,0,1) 100%) add", opacity: "0.5"}}>
+                        <figure className="framer-1qodld0" style={{filter: "brightness(1) drop-shadow(0 0 42px rgba(1, 117, 255, 0.35))", mask: "linear-gradient(0deg, rgba(0, 0, 0, 0.37) 6%, rgb(0, 0, 0) 17%, rgba(0,0,0,1) 100%) add", "WebkitFilter": "brightness(1) drop-shadow(0 0 42px rgba(1, 117, 255, 0.35))", "WebkitMask": "linear-gradient(0deg, rgba(0, 0, 0, 0.37) 6%, rgb(0, 0, 0) 17%, rgba(0,0,0,1) 100%) add", opacity: "0.5"}}>
                           <div style={{position: "absolute", borderRadius: "inherit", cornerShape: "inherit", top: "0", right: "0", bottom: "0", left: "0"}} data-framer-background-image-wrapper="true">
                             <img decoding="auto" loading="lazy" width="294" height="486" src="/images/6yzctbgtjskogwfp5mnm5z254gq.png" alt="" style={{display: "block", width: "100%", height: "100%", borderRadius: "inherit", cornerShape: "inherit", objectPosition: "center", objectFit: "cover"}} />
                           </div>
