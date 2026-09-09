@@ -7,7 +7,21 @@
  * plain FastAPI/uvicorn convention, not a verified fact. Settings page
  * lets this be corrected without a rebuild.
  */
-export const DEFAULT_API_BASE_URL = "http://localhost:8000";
+/**
+ * Resolution order, highest first:
+ *
+ *   1. what the user typed on the Settings page  (localStorage, this browser)
+ *   2. NEXT_PUBLIC_API_BASE_URL                  (baked in at build time)
+ *   3. http://localhost:8000                     (local development)
+ *
+ * The env var matters for any hosted deployment. A page served over HTTPS
+ * cannot call an http:// backend -- browsers block it as mixed content -- and
+ * "localhost" on a hosted page means the VISITOR's machine, not the server's.
+ * So a deployed build needs this set to a public HTTPS backend, or every
+ * clinical route will fail to connect.
+ */
+export const DEFAULT_API_BASE_URL =
+  process.env.NEXT_PUBLIC_API_BASE_URL?.trim() || "http://localhost:8000";
 
 const STORAGE_KEY = "memora-api-base-url";
 

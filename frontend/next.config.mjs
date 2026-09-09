@@ -26,6 +26,9 @@ const UNUSED_WALLET_SDKS = [
 
 const nextConfig = {
   reactStrictMode: true,
+  // Lets a verification build run without clobbering the .next directory a
+  // running `next dev` is using. Unset in normal builds, including on Vercel.
+  ...(process.env.NEXT_DIST_DIR ? { distDir: process.env.NEXT_DIST_DIR } : {}),
   webpack: (config) => {
     config.resolve.alias = {
       ...config.resolve.alias,
