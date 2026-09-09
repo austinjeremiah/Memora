@@ -29,7 +29,7 @@ from openai import APIConnectionError, APIError, APIStatusError, APITimeoutError
 
 from memora.config import settings
 from memora.context.engine import RetrievedContext
-from memora.llm.client import get_client
+from memora.llm.client import complete
 from memora.llm.errors import LLMUnavailableError
 from memora.ontology.kinds import ALL_KINDS
 
@@ -145,9 +145,8 @@ def propose_claims(context: RetrievedContext) -> list[dict]:
                  context.plan.patient_id)
         return []
 
-    client = get_client()
     try:
-        response = client.chat.completions.create(
+        response = complete(
             model=settings.llm_model,
             temperature=0,
             response_format={"type": "json_object"},

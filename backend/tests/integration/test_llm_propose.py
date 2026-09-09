@@ -14,6 +14,7 @@ from memora.context.engine import compile_plan, execute_plan
 from memora.context.situations import ClinicianRole, Situation
 from memora.evidence.resolver import RejectionReason, resolve_all
 from memora.gate.gate import GateResult, evaluate_all
+from memora.llm import client as llm_client
 from memora.llm.client import get_client
 from memora.llm.errors import LLMUnavailableError
 from memora.llm.propose import SYSTEM_PROMPT, build_payload, propose_claims
@@ -89,11 +90,32 @@ def test_empty_retrieval_proposes_nothing_without_calling_the_model(store):
 
 
 def test_missing_api_key_is_loud_not_silent(monkeypatch):
+    """No key at all must raise rather than quietly skip the proposal step.
+
+    Both settings are cleared: LLM_API_KEYS feeds the same pool, so leaving a
+    rotation key configured would (correctly) keep the client usable and this
+    test would be asserting nothing.
+    """
     monkeypatch.setattr(settings, "llm_api_key", "")
-    get_client.cache_clear()
+    monkeypatch.setattr(settings, "llm_api_keys", [])
+    llm_client._pool.cache_clear()
     with pytest.raises(LLMUnavailableError):
         get_client()
-    get_client.cache_clear()
+    llm_client._pool.cache_clear()
+
+
+def test_every_configured_key_joins_the_pool(monkeypatch):
+    """LLM_API_KEYS adds to LLM_API_KEY rather than replacing it."""
+    monkeypatch.setattr(settings, "llm_api_key", "gsk_primary")
+    monkeypatch.setattr(settings, "llm_api_keys", ["gsk_second", "gsk_primary"])
+    llm_client._pool.cache_clear()
+    try:
+        # The duplicate is dropped; the primary still leads.
+        assert llm_client.key_count() == 2
+        seen = {llm_client.get_client().api_key for _ in range(4)}
+        assert seen == {"gsk_primary", "gsk_second"}
+    finally:
+        llm_client._pool.cache_clear()
 
 
 # ---- live model calls ---------------------------------------------------

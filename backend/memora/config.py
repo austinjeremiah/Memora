@@ -25,6 +25,18 @@ class Settings(BaseSettings):
 
     llm_base_url: str = "https://api.groq.com/openai/v1"
     llm_api_key: str = ""
+    # Extra keys for the rotation pool, comma-separated. Optional: with none
+    # set, the pool is just [llm_api_key] and behaviour is unchanged. Only
+    # worth setting with keys from SEPARATE provider accounts -- Groq meters
+    # per account, so sibling keys share one budget. See memora/llm/client.py.
+    llm_api_keys: list[str] = []
+
+    @field_validator("llm_api_keys", mode="before")
+    @classmethod
+    def _split_keys(cls, v):
+        if isinstance(v, str):
+            return [k.strip() for k in v.split(",") if k.strip()]
+        return v
     llm_model: str = ""
 
     base_rpc_url: str = "https://sepolia.base.org"

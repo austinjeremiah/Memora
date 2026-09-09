@@ -85,13 +85,17 @@
      tint, because a form control re-read several times while a clinician
      makes a choice needs more contrast than a panel glanced at once.
      --------------------------------------------------------------------- */
-  --glass-bg-1: rgba(255, 255, 255, 0.05);
-  --glass-bg-2: rgba(255, 255, 255, 0.08);
-  --glass-bg-3: rgba(255, 255, 255, 0.13);
+  /* Dark grounds, not white tints. A white wash over a bright backdrop leaves
+     light text sitting on a light panel, which is what made the answer and
+     influence cards unreadable. Tinting DOWN instead means contrast no longer
+     depends on what the background video happens to be showing behind it. */
+  --glass-bg-1: rgba(13, 17, 26, 0.55);
+  --glass-bg-2: rgba(13, 17, 26, 0.68);
+  --glass-bg-3: rgba(24, 31, 46, 0.78);
   --glass-bg-read: rgba(18, 22, 32, 0.62);
   --glass-blur-1: 14px;
   --glass-blur-2: 18px;
-  --glass-border: rgba(255, 255, 255, 0.16);
+  --glass-border: rgba(255, 255, 255, 0.14);
   --glass-border-strong: rgba(255, 255, 255, 0.32);
   --glass-shadow:
     0 12px 40px rgba(0, 0, 0, 0.28),
@@ -149,7 +153,7 @@
      heavy: the sidebar stacks its own backdrop-filter blur on top of this,
      so a lighter base here is what makes the two panels read as visibly
      different softness instead of both maxing out to the same blur. */
-  filter: blur(20px) brightness(0.56) saturate(1.0);
+  filter: blur(22px) brightness(0.45) saturate(0.9);
   transform: scale(1.15);
 }
 
@@ -157,7 +161,7 @@
   position: absolute;
   inset: 0;
   background: var(--bg);
-  opacity: 0.48;
+  opacity: 0.58;
 }
 
 .app-shell {
@@ -273,14 +277,14 @@
   position: absolute;
   top: 0; left: 0; right: 0;
   height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.8), transparent);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.42), transparent);
 }
 .card::after {
   content: "";
   position: absolute;
   top: 0; left: 0;
   width: 1px; height: 100%;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.8), transparent, rgba(255, 255, 255, 0.3));
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.38), transparent, rgba(255, 255, 255, 0.14));
 }
 
 /* Icon badge: the one decorative color accent on an otherwise monochrome

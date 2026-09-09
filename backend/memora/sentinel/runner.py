@@ -104,11 +104,20 @@ def sweep(situation: Situation, patient_ids: list[str],
     previous_digest = load_digest(situation.value)
     kinds = SITUATION_FOCUS[situation].kinds
 
+    # These INFO lines are the agent narrating itself. The sweep is otherwise
+    # invisible -- it writes to the patient record without anyone asking, which
+    # is exactly the part worth being able to watch happen.
+    log.info("[sentinel] sweep start  situation=%s  patients=%d  kinds=%s",
+             situation.value, len(patient_ids), ",".join(kinds))
+    log.info("[sentinel] recalled digest from previous runs: %d tracked finding(s)",
+             len(previous_digest))
+
     current: dict[str, Finding] = {}
 
     for patient_id in patient_ids:
         memory = PatientMemory(patient_id)
         run.patients_scanned += 1
+        before = run.records_checked
 
         for kind in kinds:
             for row in memory.list_facts(kind):
@@ -116,9 +125,14 @@ def sweep(situation: Situation, patient_ids: list[str],
                 decision = check_drift(memory, kind, row["name"], row["status"])
                 if decision is None:
                     continue
+                log.info("[sentinel]   CONTRADICTION  %s/%s  -- %s",
+                         kind, row["name"][:44], decision.reason[:80])
                 finding = _finding_from_decision(
                     patient_id, kind, row["name"], decision, "drift", now)
                 current[finding.key] = finding
+
+        log.info("[sentinel]   read %s: %d records from persistent memory",
+                 patient_id[:8], run.records_checked - before)
 
     # Anything previously flagged that no longer trips the check has resolved.
     for key, prior in previous_digest.items():
@@ -145,11 +159,16 @@ def sweep(situation: Situation, patient_ids: list[str],
             continue  # clean result on something never flagged -- not a finding
         merged = merge_finding(prior, finding, status)
         findings.append(merged)
+        log.info("[sentinel]   %-11s %s/%s  (seen %dx across runs)",
+                 status.value, merged.kind, merged.name[:40], merged.runs_seen)
 
         # THE ACTION. Only reachable because the digest remembered how many
         # times this was already seen -- without that persisted count there is
         # no escalation threshold to cross.
         if status is FindingStatus.ESCALATED:
+            log.info("[sentinel]   ACTING UNPROMPTED: threshold of %d runs crossed, "
+                     "writing an escalation into %s's record",
+                     escalation_threshold, merged.patient_id[:8])
             event_id = escalate(PatientMemory(merged.patient_id), merged)
             if event_id:
                 run.actions_taken.append({
@@ -167,7 +186,11 @@ def sweep(situation: Situation, patient_ids: list[str],
 
     run.findings = sorted(findings, key=lambda f: (f.patient_id, f.kind, f.name))
     save_digest(situation.value, updated_digest, run_at=now)
-    log.info("sentinel sweep %s: %s", situation.value, run.by_status())
+    log.info("[sentinel] digest saved to memory: %d finding(s) carried to the next run",
+             len(updated_digest))
+    log.info("[sentinel] sweep done  checked=%d  findings=%d  actions=%d  %s",
+             run.records_checked, len(run.findings), len(run.actions_taken),
+             run.by_status())
     return run
 
 

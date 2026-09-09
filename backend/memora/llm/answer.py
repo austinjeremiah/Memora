@@ -21,7 +21,7 @@ from dataclasses import dataclass, field
 from openai import APIConnectionError, APIError, APIStatusError, APITimeoutError
 
 from memora.config import settings
-from memora.llm.client import get_client
+from memora.llm.client import complete
 from memora.llm.errors import LLMUnavailableError
 from memora.ontology.events import ClinicalEvent
 from memora.ontology.kinds import ALL_KINDS
@@ -153,9 +153,8 @@ def answer_question(ctx: QuestionContext) -> dict:
         ],
     }
 
-    client = get_client()
     try:
-        response = client.chat.completions.create(
+        response = complete(
             model=settings.llm_model, temperature=0,
             response_format={"type": "json_object"},
             messages=[
